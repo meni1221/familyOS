@@ -3,17 +3,12 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json ./
-RUN npm ci
+# Install dependencies (self-contained; the API does not use workspace packages)
+COPY package.json ./
+RUN npm install --legacy-peer-deps
 
-# Copy source code
+# Copy source code and build
 COPY . .
-
-# Generate Prisma client
-RUN npx prisma generate
-
-# Build the application
 RUN npm run build
 
 # Production stage
@@ -25,13 +20,11 @@ ENV NODE_ENV=production
 ENV PORT=3001
 
 # Install only production dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+COPY package.json ./
+RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/prisma ./prisma
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs

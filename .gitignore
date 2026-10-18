@@ -30,9 +30,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Prisma
-prisma/migrations/*.sql
-
 # Test coverage
 coverage/
 
