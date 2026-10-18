@@ -26,18 +26,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm run test
-
       - name: Build all packages
         run: npm run build
 
-      - name: Deploy application
+      - name: What happens next
         run: |
-          echo "Deploy Shlanu to production environment"
-          echo "Application built successfully"
-          echo "Ready for container deployment"
-
-      - name: Notify deployment
-        run: |
-          echo "Shlanu deployment completed at $(date)"
+          echo "The production build succeeded."
+          echo "This workflow does not deploy yet: production runs"
+          echo "docker-compose.prod.yml on the server (see DEPLOYMENT.md)."
+          echo "Tests and type checks run in the CI workflow."
