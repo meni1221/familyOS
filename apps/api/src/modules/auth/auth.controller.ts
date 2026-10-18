@@ -5,6 +5,19 @@ import { RegisterDto, LoginDto } from './dto/index';
 import { Response, Request } from 'express';
 import { ValidationPipe } from '@nestjs/common';
 
+const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
+/**
+ * One definition for the session cookie, used when it is issued *and* when it
+ * is cleared — `clearCookie` only removes a cookie whose attributes match.
+ */
+const SESSION_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  path: '/',
+};
+
 @ApiTags('auth')
 @Controller('api/v1/auth')
 export class AuthController {
@@ -19,10 +32,8 @@ export class AuthController {
   ) {
     const result = await this.authService.register(dto);
     res.cookie('session', result.sessionToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      ...SESSION_COOKIE_OPTIONS,
+      maxAge: SESSION_MAX_AGE_MS,
     });
     res.json(result);
   }
@@ -36,10 +47,8 @@ export class AuthController {
   ) {
     const result = await this.authService.login(dto);
     res.cookie('session', result.sessionToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      ...SESSION_COOKIE_OPTIONS,
+      maxAge: SESSION_MAX_AGE_MS,
     });
     res.json(result);
   }
@@ -51,7 +60,9 @@ export class AuthController {
     if (token) {
       await this.authService.logout(token);
     }
-    res.clearCookie('session');
+    // Cleared with the very same attributes it was issued with, otherwise
+    // browsers keep a cookie that no longer resolves to a session.
+    res.clearCookie('session', SESSION_COOKIE_OPTIONS);
     res.json({ success: true });
   }
 
