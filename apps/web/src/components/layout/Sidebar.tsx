@@ -26,7 +26,7 @@ export default function Sidebar() {
       <div className="flex h-16 items-center border-b border-border px-6">
         <BrandLogo to="/app" />
       </div>
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
