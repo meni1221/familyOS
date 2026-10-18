@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Req, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, Res, Req, UseGuards, Get, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './dto/index';
@@ -59,7 +59,12 @@ export class AuthController {
   @ApiOperation({ summary: 'Get current user' })
   async me(@Req() req: Request) {
     const token = req.cookies?.session;
-    if (!token) return null;
-    return this.authService.validateSession(token);
+    const user = token ? await this.authService.validateSession(token) : null;
+
+    if (!user) {
+      throw new UnauthorizedException('נדרשת התחברות');
+    }
+
+    return user;
   }
 }
