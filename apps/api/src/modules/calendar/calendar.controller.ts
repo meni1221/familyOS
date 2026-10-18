@@ -1,9 +1,19 @@
-﻿import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Req } from '@nestjs/common';
+﻿import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CalendarService } from './calendar.service';
 import { Request } from 'express';
-import { ValidationPipe } from '@nestjs/common';
-import { CreateEventDto } from './dto/index';
+import { CreateEventDto, UpdateEventDto } from './dto/index';
 
 @ApiTags('calendar')
 @Controller('api/v1/calendar')
@@ -46,21 +56,23 @@ export class CalendarController {
   @Post()
   @ApiOperation({ summary: 'Create a new event' })
   @ApiBody({ type: CreateEventDto })
-  async createEvent(
-    @Body(new ValidationPipe({ whitelist: true, transform: true })) body: CreateEventDto,
-    @Req() req: Request
-  ) {
+  async createEvent(@Body() body: CreateEventDto, @Req() req: Request) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.calendarService.createEvent(user.familyId, user.id, body);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update an event' })
   @ApiParam({ name: 'id', type: String })
-  async updateEvent(@Param('id') id: string, @Body() body: any, @Req() req: Request) {
+  @ApiBody({ type: UpdateEventDto })
+  async updateEvent(
+    @Param('id') id: string,
+    @Body() body: UpdateEventDto,
+    @Req() req: Request
+  ) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.calendarService.updateEvent(user.familyId, id, body);
   }
 
@@ -69,7 +81,7 @@ export class CalendarController {
   @ApiParam({ name: 'id', type: String })
   async deleteEvent(@Param('id') id: string, @Req() req: Request) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.calendarService.deleteEvent(user.familyId, id);
   }
 }
