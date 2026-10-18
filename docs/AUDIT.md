@@ -165,11 +165,13 @@ expenseAdded: bool, weeklySummary: bool, email: bool }` (defaults: all true exce
 
 ## 9. Verification round — automated E2E suite
 
-`npm run test:e2e -w apps/api` (requires local MongoDB) builds the API and spawns
-`dist/main.js` against a throwaway database (`FamilyOs_e2e_<pid>`, dropped on start), then
-drives it from the outside over real HTTP **and** socket.io with the same middleware stack the
-browser hits. **20/20 checks pass.** `npm test -w apps/api` stays database-free (11 unit checks)
-and `pretest:e2e` performs the build.
+`npm run test:e2e -w apps/api` (requires local MongoDB) builds the API into its own
+`dist-e2e/` folder and spawns `dist-e2e/main.js` against a throwaway database
+(`FamilyOs_e2e_<pid>`, dropped on start), then drives it from the outside over real HTTP **and**
+socket.io with the same middleware stack the browser hits. **20/20 checks pass.** `npm test -w
+apps/api` stays database-free (11 unit checks). The separate output folder is deliberate: the
+suite rebuilds on every run, and `nest start --watch` owns `dist/`, so sharing it would kill the
+dev server mid-session.
 
 Covered by the suite: registration + session cookie, `/auth/me`, socket handshake via cookie
 *and* handshake token, anonymous socket dropped, task CRUD with `task:created|updated`,

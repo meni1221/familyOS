@@ -9,12 +9,13 @@ import { join } from 'path';
 /*
  * End-to-end journey.
  *
- * Spawns the *compiled* server (`dist/main.js`, produced by the `pretest:e2e`
- * script) against a throwaway MongoDB database and drives it over HTTP *and*
- * socket.io — i.e. from the outside, exactly like the browser does. Nest's
- * dependency injection needs `emitDecoratorMetadata`, which vitest's esbuild
- * transformer does not emit, so importing the application in-process is not an
- * option; the build is what makes this suite possible.
+ * Spawns the compiled server built by the `pretest:e2e` script into its own
+ * `dist-e2e/` folder (so running the suite never disturbs a `nest start --watch`
+ * dev server, which owns `dist/`) and drives it over HTTP *and* socket.io — i.e.
+ * from the outside, exactly like the browser does. Nest's dependency injection
+ * needs `emitDecoratorMetadata`, which vitest's esbuild transformer does not
+ * emit, so importing the application in-process is not an option; the build is
+ * what makes this suite possible.
  *
  * Requires MongoDB on localhost:27017 (`npm run test:e2e -w apps/api`).
  */
@@ -151,7 +152,7 @@ describe('FamilyOS end-to-end journey', () => {
 
     await fs.rm(uploadsDir, { recursive: true, force: true });
 
-    server = spawn(process.execPath, ['dist/main.js'], {
+    server = spawn(process.execPath, ['dist-e2e/main.js'], {
       cwd: apiRoot,
       env: {
         ...process.env,
