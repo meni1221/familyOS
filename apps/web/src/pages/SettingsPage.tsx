@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   FamilySection,
   InvitationBanner,
-  PasswordSection,
   PreferencesSection,
-  ProfileSection,
 } from '../components/settings';
 import { useLogout } from '../hooks/useAuth';
 
@@ -23,16 +21,14 @@ export default function SettingsPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">הגדרות</h1>
-          <p className="text-sm text-ink-secondary">ניהול הפרופיל, המשפחה והאבטחה</p>
+          <p className="text-sm text-ink-secondary">ההעדפות, המשפחה והאבטחה</p>
         </div>
       </div>
 
       <div className="space-y-4">
         <InvitationBanner />
-        <ProfileSection />
         <PreferencesSection />
         <FamilySection />
-        <PasswordSection />
 
         <div className="card flex flex-wrap items-center gap-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-4 bg-red-50">

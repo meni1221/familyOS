@@ -14,6 +14,7 @@ import BudgetPage from './pages/BudgetPage';
 import DocumentsPage from './pages/DocumentsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import SettingsPage from './pages/SettingsPage';
+import ProfilePage from './pages/ProfilePage';
 import AccessibilityPage from './pages/AccessibilityPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
@@ -126,6 +127,7 @@ export default function App() {
           <Route path="documents" element={<DocumentsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

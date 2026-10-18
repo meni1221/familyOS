@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { IconBell, IconChevronDown, IconLogout, IconSettings } from '@tabler/icons-react';
+import { IconBell, IconLogout, IconSettings, IconUser } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth, useLogout } from '../../hooks/useAuth';
 import { useUnreadCount } from '../../hooks/useUnreadCount';
@@ -47,7 +47,7 @@ export default function Header() {
     <header className="sticky top-0 z-30 flex h-20 items-center justify-between gap-4 border-b border-border bg-surface px-4 md:px-6">
       <BrandLogo to="/app" size="lg" />
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 md:gap-3">
         <Link
           to="/app/notifications"
           className="relative flex h-12 w-12 items-center justify-center rounded-4 text-ink-secondary transition-colors hover:bg-cream hover:text-ink"
@@ -57,27 +57,24 @@ export default function Header() {
         >
           <IconBell className="h-6 w-6" />
           {unreadCount > 0 && (
-            <span className="absolute top-0 end-0 flex h-6 min-w-6 items-center justify-center rounded-full bg-error px-1 text-xs font-semibold text-white">
+            <span className="absolute -top-1 -end-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-error px-1 text-xs font-semibold text-white">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
         </Link>
 
         <div className="relative" ref={menuRef}>
+          {/* The initials are the trigger; the name lives inside the menu. */}
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
-            className="flex items-center gap-2 rounded-4 px-2 py-1.5 text-ink transition-colors hover:bg-cream"
+            aria-label={`חשבון: ${user?.displayName ?? 'משתמש'}`}
+            title={user?.displayName ?? 'החשבון שלי'}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-sage-light text-base font-semibold text-forest transition-colors hover:bg-sand"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sage-light text-base font-semibold text-forest">
-              {user?.displayName?.charAt(0) ?? '?'}
-            </span>
-            <span className="hidden max-w-[12rem] truncate text-base font-medium md:block">
-              {user?.displayName ?? 'משתמש'}
-            </span>
-            <IconChevronDown className="hidden h-5 w-5 text-ink-secondary md:block" />
+            {user?.displayName?.charAt(0) ?? '?'}
           </button>
 
           {menuOpen && (
@@ -86,19 +83,29 @@ export default function Header() {
               className="absolute end-0 top-full z-30 mt-2 w-60 overflow-hidden rounded-12 border border-border bg-surface shadow-modal"
             >
               <div className="border-b border-border px-4 py-3">
-                <p className="truncate text-sm font-medium text-ink">
+                <p className="truncate text-base font-semibold text-ink">
                   {user?.displayName ?? 'משתמש'}
                 </p>
-                <p className="truncate text-xs text-ink-secondary">{user?.email}</p>
+                <p className="truncate text-sm text-ink-secondary">{user?.email}</p>
               </div>
+
+              <Link
+                to="/app/profile"
+                role="menuitem"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 text-base text-ink transition-colors hover:bg-cream"
+              >
+                <IconUser className="h-5 w-5 text-ink-secondary" />
+                הפרופיל שלי
+              </Link>
 
               <Link
                 to="/app/settings"
                 role="menuitem"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-3 text-sm text-ink transition-colors hover:bg-cream"
+                className="flex items-center gap-3 border-t border-border px-4 py-3 text-base text-ink transition-colors hover:bg-cream"
               >
-                <IconSettings className="h-4 w-4 text-ink-secondary" />
+                <IconSettings className="h-5 w-5 text-ink-secondary" />
                 הגדרות
               </Link>
 
@@ -106,9 +113,9 @@ export default function Header() {
                 type="button"
                 role="menuitem"
                 onClick={handleLogout}
-                className="flex w-full items-center gap-2 border-t border-border px-4 py-3 text-start text-sm text-error transition-colors hover:bg-cream"
+                className="flex w-full items-center gap-3 border-t border-border px-4 py-3 text-start text-base text-error transition-colors hover:bg-cream"
               >
-                <IconLogout className="h-4 w-4" />
+                <IconLogout className="h-5 w-5" />
                 התנתקות
               </button>
             </div>
