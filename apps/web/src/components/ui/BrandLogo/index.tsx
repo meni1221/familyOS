@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 const LOGO_SIZES = {
   sm: { image: 'h-8 w-8', text: 'text-lg' },
   md: { image: 'h-10 w-10', text: 'text-xl' },
-  lg: { image: 'h-12 w-12', text: 'text-2xl' },
+  // The app header uses `lg`. It grows from `md` upwards so the wider brand
+  // still fits next to the header actions on narrow phones.
+  lg: { image: 'h-12 w-12 md:h-14 md:w-14', text: 'text-2xl md:text-3xl' },
 } as const;
 
 interface BrandLogoProps {
