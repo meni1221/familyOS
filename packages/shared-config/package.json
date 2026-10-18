@@ -1,0 +1,10 @@
+{
+  "name": "@familyos/shared-config",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "scripts": {
+    "build": "echo 'No build needed for shared-config'"
+  }
+}
