@@ -1,34 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-  IconCheck,
-  IconCalendar,
   IconBabyBottle,
-  IconWallet,
   IconBell,
+  IconCalendar,
+  IconCheck,
   IconPlus,
   IconSparkles,
+  IconWallet,
 } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
+import { api } from '../lib/api';
+import { formatCurrency, formatDate, formatTime } from '../lib/format';
 import EmptyState from '../components/ui/EmptyState';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import type { DashboardPayload } from '../lib/types';
 
-interface DashboardData {
-  tasks: {
-    today: Array<{ id: string; title: string; status: string; priority: string }>;
-    overdue: Array<{ id: string; title: string; dueAt: string }>;
-  };
-  events: {
-    today: Array<{ id: string; title: string; startsAt: string }>;
-  };
-  notifications: {
-    unreadCount: number;
-  };
-}
-
-async function fetchDashboard(): Promise<DashboardData> {
-  const res = await fetch('/api/v1/dashboard', { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch dashboard');
-  return res.json();
+async function fetchDashboard(): Promise<DashboardPayload> {
+  return api.get<DashboardPayload>('/api/v1/dashboard');
 }
 
 export default function DashboardPage() {
@@ -61,6 +49,8 @@ export default function DashboardPage() {
     month: 'long',
   });
 
+  const overdueCount = data?.tasks.overdue.length ?? 0;
+
   return (
     <div>
       <div className="page-header">
@@ -75,29 +65,34 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* Today's Tasks */}
+        {/* Today's tasks */}
         <div className="card">
           <div className="card-header">
-            <h2 className="card-title">משימות שלי היום</h2>
+            <h2 className="card-title">משימות להיום</h2>
             <Link to="/app/tasks" className="text-xs text-forest hover:underline">
               הצג הכל
             </Link>
           </div>
-          {data?.tasks?.today?.length ? (
+          {data?.tasks.today.length ? (
             <ul className="space-y-2">
               {data.tasks.today.slice(0, 3).map((task) => (
                 <li key={task.id} className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-forest" />
-                  <span className="text-sm text-ink">{task.title}</span>
+                  <span className="h-2 w-2 rounded-full bg-forest" aria-hidden="true" />
+                  <span className="truncate text-sm text-ink">{task.title}</span>
                 </li>
               ))}
             </ul>
           ) : (
             <p className="text-sm text-ink-secondary">אין משימות להיום</p>
           )}
+          {overdueCount > 0 && (
+            <p className="mt-3 text-xs text-error">
+              {overdueCount} משימות שעברו את מועד היעד
+            </p>
+          )}
         </div>
 
-        {/* Today's Events */}
+        {/* Today's events */}
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">אירועים היום</h2>
@@ -105,12 +100,14 @@ export default function DashboardPage() {
               הצג הכל
             </Link>
           </div>
-          {data?.events?.today?.length ? (
+          {data?.events.today.length ? (
             <ul className="space-y-2">
               {data.events.today.slice(0, 3).map((event) => (
                 <li key={event.id} className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-gold" />
-                  <span className="text-sm text-ink">{event.title}</span>
+                  <span className="h-2 w-2 rounded-full bg-gold" aria-hidden="true" />
+                  <span className="truncate text-sm text-ink">
+                    {formatTime(event.startsAt)} · {event.title}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -132,14 +129,77 @@ export default function DashboardPage() {
               <IconBell className="h-5 w-5 text-forest" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-ink">{data?.notifications?.unreadCount ?? 0}</p>
+              <p className="text-2xl font-bold text-ink">{data?.notifications.unreadCount ?? 0}</p>
               <p className="text-xs text-ink-secondary">התראות לא נקראו</p>
             </div>
           </div>
         </div>
+
+        {/* Budget */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">תקציב החודש</h2>
+            <Link to="/app/budget" className="text-xs text-forest hover:underline">
+              הצג הכל
+            </Link>
+          </div>
+          {data ? (
+            <dl className="space-y-1 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-ink-secondary">הוצאות</dt>
+                <dd className="text-numeric text-error">
+                  {formatCurrency(data.budget.monthlyExpenses, 'ILS')}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-ink-secondary">תקציב</dt>
+                <dd className="text-numeric text-ink">
+                  {formatCurrency(data.budget.budgetAmount, 'ILS')}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-ink-secondary">נותר</dt>
+                <dd
+                  className={`text-numeric ${
+                    data.budget.remaining < 0 ? 'text-error' : 'text-success'
+                  }`}
+                >
+                  {formatCurrency(data.budget.remaining, 'ILS')}
+                </dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="text-sm text-ink-secondary">אין נתונים</p>
+          )}
+        </div>
+
+        {/* Baby */}
+        <div className="card md:col-span-2 lg:col-span-2">
+          <div className="card-header">
+            <h2 className="card-title">שגרת התינוק</h2>
+            <Link to="/app/baby" className="text-xs text-forest hover:underline">
+              הצג הכל
+            </Link>
+          </div>
+          {data?.babyLogs.recent.length ? (
+            <ul className="space-y-2">
+              {data.babyLogs.recent.slice(0, 3).map((log) => (
+                <li key={log.id} className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-sage" aria-hidden="true" />
+                  <span className="truncate text-sm text-ink">
+                    {formatDate(log.occurredAt)} · {formatTime(log.occurredAt)}
+                    {log.note ? ` · ${log.note}` : ''}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-ink-secondary">אין רשומות אחרונות</p>
+          )}
+        </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick actions */}
       <div className="mt-6">
         <h2 className="section-title mb-3">פעולות מהירות</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
