@@ -12,7 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { hashToken, sessionStore, SessionData } from '../auth/session.store';
 
 /** Parses a `Cookie` request header without pulling in a dependency. */
-function parseCookieHeader(header: string | undefined): Record<string, string> {
+const parseCookieHeader = (header: string | undefined): Record<string, string> => {
   if (!header) return {};
 
   return header.split(';').reduce<Record<string, string>>((acc, part) => {
@@ -24,7 +24,7 @@ function parseCookieHeader(header: string | undefined): Record<string, string> {
     if (key) acc[key] = decodeURIComponent(value);
     return acc;
   }, {});
-}
+};
 
 /**
  * Socket.io gateway for live family updates.

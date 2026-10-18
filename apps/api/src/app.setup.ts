@@ -21,7 +21,7 @@ import { AppModule } from './app.module';
  * Kept separate from `main.ts` so the HTTP surface of the server is defined in a
  * single, reviewable place.
  */
-export function configureApp(app: INestApplication): INestApplication {
+export const configureApp = (app: INestApplication): INestApplication => {
   // The session store is a module singleton (the auth middleware is built by
   // hand below), so it receives its model once, here.
   bindSessionModel(app.get<Model<Session>>(getModelToken(Session.name)));
@@ -49,10 +49,10 @@ export function configureApp(app: INestApplication): INestApplication {
   SwaggerModule.setup('api/docs', app, document);
 
   return app;
-}
+};
 
 /** Creates a fully configured application without binding it to a port. */
-export async function createApp(options: NestApplicationOptions = {}): Promise<INestApplication> {
+export const createApp = async (options: NestApplicationOptions = {}): Promise<INestApplication> => {
   const app = await NestFactory.create(AppModule, options);
   return configureApp(app);
-}
+};

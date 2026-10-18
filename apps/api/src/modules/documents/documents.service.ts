@@ -11,7 +11,7 @@ import { UploadedFile } from './uploads.types';
 const DEFAULT_MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 /** MIME types accepted for upload, extensible through `ALLOWED_FILE_TYPES`. */
-export function allowedMimeTypes(): string[] {
+export const allowedMimeTypes = (): string[] => {
   const configured = process.env.ALLOWED_FILE_TYPES;
   if (configured) {
     return configured
@@ -28,29 +28,29 @@ export function allowedMimeTypes(): string[] {
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   ];
-}
+};
 
-export function maxFileSizeBytes(): number {
+export const maxFileSizeBytes = (): number => {
   const configured = Number(process.env.MAX_FILE_SIZE_BYTES);
   return Number.isFinite(configured) && configured > 0 ? configured : DEFAULT_MAX_FILE_SIZE_BYTES;
-}
+};
 
 /**
  * Local uploads directory. Resolved lazily (not at module load) so that
  * `ConfigModule` has already populated `process.env` before the first request.
  */
-export function uploadsRoot(): string {
+export const uploadsRoot = (): string => {
   return process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads');
-}
+};
 
-function familyUploadDir(familyId: string): string {
+const familyUploadDir = (familyId: string): string => {
   return path.join(uploadsRoot(), familyId);
-}
+};
 
-function absolutePathFor(storageKey: string): string {
+const absolutePathFor = (storageKey: string): string => {
   // `storageKey` always uses forward slashes; normalise for Windows.
   return path.join(uploadsRoot(), ...storageKey.split('/'));
-}
+};
 
 const MIME_EXTENSIONS: Record<string, string> = {
   'application/pdf': '.pdf',
@@ -63,13 +63,13 @@ const MIME_EXTENSIONS: Record<string, string> = {
   'text/csv': '.csv',
 };
 
-function extensionFor(file: UploadedFile): string {
+const extensionFor = (file: UploadedFile): string => {
   const byMime = MIME_EXTENSIONS[file.mimetype];
   if (byMime) return byMime;
 
   const fromName = path.extname(file.originalname || '').toLowerCase();
   return /^\.[a-z0-9]{1,8}$/.test(fromName) ? fromName : '.bin';
-}
+};
 
 @Injectable()
 export class DocumentsService {

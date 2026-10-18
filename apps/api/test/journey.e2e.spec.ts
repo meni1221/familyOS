@@ -48,7 +48,7 @@ interface RequestOptions {
   cookie?: string;
 }
 
-async function request(method: string, path: string, options: RequestOptions = {}) {
+const request = async (method: string, path: string, options: RequestOptions = {}) => {
   const headers: Record<string, string> = {};
   const cookie = options.cookie ?? ownerCookie;
   if (cookie) headers.cookie = cookie;
@@ -77,14 +77,14 @@ async function request(method: string, path: string, options: RequestOptions = {
     text,
     session: session ? session.split(';')[0] : '',
   };
-}
+};
 
 /**
  * The gateway accepts the connection and then drops it when the handshake
  * carries no usable session, so the client can surface an "unauthorized" state
  * instead of an opaque connection error.
  */
-async function expectSocketDropped(cookie: string): Promise<void> {
+const expectSocketDropped = async (cookie: string): Promise<void> => {
   const client = io(baseUrl, {
     path: '/socket.io',
     transports: ['websocket'],
@@ -102,10 +102,10 @@ async function expectSocketDropped(cookie: string): Promise<void> {
 
   client.close();
   expect(dropped).toBe(true);
-}
+};
 
 /** Resolves with the payload of the first matching event, or `null` on timeout. */
-function waitForEvent<T = any>(event: string, timeoutMs = 5000): Promise<T | null> {
+const waitForEvent = <T = any>(event: string, timeoutMs = 5000): Promise<T | null> => {
   return new Promise((resolve) => {
     if (!socket) {
       resolve(null);
@@ -118,9 +118,9 @@ function waitForEvent<T = any>(event: string, timeoutMs = 5000): Promise<T | nul
       resolve(payload);
     });
   });
-}
+};
 
-function connectSocket(options: { cookie?: string; token?: string }): Promise<Socket> {
+const connectSocket = (options: { cookie?: string; token?: string }): Promise<Socket> => {
   return new Promise((resolve, reject) => {
     const client = io(baseUrl, {
       path: '/socket.io',
@@ -141,7 +141,7 @@ function connectSocket(options: { cookie?: string; token?: string }): Promise<So
       reject(error);
     });
   });
-}
+};
 
 describe('Shlanu end-to-end journey', () => {
   beforeAll(async () => {

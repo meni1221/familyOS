@@ -19,18 +19,18 @@ let boundModel: Model<Session> | null = null;
  * from the global mongoose connection either: `MongooseModule.forRoot` opens its
  * own connection.
  */
-export function bindSessionModel(model: Model<Session>): void {
+export const bindSessionModel = (model: Model<Session>): void => {
   boundModel = model;
-}
+};
 
-function sessions(): Model<Session> {
+const sessions = (): Model<Session> => {
   if (!boundModel) {
     throw new Error(
       'Session model is not bound yet: call bindSessionModel() during bootstrap.'
     );
   }
   return boundModel;
-}
+};
 
 /**
  * Session storage backed by MongoDB.
@@ -84,9 +84,9 @@ export class SessionStore {
 
 export const sessionStore = new SessionStore();
 
-export function hashToken(token: string): string {
+export const hashToken = (token: string): string => {
   return createHash('sha256').update(token).digest('hex');
-}
+};
 
 // Sweeps leftovers every 5 minutes (does not keep the process alive).
 const cleanupTimer = setInterval(() => {

@@ -128,11 +128,11 @@ export class DashboardController {
   }
 }
 
-function toObjectId(value: string) {
+const toObjectId = (value: string) => {
   return new Types.ObjectId(value);
-}
+};
 
-function emptyDashboard() {
+const emptyDashboard = () => {
   return {
     tasks: { today: [], overdue: [], upcoming: [] },
     events: { today: [], upcoming: [] },
@@ -146,4 +146,4 @@ function emptyDashboard() {
     },
     notifications: { unread: [], unreadCount: 0 },
   };
-}
+};

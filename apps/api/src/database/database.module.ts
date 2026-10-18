@@ -9,7 +9,7 @@ const DEFAULT_DB_NAME = 'Shlanu';
  * Serializes every document with a stable `id` string instead of `_id`/`__v`,
  * so API responses are consistent for the frontend and shared types.
  */
-function configureMongooseSerialization() {
+const configureMongooseSerialization = () => {
   mongoose.set('toJSON', {
     versionKey: false,
     transform: (_doc, ret: Record<string, unknown>) => {
@@ -20,7 +20,7 @@ function configureMongooseSerialization() {
       return ret;
     },
   });
-}
+};
 
 @Global()
 @Module({

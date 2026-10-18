@@ -42,14 +42,14 @@ const allModels = [
   models.Notification,
 ] as unknown as Model<unknown>[];
 
-function daysFromNow(days: number, hours = 0) {
+const daysFromNow = (days: number, hours = 0) => {
   const date = new Date();
   date.setDate(date.getDate() + days);
   date.setHours(date.getHours() + hours);
   return date;
-}
+};
 
-async function seed() {
+const seed = async () => {
   await mongoose.connect(DATABASE_URL);
   console.log(`Connected to ${DATABASE_URL}`);
 
@@ -236,7 +236,7 @@ async function seed() {
   console.log('Demo accounts:');
   console.log(`  demo@shlanu.app / ${DEMO_PASSWORD}`);
   console.log(`  sarah@shlanu.app / ${DEMO_PASSWORD}`);
-}
+};
 
 seed()
   .then(() => mongoose.disconnect())
