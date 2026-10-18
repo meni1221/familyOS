@@ -1,5 +1,5 @@
-﻿import { Controller, Get, Post, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+﻿import { Controller, Get, Post, Patch, Param, Req, UnauthorizedException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
 import { Request } from 'express';
 
@@ -28,7 +28,16 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Mark all notifications as read' })
   async markAllAsRead(@Req() req: Request) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.notificationsService.markAllAsRead(user.familyId, user.id);
+  }
+
+  @Patch(':id/read')
+  @ApiOperation({ summary: 'Mark a single notification as read' })
+  @ApiParam({ name: 'id', type: String })
+  async markAsRead(@Param('id') id: string, @Req() req: Request) {
+    const user = (req as any).user;
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
+    return this.notificationsService.markAsRead(user.familyId, user.id, id);
   }
 }
