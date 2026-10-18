@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { UserPlus } from 'lucide-react';
+import { IconUserPlus } from '@tabler/icons-react';
 
 const registerSchema = z.object({
   displayName: z.string().min(2, 'שם צריך להכיל לפחות 2 תווים'),
@@ -139,7 +139,7 @@ export default function RegisterPage() {
               disabled={isSubmitting}
               className="btn-primary w-full"
             >
-              <UserPlus className="h-4 w-4" />
+              <IconUserPlus className="h-4 w-4" />
               {isSubmitting ? 'נרשם...' : 'הרשמה'}
             </button>
           </form>

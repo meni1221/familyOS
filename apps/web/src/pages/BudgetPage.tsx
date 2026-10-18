@@ -1,4 +1,4 @@
-import { Plus, Wallet } from 'lucide-react';
+import { IconPlus, IconWallet } from '@tabler/icons-react';
 import EmptyState from '../components/ui/EmptyState';
 
 export default function BudgetPage() {
@@ -7,7 +7,7 @@ export default function BudgetPage() {
       <div className="page-header">
         <h1 className="page-title">תקציב משפחתי</h1>
         <button className="btn-primary btn-sm">
-          <Plus className="h-4 w-4" />
+          <IconPlus className="h-4 w-4" />
           הוצאה חדשה
         </button>
       </div>
@@ -29,7 +29,7 @@ export default function BudgetPage() {
 
       <div className="card">
         <EmptyState
-          icon={Wallet}
+          icon={IconWallet}
           title="אין נתונים עדיין"
           description="התחילו להזין הוצאות והכנסות כדי לראות סטטיסטיקות"
         />

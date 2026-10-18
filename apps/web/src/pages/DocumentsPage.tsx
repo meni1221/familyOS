@@ -1,4 +1,4 @@
-import { Plus, FileText, Upload } from 'lucide-react';
+import { IconPlus, IconFileText, IconUpload } from '@tabler/icons-react';
 import EmptyState from '../components/ui/EmptyState';
 
 export default function DocumentsPage() {
@@ -7,19 +7,19 @@ export default function DocumentsPage() {
       <div className="page-header">
         <h1 className="page-title">מסמכים</h1>
         <button className="btn-primary btn-sm">
-          <Plus className="h-4 w-4" />
+          <IconPlus className="h-4 w-4" />
           העלה מסמך
         </button>
       </div>
 
       <div className="card">
         <EmptyState
-          icon={FileText}
+          icon={IconFileText}
           title="אין מסמכים"
           description="העלו מסמכים חשובים כדי לשמור עליהם במקום אחד ומאובטח"
           action={
             <button className="btn-secondary btn-sm">
-              <Upload className="h-4 w-4" />
+              <IconUpload className="h-4 w-4" />
               העלה מסמך ראשון
             </button>
           }

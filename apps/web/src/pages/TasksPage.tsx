@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Check } from 'lucide-react';
+import { IconPlus, IconCheck } from '@tabler/icons-react';
 import EmptyState from '../components/ui/EmptyState';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import Badge from '../components/ui/Badge';
@@ -59,7 +59,7 @@ export default function TasksPage() {
 
   if (error) {
     return (
-      <EmptyState icon={Check} title="שגיאה בטעינת משימות" description="נסו שוב מאוחר יותר" />
+      <EmptyState icon={IconCheck} title="שגיאה בטעינת משימות" description="נסו שוב מאוחר יותר" />
     );
   }
 
@@ -74,7 +74,7 @@ export default function TasksPage() {
       <div className="page-header">
         <h1 className="page-title">משימות</h1>
         <button className="btn-primary btn-sm">
-          <Plus className="h-4 w-4" />
+          <IconPlus className="h-4 w-4" />
           משימה חדשה
         </button>
       </div>
@@ -97,7 +97,7 @@ export default function TasksPage() {
 
       {filteredTasks.length === 0 ? (
         <EmptyState
-          icon={Check}
+          icon={IconCheck}
           title="אין משימות"
           description="צרו את המשימה הראשונה שלכם"
         />
@@ -115,7 +115,7 @@ export default function TasksPage() {
                     : 'border-border hover:border-forest'
                 }`}
               >
-                {task.status === 'COMPLETED' && <Check className="h-3 w-3" />}
+                {task.status === 'COMPLETED' && <IconCheck className="h-3 w-3" />}
               </button>
               <div className="flex-1">
                 <p

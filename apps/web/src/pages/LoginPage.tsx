@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { LogIn } from 'lucide-react';
+import { IconLogin } from '@tabler/icons-react';
 
 const loginSchema = z.object({
   email: z.string().email('כתובת אימייל לא תקינה'),
@@ -100,7 +100,7 @@ export default function LoginPage() {
               disabled={isSubmitting}
               className="btn-primary w-full"
             >
-              <LogIn className="h-4 w-4" />
+              <IconLogin className="h-4 w-4" />
               {isSubmitting ? 'מתחבר...' : 'התחברות'}
             </button>
           </form>
