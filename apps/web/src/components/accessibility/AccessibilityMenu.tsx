@@ -152,15 +152,6 @@ const AccessibilityMenu = forwardRef<HTMLDivElement, AccessibilityMenuProps>(
           >
             להצהרת הנגישות המלאה
           </Link>
-          <p className="mt-2 text-xs font-semibold text-ink">רכזת נגישות:</p>
-          <p className="text-xs text-ink">עו&quot;ד שירן לוי אלדר</p>
-          <p className="text-xs text-ink-secondary">
-            טלפון:{' '}
-            <a href="tel:0542068580" className="hover:underline">
-              054-2068580
-            </a>
-          </p>
-          <p className="text-xs text-ink-secondary">ימים א&#39;-ה&#39;, בשעות פעילות המשרד</p>
         </div>
       </div>
     );
