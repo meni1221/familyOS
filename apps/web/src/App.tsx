@@ -18,6 +18,7 @@ import ProfilePage from './pages/ProfilePage';
 import AccessibilityPage from './pages/AccessibilityPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
+import ToastProvider from './components/ui/ToastProvider';
 import { AccessibilityWidget, SkipLink } from './components/accessibility';
 import { ContentGuard } from './components/security';
 import { useRealtimeConnection } from './hooks/useRealtime';
@@ -80,7 +81,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <>
+    <ToastProvider>
       <Routes>
         <Route
           path="/"
@@ -136,6 +137,6 @@ export default function App() {
       <LocaleSync />
       <ContentGuard />
       <AccessibilityWidget />
-    </>
+    </ToastProvider>
   );
 }

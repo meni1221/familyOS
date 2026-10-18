@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { IconUser } from '@tabler/icons-react';
 import SectionCard from '../SectionCard';
 import { useProfile, useUpdateProfile } from '../../../hooks/useSettings';
+import { useToast } from '../../../hooks/useToast';
 import { applyLocale, LOCALE_LABELS } from '../../../lib/locale';
 import type { Locale } from '../../../lib/types';
 
@@ -29,12 +30,13 @@ type ProfileFormData = z.infer<typeof schema>;
 export default function ProfileSection() {
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
+  const toast = useToast();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({ resolver: zodResolver(schema) });
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export default function ProfileSection() {
     await updateProfile.mutateAsync(values);
     // Keep the document direction/formatting in sync with the saved language.
     applyLocale(values.preferredLocale as Locale);
+    toast.success('השינויים נשמרו');
   };
 
   const timezones = profile?.timezone
@@ -128,11 +131,6 @@ export default function ProfileSection() {
               {isSubmitting ? 'שומר…' : 'שמירת שינויים'}
             </button>
 
-            {isSubmitSuccessful && !isSubmitting && (
-              <span className="text-xs text-success" role="status">
-                השינויים נשמרו
-              </span>
-            )}
             {updateProfile.isError && (
               <span className="text-xs text-error" role="alert">
                 {updateProfile.error instanceof Error

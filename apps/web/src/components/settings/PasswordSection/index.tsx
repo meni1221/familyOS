@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { IconShield } from '@tabler/icons-react';
 import SectionCard from '../SectionCard';
 import { useChangePassword } from '../../../hooks/useSettings';
+import { useToast } from '../../../hooks/useToast';
 
 const schema = z
   .object({
@@ -24,12 +25,13 @@ type PasswordFormData = z.infer<typeof schema>;
 
 export default function PasswordSection() {
   const changePassword = useChangePassword();
+  const toast = useToast();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm<PasswordFormData>({
     resolver: zodResolver(schema),
     defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
@@ -41,6 +43,7 @@ export default function PasswordSection() {
       newPassword: values.newPassword,
     });
     reset({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    toast.success('הסיסמה עודכנה');
   };
 
   return (
@@ -105,11 +108,6 @@ export default function PasswordSection() {
             {isSubmitting ? 'מעדכן…' : 'עדכון סיסמה'}
           </button>
 
-          {isSubmitSuccessful && !isSubmitting && (
-            <span className="text-xs text-success" role="status">
-              הסיסמה עודכנה
-            </span>
-          )}
           {changePassword.isError && (
             <span className="text-xs text-error" role="alert">
               {changePassword.error instanceof Error

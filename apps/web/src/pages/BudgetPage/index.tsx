@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconPlus, IconWallet } from '@tabler/icons-react';
 import { api } from '../../lib/api';
+import { errorMessage } from '../../lib/errorMessage';
 import { useCurrentFamily } from '../../hooks/useFamily';
+import { useToast } from '../../hooks/useToast';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import type { Budget, Currency, Expense } from '../../lib/types';
 import BudgetSummary from './BudgetSummary';
@@ -18,6 +20,7 @@ import type { BudgetFormData, ExpenseFormData } from './schemas';
  */
 export default function BudgetPage() {
   const client = useQueryClient();
+  const toast = useToast();
   const { data: family } = useCurrentFamily();
   const defaultCurrency: Currency = family?.defaultCurrency ?? 'ILS';
 
@@ -45,12 +48,18 @@ export default function BudgetPage() {
     onSuccess: () => {
       invalidate();
       setBudgetFormOpen(false);
+      toast.success('התקציב נשמר');
     },
+    onError: (error) => toast.error('שמירת התקציב נכשלה', errorMessage(error)),
   });
 
   const deleteBudget = useMutation({
     mutationFn: (id: string) => api.del(`/api/v1/budget/${id}`),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('התקציב נמחק');
+    },
+    onError: (error) => toast.error('מחיקת התקציב נכשלה', errorMessage(error)),
   });
 
   const createExpense = useMutation({
@@ -63,12 +72,18 @@ export default function BudgetPage() {
     onSuccess: () => {
       invalidate();
       setExpenseFormOpen(false);
+      toast.success('ההוצאה נוספה');
     },
+    onError: (error) => toast.error('הוספת ההוצאה נכשלה', errorMessage(error)),
   });
 
   const deleteExpense = useMutation({
     mutationFn: (id: string) => api.del(`/api/v1/budget/expenses/${id}`),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('ההוצאה נמחקה');
+    },
+    onError: (error) => toast.error('מחיקת ההוצאה נכשלה', errorMessage(error)),
   });
 
   const summary = useMemo(() => {

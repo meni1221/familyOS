@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { IconUserPlus } from '@tabler/icons-react';
 import { useAcceptInvitation } from '../../../hooks/useFamily';
+import { useToast } from '../../../hooks/useToast';
 
 /**
  * Shown when the page is opened from an invitation link
@@ -10,6 +11,7 @@ import { useAcceptInvitation } from '../../../hooks/useFamily';
 export default function InvitationBanner() {
   const [searchParams, setSearchParams] = useSearchParams();
   const acceptInvitation = useAcceptInvitation();
+  const toast = useToast();
 
   const token = searchParams.get('invite');
   if (!token) return null;
@@ -24,6 +26,7 @@ export default function InvitationBanner() {
     try {
       await acceptInvitation.mutateAsync(token);
       clearToken();
+      toast.success('הצטרפתם למשפחה');
     } catch {
       // The error message is rendered below; keep the token so it can be retried.
     }

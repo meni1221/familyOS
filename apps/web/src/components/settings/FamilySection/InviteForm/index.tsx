@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconCopy, IconUserPlus } from '@tabler/icons-react';
 import { useCreateInvitation } from '../../../../hooks/useFamily';
+import { useToast } from '../../../../hooks/useToast';
 import { inviteSchema, type InviteFormData } from '../schemas';
 
 interface InviteFormProps {
@@ -16,6 +17,7 @@ interface InviteFormProps {
  */
 export default function InviteForm({ canInvite }: InviteFormProps) {
   const createInvitation = useCreateInvitation();
+  const toast = useToast();
   const [inviteUrl, setInviteUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -34,14 +36,17 @@ export default function InviteForm({ canInvite }: InviteFormProps) {
     const response = await createInvitation.mutateAsync(values);
     setInviteUrl(response.data.inviteUrl);
     reset({ email: '', role: 'MEMBER' });
+    toast.success('ההזמנה נוצרה');
   };
 
   const copyInvite = async () => {
     try {
       await navigator.clipboard.writeText(inviteUrl);
       setCopied(true);
+      toast.success('הקישור הועתק');
     } catch {
       setCopied(false);
+      toast.error('העתקת הקישור נכשלה');
     }
   };
 

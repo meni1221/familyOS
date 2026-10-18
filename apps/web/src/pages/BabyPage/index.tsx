@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
 import { api } from '../../lib/api';
+import { errorMessage } from '../../lib/errorMessage';
 import { daysSince } from '../../lib/format';
+import { useToast } from '../../hooks/useToast';
 import type { BabyLog, BabyProfile } from '../../lib/types';
 import BabyLogForm from './BabyLogForm';
 import BabyTimeline from './BabyTimeline';
@@ -15,6 +17,7 @@ import type { LogFormData, ProfileFormData } from './schemas';
  */
 export default function BabyPage() {
   const client = useQueryClient();
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<'timeline' | 'add'>('timeline');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -53,12 +56,18 @@ export default function BabyPage() {
     onSuccess: () => {
       invalidate();
       setActiveTab('timeline');
+      toast.success('הרשומה נוספה ליומן');
     },
+    onError: (error) => toast.error('הוספת הרשומה נכשלה', errorMessage(error)),
   });
 
   const deleteLog = useMutation({
     mutationFn: (id: string) => api.del(`/api/v1/baby/logs/${id}`),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('הרשומה נמחקה');
+    },
+    onError: (error) => toast.error('מחיקת הרשומה נכשלה', errorMessage(error)),
   });
 
   const saveProfile = useMutation({
@@ -70,7 +79,9 @@ export default function BabyPage() {
     onSuccess: () => {
       invalidate();
       setIsProfileOpen(false);
+      toast.success('הפרופיל נשמר');
     },
+    onError: (error) => toast.error('שמירת הפרופיל נכשלה', errorMessage(error)),
   });
 
   const ageInDays = profile?.dateOfBirth ? daysSince(profile.dateOfBirth) : null;

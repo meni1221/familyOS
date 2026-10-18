@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconPlus } from '@tabler/icons-react';
 import { api } from '../../lib/api';
+import { errorMessage } from '../../lib/errorMessage';
+import { useToast } from '../../hooks/useToast';
 import type { FamilyDocument } from '../../lib/types';
 import DocumentList from './DocumentList';
 import DocumentFormModal from './DocumentFormModal';
@@ -13,6 +15,7 @@ import type { DocumentFormData } from './schemas';
  */
 export default function DocumentsPage() {
   const client = useQueryClient();
+  const toast = useToast();
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const {
@@ -40,14 +43,18 @@ export default function DocumentsPage() {
     },
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: ['documents'] });
+      toast.success('המסמך הועלה');
     },
+    onError: (error) => toast.error('העלאת המסמך נכשלה', errorMessage(error)),
   });
 
   const deleteDocument = useMutation({
     mutationFn: (id: string) => api.del(`/api/v1/documents/${id}`),
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: ['documents'] });
+      toast.success('המסמך נמחק');
     },
+    onError: (error) => toast.error('מחיקת המסמך נכשלה', errorMessage(error)),
   });
 
   const onSubmit = async (values: DocumentFormData & { file: File }) => {

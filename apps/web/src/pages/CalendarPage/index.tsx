@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconPlus } from '@tabler/icons-react';
 import { api } from '../../lib/api';
+import { errorMessage } from '../../lib/errorMessage';
 import { toDateInputValue } from '../../lib/format';
+import { useToast } from '../../hooks/useToast';
 import type { CalendarEvent } from '../../lib/types';
 import CalendarGrid from './CalendarGrid';
 import EventList from './EventList';
@@ -16,6 +18,7 @@ import type { EventFormData } from './schemas';
  */
 export default function CalendarPage() {
   const client = useQueryClient();
+  const toast = useToast();
   const [currentDate, setCurrentDate] = useState(new Date());
   /** The day a new event starts on, or null while the dialog is closed. */
   const [formDate, setFormDate] = useState<string | null>(null);
@@ -55,12 +58,20 @@ export default function CalendarPage() {
         startsAt: new Date(`${values.date}T${values.startTime}:00`).toISOString(),
         endsAt: new Date(`${values.date}T${values.endTime}:00`).toISOString(),
       }),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('האירוע נוצר');
+    },
+    onError: (error) => toast.error('יצירת האירוע נכשלה', errorMessage(error)),
   });
 
   const deleteEvent = useMutation({
     mutationFn: (id: string) => api.del(`/api/v1/calendar/${id}`),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('האירוע נמחק');
+    },
+    onError: (error) => toast.error('מחיקת האירוע נכשלה', errorMessage(error)),
   });
 
   const openForm = (date: Date) => setFormDate(toDateInputValue(date));

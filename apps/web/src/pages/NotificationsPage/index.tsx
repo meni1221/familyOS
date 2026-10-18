@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconBell, IconCheck } from '@tabler/icons-react';
 import { api } from '../../lib/api';
+import { errorMessage } from '../../lib/errorMessage';
+import { useToast } from '../../hooks/useToast';
 import EmptyState from '../../components/ui/EmptyState';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import type { Notification } from '../../lib/types';
@@ -17,6 +19,7 @@ async function fetchNotifications(): Promise<Notification[]> {
  */
 export default function NotificationsPage() {
   const client = useQueryClient();
+  const toast = useToast();
 
   const { data: notifications, isLoading, error } = useQuery({
     queryKey: ['notifications'],
@@ -36,7 +39,11 @@ export default function NotificationsPage() {
 
   const markAll = useMutation({
     mutationFn: () => api.post('/api/v1/notifications/read-all'),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('כל ההתראות סומנו כנקראו');
+    },
+    onError: (error) => toast.error('סימון ההתראות נכשל', errorMessage(error)),
   });
 
   const unread = (notifications ?? []).filter((item) => !item.readAt).length;

@@ -1,6 +1,8 @@
 import { IconTrash } from '@tabler/icons-react';
 import Badge from '../../../ui/Badge';
 import { useRevokeInvitation } from '../../../../hooks/useFamily';
+import { useToast } from '../../../../hooks/useToast';
+import { errorMessage } from '../../../../lib/errorMessage';
 import { formatDate } from '../../../../lib/format';
 import type { FamilyInvitation } from '../../../../lib/types';
 import { invitationLabels, invitationVariant } from '../labels';
@@ -14,6 +16,14 @@ interface InvitationListProps {
 /** The invitations sent so far, with their state and expiry. */
 export default function InvitationList({ invitations, canInvite }: InvitationListProps) {
   const revokeInvitation = useRevokeInvitation();
+  const toast = useToast();
+
+  const revoke = (id: string, email: string) => {
+    revokeInvitation.mutate(id, {
+      onSuccess: () => toast.success('ההזמנה בוטלה', email),
+      onError: (error) => toast.error('ביטול ההזמנה נכשל', errorMessage(error)),
+    });
+  };
 
   return (
     <ul className="space-y-2">
@@ -33,7 +43,7 @@ export default function InvitationList({ invitations, canInvite }: InvitationLis
             <button
               type="button"
               className="btn-ghost btn-sm text-error"
-              onClick={() => revokeInvitation.mutate(invitation.id)}
+              onClick={() => revoke(invitation.id, invitation.email)}
               disabled={revokeInvitation.isPending}
               aria-label={`ביטול ההזמנה ${invitation.email}`}
             >

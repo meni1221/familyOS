@@ -3,7 +3,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconCheck, IconPlus } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { errorMessage } from '../../lib/errorMessage';
 import { useFamilyMembers } from '../../hooks/useFamily';
+import { useToast } from '../../hooks/useToast';
 import EmptyState from '../../components/ui/EmptyState';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import type { Task } from '../../lib/types';
@@ -24,6 +26,7 @@ async function fetchTasks(): Promise<Task[]> {
  */
 export default function TasksPage() {
   const client = useQueryClient();
+  const toast = useToast();
   const [filter, setFilter] = useState<TaskFilter>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -58,18 +61,27 @@ export default function TasksPage() {
         dueAt: values.dueAt ? new Date(values.dueAt).toISOString() : undefined,
         assigneeUserId: values.assigneeUserId || undefined,
       }),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('המשימה נוצרה');
+    },
+    onError: (error) => toast.error('המשימה לא נוצרה', errorMessage(error)),
   });
 
   const updateTask = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       api.patch(`/api/v1/tasks/${id}`, { status }),
     onSuccess: invalidate,
+    onError: (error) => toast.error('עדכון המשימה נכשל', errorMessage(error)),
   });
 
   const deleteTask = useMutation({
     mutationFn: (id: string) => api.del(`/api/v1/tasks/${id}`),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('המשימה נמחקה');
+    },
+    onError: (error) => toast.error('מחיקת המשימה נכשלה', errorMessage(error)),
   });
 
   const onSubmit = async (values: TaskFormData) => {
