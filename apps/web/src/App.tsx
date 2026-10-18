@@ -16,6 +16,7 @@ import AccessibilityPage from './pages/AccessibilityPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import SkipLink from './components/accessibility/SkipLink';
+import AccessibilityWidget from './components/accessibility/AccessibilityWidget';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -55,60 +56,58 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <PublicRoute>
-            <>
-              <SkipLink />
-              <LandingPage />
-            </>
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <PublicRoute>
-            <RegisterPage />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/accessibility"
-        element={<AccessibilityPage />}
-      />
-      <Route
-        path="/privacy"
-        element={<PrivacyPage />}
-      />
-      <Route
-        path="/app"
-        element={
-          <ProtectedRoute>
-            <AppShell />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<DashboardPage />} />
-        <Route path="tasks" element={<TasksPage />} />
-        <Route path="calendar" element={<CalendarPage />} />
-        <Route path="baby" element={<BabyPage />} />
-        <Route path="budget" element={<BudgetPage />} />
-        <Route path="documents" element={<DocumentsPage />} />
-        <Route path="notifications" element={<NotificationsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <>
+                <SkipLink />
+                <LandingPage />
+              </>
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          }
+        />
+        <Route path="/accessibility" element={<AccessibilityPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route
+          path="/app"
+          element={
+            <ProtectedRoute>
+              <AppShell />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<DashboardPage />} />
+          <Route path="tasks" element={<TasksPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
+          <Route path="baby" element={<BabyPage />} />
+          <Route path="budget" element={<BudgetPage />} />
+          <Route path="documents" element={<DocumentsPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      {/* Global, mounted once: available on every page, public or protected. */}
+      <AccessibilityWidget />
+    </>
   );
 }

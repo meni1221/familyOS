@@ -81,6 +81,22 @@
     color: var(--color-ink);
   }
 
+  /* Accessibility: hide images (visuals only, layout is preserved) */
+  [data-hide-images='true'] img {
+    opacity: 0 !important;
+    visibility: hidden;
+  }
+
+  /* Accessibility: disable animations and transitions */
+  [data-reduce-motion='true'] *,
+  [data-reduce-motion='true'] *::before,
+  [data-reduce-motion='true'] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
   /* Screen reader live region */
   .aria-live-polite {
     position: absolute;
