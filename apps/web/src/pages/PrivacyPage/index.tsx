@@ -68,7 +68,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="section-title mb-2">זכויות המשתמש</h2>
           <p className="text-body">
-            בהתאם לדין, כל משתמש רשאי לעיין במידע הנוגע אליו המצוי בידינו, ולבקש את תיקונו או מחיקתו. בקשה כאמור ניתן להפנות בכתב בדואר האלקטרוני שלהלן.
+            בהתאם לדין, כל משתמש רשאי לעיין במידע הנוגע אליו המצוי בידינו, ולבקש את תיקונו או מחיקתו. בקשה כאמור ניתן להפנות אלינו לפי פרטי הקשר שלהלן.
           </p>
         </section>
 
@@ -83,7 +83,6 @@ export default function PrivacyPage() {
           <h2 className="section-title mb-2">יצירת קשר</h2>
           <div className="text-body space-y-1">
             <p>טלפון: 053-3011599</p>
-            <p>דוא"ל: [להשלמה]</p>
           </div>
         </section>
       </div>
