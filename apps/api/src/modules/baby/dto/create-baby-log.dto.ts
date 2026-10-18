@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsDateString, IsIn, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsDateString, IsIn, IsMongoId } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateBabyLogDto {
@@ -7,9 +7,10 @@ export class CreateBabyLogDto {
   @IsIn(['FEEDING', 'SLEEP', 'DIAPER', 'NOTE'], { message: 'סוג לוג לא תקין' })
   type: 'FEEDING' | 'SLEEP' | 'DIAPER' | 'NOTE';
 
-  @ApiProperty({ example: 'uuid-baby-profile' })
-  @IsUUID()
-  babyProfileId: string;
+  @ApiPropertyOptional({ example: '507f1f77bcf86cd799439011' })
+  @IsOptional()
+  @IsMongoId({ message: 'מזהה פרופיל התינוק אינו תקין' })
+  babyProfileId?: string;
 
   @ApiProperty({ example: '2024-12-25T10:00:00Z' })
   @IsDateString()
