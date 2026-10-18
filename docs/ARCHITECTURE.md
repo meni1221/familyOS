@@ -1,7 +1,7 @@
 # Shlanu — Architecture
 
 ## Overview
-Shlanu is a modular monolith SaaS application built with a React frontend and NestJS backend, using PostgreSQL as the primary data store.
+Shlanu is a modular monolith SaaS application built with a React frontend and NestJS backend, using MongoDB (through Mongoose) as the primary data store.
 
 ## Technology Stack
 
@@ -14,18 +14,17 @@ Shlanu is a modular monolith SaaS application built with a React frontend and Ne
 - React Hook Form + Zod (forms & validation)
 - Recharts (charts)
 - date-fns (date handling)
-- Lucide (icons)
+- Tabler Icons (icons)
 
 ### Backend
 - Node.js 20+ with NestJS
 - TypeScript (strict mode)
-- Prisma ORM
+- Mongoose ODM
 - Swagger/OpenAPI (documentation)
 - class-validator (validation)
 
 ### Database
-- PostgreSQL 15+
-- Prisma migrations
+- MongoDB 6+
 
 ### Testing
 - Vitest + React Testing Library (frontend)
@@ -92,7 +91,7 @@ The application uses a modular monolith pattern:
 ## Security Architecture
 - Family-scoped authorization on every operation
 - Input validation on all boundaries
-- SQL injection prevention through Prisma ORM
+- Injection prevention through Mongoose's typed schemas
 - XSS prevention through React escaping
 - CSRF protection on state-changing requests
 - Security headers (CSP, HSTS, X-Frame-Options)
@@ -102,7 +101,7 @@ The application uses a modular monolith pattern:
 ## Deployment Architecture
 - Docker Compose for local development
 - Separate dev/prod configurations
-- Managed PostgreSQL in production
+- Managed MongoDB in production
 - Health check endpoints
 - Structured logging
 - Environment-based secrets management

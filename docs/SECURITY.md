@@ -13,7 +13,7 @@
 - Cross-family data leakage
 - Session hijacking
 - CSRF attacks
-- SQL injection
+- NoSQL injection
 - XSS attacks
 - Unauthorized file access
 - Invitation token abuse
@@ -50,7 +50,7 @@
 - Sanitization of user content
 
 ### Data Protection
-- SQL injection prevention via Prisma ORM (parameterized queries)
+- NoSQL injection prevention via Mongoose (typed schemas, no string-built queries)
 - XSS prevention through React escaping
 - CSRF tokens for state-changing requests
 - Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options)

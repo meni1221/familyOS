@@ -20,7 +20,7 @@
 - [ ] Create app shell with navigation
 
 ## Phase 2 — Authentication and Family Workspace
-- [ ] Database schema with Prisma
+- [ ] Database schema with Mongoose
 - [ ] Authentication (register, login, logout, sessions)
 - [ ] Family creation
 - [ ] Membership system
@@ -78,7 +78,7 @@
 - React app, routing, components, forms, RTL, i18n
 
 ### Team C — Backend and Data
-- NestJS API, PostgreSQL, auth, authorization, business rules
+- NestJS API, MongoDB, auth, authorization, business rules
 
 ### Team D — QA, Security, Reliability
 - Tests, security tests, verification

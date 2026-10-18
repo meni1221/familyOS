@@ -12,11 +12,11 @@
 **Rationale**: Provides dependency injection, modular architecture, excellent TypeScript support, and built-in validation. Well-suited for a modular monolith.
 **Consequences**: More structure than Express, but better long-term maintainability.
 
-## ADR-003: Prisma ORM
+## ADR-003: Mongoose on MongoDB
 **Status**: Accepted
-**Decision**: Use Prisma for database access.
-**Rationale**: Type-safe queries, excellent migration system, prevents SQL injection through parameterized queries, great TypeScript integration.
-**Consequences**: Generated types, migration workflow, but adds build step.
+**Decision**: Use MongoDB with Mongoose as the ODM.
+**Rationale**: The domain is document-shaped — a family, its members, tasks, logs and expenses are naturally nested and read as a whole — so a document store fits better than a relational schema, and Mongoose gives typed schemas, validation and index management without a migration tool in the loop.
+**Consequences**: No migration workflow to run at deploy time; schema changes are made in code and indexes are built on startup. Anything that needs a real transaction or a cross-document join has to be handled deliberately.
 
 ## ADR-004: TanStack Query for Data Fetching
 **Status**: Accepted
@@ -48,14 +48,14 @@
 **Rationale**: Primary market is Israel. RTL is not an afterthought but built into the foundation.
 **Consequences**: All layouts must be direction-aware from the start.
 
-## ADR-009: S3-Compatible Storage Abstraction
-**Status**: Accepted
-**Decision**: Abstract file storage behind an interface, with S3-compatible storage as the default.
-**Rationale**: Allows local development with MinIO, easy migration to AWS S3 or other providers.
-**Consequences**: Additional abstraction layer, but provides flexibility.
+## ADR-009: File storage on the local disk
+**Status**: Accepted (revisit before running more than one API instance)
+**Decision**: Uploaded documents are written to the API server's filesystem under `UPLOADS_DIR`, behind a documents service that could later be swapped for object storage.
+**Rationale**: One instance and one disk while the product is being built means no third-party credentials to manage and no SDK to keep current. MinIO sits in `docker-compose.yml` for whoever picks this up next.
+**Consequences**: Uploads survive only with a persistent volume, and a second API instance would not see the first one's files. Moving to S3 is a matter of implementing the storage service, not of flipping a variable — the `STORAGE_*` placeholders in the env examples are not read by the code.
 
 ## ADR-010: No Redis in MVP
 **Status**: Accepted
 **Decision**: Do not add Redis or external caching in the MVP.
-**Rationale**: Premature optimization. PostgreSQL can handle the expected load. Add caching only when metrics justify it.
+**Rationale**: Premature optimization. MongoDB can handle the expected load. Add caching only when metrics justify it.
 **Consequences**: Simpler infrastructure, but may need to add caching later if performance requires it.

@@ -54,7 +54,7 @@ Deliverables:
 
 Responsibilities:
 - NestJS modules and REST API
-- PostgreSQL data model
+- MongoDB data model
 - Authentication and session management
 - Family membership and authorization
 - Business rules and validation

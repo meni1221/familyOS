@@ -28,12 +28,11 @@ Shlanu is a family life management SaaS application that helps families coordina
 ### Backend
 - NestJS
 - TypeScript
-- Prisma ORM
-- PostgreSQL
+- Mongoose (MongoDB ODM)
 
 ### Infrastructure
 - Docker Compose
-- MinIO (S3-compatible storage)
+- MongoDB
 
 ## Quick Start
 
@@ -59,27 +58,22 @@ npm install
 cp apps/api/.env.example apps/api/.env
 ```
 
-4. Start local infrastructure (PostgreSQL + MinIO):
+4. Start local infrastructure (MongoDB):
 ```bash
 docker-compose up -d
 ```
 
-5. Run database migrations:
-```bash
-npm run db:migrate
-```
-
-6. Seed demo data:
+5. Seed demo data (optional):
 ```bash
 npm run db:seed
 ```
 
-7. Start development servers:
+6. Start development servers:
 ```bash
 npm run dev
 ```
 
-8. Open http://localhost:5173
+7. Open http://localhost:5173
 
 ### Demo Accounts
 - **Email**: demo@shlanu.app / **Password**: demo1234
@@ -117,9 +111,8 @@ shlanu/
 | `npm run build` | Build all packages |
 | `npm run lint` | Run ESLint |
 | `npm run test` | Run tests |
-| `npm run db:migrate` | Run database migrations |
+| `npm run test:e2e` | Run the API end-to-end suite |
 | `npm run db:seed` | Seed demo data |
-| `npm run db:studio` | Open Prisma Studio |
 
 ## License
 

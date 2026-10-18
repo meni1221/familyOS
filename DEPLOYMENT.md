@@ -9,8 +9,8 @@
 - Docker ו-Docker Compose מותקנים
 - דומיין מוגדר עם רשומות DNS
 - אישור SSL/TLS (מומלץ Let's Encrypt)
-- מסד נתונים PostgreSQL מנוהל (AWS RDS, Google Cloud SQL, או Azure Database)
-- אחסון קבצים S3-תואם (AWS S3, MinIO, או Google Cloud Storage)
+- מסד נתונים MongoDB (MongoDB Atlas, או שרת MongoDB משלך)
+- אחסון קבוע לקבצים שהועלו (Volume שנשמר בין הפעלות של מכולת ה-API)
 
 ## שלב 1: הכנת סביבה
 
@@ -30,18 +30,15 @@ PORT=3001
 FRONTEND_URL=https://app.shlanu.app
 API_URL=https://api.shlanu.app
 
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/familyos?schema=public"
-DATABASE_SSL=true
+DATABASE_URL="mongodb://USER:PASSWORD@HOST:27017/shlanu?authSource=admin"
+
+# קבצים שהועלו נשמרים על הדיסק של מכולת ה-API — הנתיב חייב לשבת על Volume קבוע
+UPLOADS_DIR=/app/uploads
+MAX_FILE_SIZE_BYTES=10485760
+ALLOWED_FILE_TYPES=application/pdf,image/jpeg,image/png,image/webp
 
 SESSION_SECRET=הזן_מחרוזת_אקראית_מאובטחת_מינימום_32_תווים
 COOKIE_DOMAIN=shlanu.app
-
-STORAGE_PROVIDER=s3
-STORAGE_ENDPOINT=https://s3.amazonaws.com
-STORAGE_ACCESS_KEY=המפתח_שלך
-STORAGE_SECRET_KEY=המפתח_הסודי_שלך
-STORAGE_BUCKET=shlanu-documents-prod
-STORAGE_REGION=us-east-1
 
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
@@ -54,19 +51,19 @@ LOG_LEVEL=warn
 LOG_FORMAT=json
 ```
 
-## שלב 2: הרצת הגירות מסד נתונים
+## שלב 2: אתחול מסד הנתונים
+
+לפרויקט אין מיגרציות. הסכמות מוגדרות ב-Mongoose, והאוספים והאינדקסים נוצרים
+אוטומטית כשהאפליקציה עולה מול מסד נתונים ריק — כלומר אין צעד נפרד שצריך להריץ
+לפני העלייה.
+
+אם רוצים נתוני דמו בסביבה שאינה פרודקשן:
 
 ```bash
-# הגדר משתני סביבה
-export DATABASE_URL="הנתיב_לבסיס_הנתונים_שלך"
-
-# הרץ הגירות
-cd apps/api
-npx prisma migrate deploy
-
-# צור אינדקסים אם נדרש
-npx prisma db push
+npm run db:seed
 ```
+
+בפרודקשן אמיתי דלגו על הפקודה הזו — היא יוצרת חשבונות דמו עם סיסמה ידועה מראש.
 
 ## שלב 3: בנייה והרצה עם Docker Compose
 
@@ -124,8 +121,8 @@ server {
 ```bash
 #!/bin/bash
 # backup.sh
-pg_dump $DATABASE_URL > backup_$(date +%Y%m%d).sql
-aws s3 cp backup_$(date +%Y%m%d).sql s3://shlanu-backups/
+mongodump --uri="$DATABASE_URL" --archive="backup_$(date +%Y%m%d).gz" --gzip
+aws s3 cp backup_$(date +%Y%m%d).gz s3://shlanu-backups/
 ```
 
 ## שלב 6: ניטור והתראות
@@ -154,7 +151,7 @@ curl https://api.shlanu.app/health
 | בעיה | פתרון |
 |------|--------|
 | שגיאת חיבור למסד נתונים | בדוק DATABASE_URL ודא שהמסד נגיש |
-| שגיאת העלאת קבצים | בדוק הרשאות Bucket ב-S3 |
+| שגיאת העלאת קבצים | בדוק הרשאות כתיבה לנתיב ב-UPLOADS_DIR |
 | עוגיות לא נשלחות | ודא ש-COOKIE_DOMAIN מוגדר נכון |
 | שגיאת CORS | עדכן FRONTEND_URL ב-.env |
 
