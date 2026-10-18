@@ -10,7 +10,7 @@ import type { Locale } from './types';
  * `docs/AUDIT.md` for that documented gap.
  */
 
-const STORAGE_KEY = 'familyos:locale';
+const STORAGE_KEY = 'shlanu:locale';
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   he: 'עברית',

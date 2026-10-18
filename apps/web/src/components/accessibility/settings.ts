@@ -30,7 +30,7 @@ export const DEFAULT_ACCESSIBILITY_SETTINGS: AccessibilitySettings = {
   soundMuted: false,
 };
 
-const STORAGE_KEY = 'familyos:accessibility-settings';
+const STORAGE_KEY = 'shlanu:accessibility-settings';
 
 export function loadAccessibilitySettings(): AccessibilitySettings {
   try {

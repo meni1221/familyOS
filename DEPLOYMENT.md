@@ -27,27 +27,27 @@ cp apps/api/.env.example apps/api/.env.production
 ```env
 NODE_ENV=production
 PORT=3001
-FRONTEND_URL=https://app.familyos.app
-API_URL=https://api.familyos.app
+FRONTEND_URL=https://app.shlanu.app
+API_URL=https://api.shlanu.app
 
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/familyos?schema=public"
 DATABASE_SSL=true
 
 SESSION_SECRET=הזן_מחרוזת_אקראית_מאובטחת_מינימום_32_תווים
-COOKIE_DOMAIN=familyos.app
+COOKIE_DOMAIN=shlanu.app
 
 STORAGE_PROVIDER=s3
 STORAGE_ENDPOINT=https://s3.amazonaws.com
 STORAGE_ACCESS_KEY=המפתח_שלך
 STORAGE_SECRET_KEY=המפתח_הסודי_שלך
-STORAGE_BUCKET=familyos-documents-prod
+STORAGE_BUCKET=shlanu-documents-prod
 STORAGE_REGION=us-east-1
 
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_USER=המשתמש_שלך
 SMTP_PASS=הסיסמה_שלך
-SMTP_FROM=noreply@familyos.app
+SMTP_FROM=noreply@shlanu.app
 EMAIL_ENABLED=true
 
 LOG_LEVEL=warn
@@ -88,7 +88,7 @@ docker-compose -f docker-compose.prod.yml logs -f
 ```nginx
 server {
     listen 443 ssl;
-    server_name app.familyos.app api.familyos.app;
+    server_name app.shlanu.app api.shlanu.app;
 
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
@@ -125,7 +125,7 @@ server {
 #!/bin/bash
 # backup.sh
 pg_dump $DATABASE_URL > backup_$(date +%Y%m%d).sql
-aws s3 cp backup_$(date +%Y%m%d).sql s3://familyos-backups/
+aws s3 cp backup_$(date +%Y%m%d).sql s3://shlanu-backups/
 ```
 
 ## שלב 6: ניטור והתראות
@@ -143,7 +143,7 @@ SENTRY_ENVIRONMENT=production
 
 ```bash
 # בדיקת בריאות API
-curl https://api.familyos.app/health
+curl https://api.shlanu.app/health
 
 # תגובה מצופה:
 # {"status":"healthy","timestamp":"...","services":{"database":"connected"}}

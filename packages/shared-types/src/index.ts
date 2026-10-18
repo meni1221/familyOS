@@ -1,4 +1,4 @@
-// Shared types for FamilyOS
+// Shared types for Shlanu
 
 export type Locale = 'he' | 'en';
 export type Direction = 'rtl' | 'ltr';

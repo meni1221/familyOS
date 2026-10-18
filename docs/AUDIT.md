@@ -167,7 +167,7 @@ expenseAdded: bool, weeklySummary: bool, email: bool }` (defaults: all true exce
 
 `npm run test:e2e -w apps/api` (requires local MongoDB) builds the API into its own
 `dist-e2e/` folder and spawns `dist-e2e/main.js` against a throwaway database
-(`FamilyOs_e2e_<pid>`, dropped on start), then drives it from the outside over real HTTP **and**
+(`Shlanu_e2e_<pid>`, dropped on start), then drives it from the outside over real HTTP **and**
 socket.io with the same middleware stack the browser hits. **21/21 checks pass.** `npm test -w
 apps/api` stays database-free (11 unit checks). The separate output folder is deliberate: the
 suite rebuilds on every run, and `nest start --watch` owns `dist/`, so sharing it would kill the

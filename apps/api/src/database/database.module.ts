@@ -2,8 +2,8 @@ import { Module, Global } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
-const DEFAULT_URI = 'mongodb://localhost:27017/FamilyOs';
-const DEFAULT_DB_NAME = 'FamilyOs';
+const DEFAULT_URI = 'mongodb://localhost:27017/Shlanu';
+const DEFAULT_DB_NAME = 'Shlanu';
 
 /**
  * Serializes every document with a stable `id` string instead of `_id`/`__v`,

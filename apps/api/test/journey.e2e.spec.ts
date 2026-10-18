@@ -24,10 +24,10 @@ import { join } from 'path';
 const apiRoot = process.cwd();
 
 const TEST_PORT = 3997;
-const TEST_DB = `FamilyOs_e2e_${process.pid}`;
+const TEST_DB = `Shlanu_e2e_${process.pid}`;
 const TEST_DB_URL = `mongodb://localhost:27017/${TEST_DB}`;
 
-const uploadsDir = join(tmpdir(), `familyos-e2e-uploads-${process.pid}`);
+const uploadsDir = join(tmpdir(), `shlanu-e2e-uploads-${process.pid}`);
 
 let server: ChildProcess | undefined;
 let serverLog = '';
@@ -143,7 +143,7 @@ function connectSocket(options: { cookie?: string; token?: string }): Promise<So
   });
 }
 
-describe('FamilyOS end-to-end journey', () => {
+describe('Shlanu end-to-end journey', () => {
   beforeAll(async () => {
     // Start from an empty database so repeated runs stay independent.
     const connection = await mongoose.createConnection(TEST_DB_URL).asPromise();

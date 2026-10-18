@@ -1,4 +1,4 @@
-# Multi-stage build for FamilyOS Frontend
+# Multi-stage build for the Shlanu frontend
 FROM node:20-alpine AS builder
 
 WORKDIR /app

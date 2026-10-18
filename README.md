@@ -82,8 +82,8 @@ npm run dev
 8. Open http://localhost:5173
 
 ### Demo Accounts
-- **Email**: demo@familyos.app / **Password**: demo1234
-- **Email**: sarah@familyos.app / **Password**: demo1234
+- **Email**: demo@shlanu.app / **Password**: demo1234
+- **Email**: sarah@shlanu.app / **Password**: demo1234
 
 ## Project Structure
 

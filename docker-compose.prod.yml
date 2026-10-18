@@ -4,11 +4,11 @@ services:
   mongodb:
     image: mongo:7-jammy
     environment:
-      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-FamilyOs}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-Shlanu}
     volumes:
       - mongodb_data:/data/db
     networks:
-      - familyos-network
+      - shlanu-network
     healthcheck:
       test: ['CMD', 'mongosh', '--eval', "db.runCommand({ ping: 1 })"]
       interval: 10s
@@ -23,7 +23,7 @@ services:
     volumes:
       - minio_data:/data
     networks:
-      - familyos-network
+      - shlanu-network
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 10s
@@ -64,7 +64,7 @@ services:
       minio:
         condition: service_healthy
     networks:
-      - familyos-network
+      - shlanu-network
     ports:
       - "3001:3001"
     restart: unless-stopped
@@ -78,7 +78,7 @@ services:
     depends_on:
       - api
     networks:
-      - familyos-network
+      - shlanu-network
     ports:
       - "80:80"
     restart: unless-stopped
@@ -88,5 +88,5 @@ volumes:
   minio_data:
 
 networks:
-  familyos-network:
+  shlanu-network:
     driver: bridge

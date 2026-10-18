@@ -13,7 +13,7 @@ import { BabyProfileSchema } from '../src/database/models/baby-profile.model';
 import { BabyLogSchema } from '../src/database/models/baby-log.model';
 import { NotificationSchema } from '../src/database/models/notification.model';
 
-const DATABASE_URL = process.env.DATABASE_URL ?? 'mongodb://localhost:27017/FamilyOs';
+const DATABASE_URL = process.env.DATABASE_URL ?? 'mongodb://localhost:27017/Shlanu';
 const DEMO_PASSWORD = 'demo1234';
 
 const models = {
@@ -59,7 +59,7 @@ async function seed() {
 
   const [israel, sarah] = await models.User.create([
     {
-      email: 'demo@familyos.app',
+      email: 'demo@shlanu.app',
       displayName: 'ישראל ישראלי',
       passwordHash,
       preferredLocale: 'he',
@@ -67,7 +67,7 @@ async function seed() {
       families: [],
     },
     {
-      email: 'sarah@familyos.app',
+      email: 'sarah@shlanu.app',
       displayName: 'שרה ישראלי',
       passwordHash,
       preferredLocale: 'he',
@@ -234,8 +234,8 @@ async function seed() {
 
   console.log('Seed data created successfully.');
   console.log('Demo accounts:');
-  console.log(`  demo@familyos.app / ${DEMO_PASSWORD}`);
-  console.log(`  sarah@familyos.app / ${DEMO_PASSWORD}`);
+  console.log(`  demo@shlanu.app / ${DEMO_PASSWORD}`);
+  console.log(`  sarah@shlanu.app / ${DEMO_PASSWORD}`);
 }
 
 seed()
