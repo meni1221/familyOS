@@ -7,6 +7,10 @@ import {
   FamilyMembership,
   FamilyMembershipSchema,
 } from '../../database/models/family-membership.model';
+import {
+  FamilyInvitation,
+  FamilyInvitationSchema,
+} from '../../database/models/family-invitation.model';
 import { User, UserSchema } from '../../database/models/user.model';
 
 @Module({
@@ -14,6 +18,7 @@ import { User, UserSchema } from '../../database/models/user.model';
     MongooseModule.forFeature([
       { name: Family.name, schema: FamilySchema },
       { name: FamilyMembership.name, schema: FamilyMembershipSchema },
+      { name: FamilyInvitation.name, schema: FamilyInvitationSchema },
       { name: User.name, schema: UserSchema },
     ]),
   ],
