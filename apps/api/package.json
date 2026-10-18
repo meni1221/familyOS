@@ -9,6 +9,8 @@
     "lint": "eslint src/ --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",
+    "pretest:e2e": "npm run build",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "db:seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
@@ -40,6 +42,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/supertest": "^7.2.1",
+    "socket.io-client": "^4.8.0",
     "supertest": "^7.3.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.0",

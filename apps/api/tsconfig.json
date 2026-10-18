@@ -20,6 +20,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "prisma/**/*"],
+  "include": ["src/**/*", "test/**/*"],
   "types": ["vitest/globals", "node"]
 }
