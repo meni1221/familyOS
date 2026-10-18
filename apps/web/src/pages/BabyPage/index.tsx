@@ -1,63 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  IconBabyBottle,
-  IconDroplets,
-  IconFile,
-  IconMoon,
-  IconPencil,
-  IconPlus,
-} from '@tabler/icons-react';
+import { IconPencil, IconPlus } from '@tabler/icons-react';
 import { api } from '../../lib/api';
-import { daysSince, formatDate, formatTime, toDateInputValue, toDateTimeInputValue } from '../../lib/format';
-import Modal from '../../components/ui/Modal';
-import DeleteButton from '../../components/ui/DeleteButton';
-import EmptyState from '../../components/ui/EmptyState';
-import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import type { BabyLog, BabyLogType, BabyProfile } from '../../lib/types';
+import { daysSince } from '../../lib/format';
+import type { BabyLog, BabyProfile } from '../../lib/types';
+import BabyLogForm from './BabyLogForm';
+import BabyTimeline from './BabyTimeline';
+import BabyProfileModal from './BabyProfileModal';
+import type { LogFormData, ProfileFormData } from './schemas';
 
-const logTypes: Array<{ type: BabyLogType; icon: React.ComponentType<{ className?: string }>; label: string }> = [
-  { type: 'FEEDING', icon: IconBabyBottle, label: 'הזנה' },
-  { type: 'SLEEP', icon: IconMoon, label: 'שינה' },
-  { type: 'DIAPER', icon: IconDroplets, label: 'חיתול' },
-  { type: 'NOTE', icon: IconFile, label: 'הערה' },
-];
-
-const logSchema = z.object({
-  type: z.enum(['FEEDING', 'SLEEP', 'DIAPER', 'NOTE']),
-  occurredAt: z.string().min(1, 'נדרש מועד'),
-  amountMl: z.string().optional(),
-  durationMinutes: z.string().optional(),
-  diaperType: z.enum(['', 'WET', 'DIRTY', 'BOTH']).optional(),
-  note: z.string().optional(),
-});
-
-type LogFormData = z.infer<typeof logSchema>;
-
-const profileSchema = z.object({
-  displayName: z.string().min(1, 'נדרש שם'),
-  dateOfBirth: z.string().optional(),
-});
-
-type ProfileFormData = z.infer<typeof profileSchema>;
-
-function detailSummary(log: BabyLog): string[] {
-  const parts: string[] = [];
-  const details = (log.details ?? {}) as Record<string, unknown>;
-
-  if (typeof details.amountMl === 'number') parts.push(`${details.amountMl} מ״ל`);
-  if (typeof details.durationMinutes === 'number') parts.push(`${details.durationMinutes} דקות`);
-  if (typeof details.diaperType === 'string') {
-    const labels: Record<string, string> = { WET: 'רטוב', DIRTY: 'מלוכלך', BOTH: 'שניהם' };
-    parts.push(labels[details.diaperType] ?? String(details.diaperType));
-  }
-
-  return parts;
-}
-
+/**
+ * The baby routine: the profile, the activity timeline and the form that feeds
+ * it. The pieces live next to this file.
+ */
 export default function BabyPage() {
   const client = useQueryClient();
   const [activeTab, setActiveTab] = useState<'timeline' | 'add'>('timeline');
@@ -118,35 +73,6 @@ export default function BabyPage() {
     },
   });
 
-  const logForm = useForm<LogFormData>({
-    resolver: zodResolver(logSchema),
-    defaultValues: { type: 'FEEDING', occurredAt: toDateTimeInputValue() },
-  });
-
-  const profileForm = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: { displayName: '', dateOfBirth: '' },
-  });
-
-  const openProfileForm = () => {
-    profileForm.reset({
-      displayName: profile?.displayName ?? '',
-      dateOfBirth: profile?.dateOfBirth ? toDateInputValue(new Date(profile.dateOfBirth)) : '',
-    });
-    setIsProfileOpen(true);
-  };
-
-  const groupedLogs = useMemo(() => {
-    const groups = new Map<string, BabyLog[]>();
-    for (const log of logs ?? []) {
-      const key = toDateInputValue(new Date(log.occurredAt));
-      const list = groups.get(key) ?? [];
-      list.push(log);
-      groups.set(key, list);
-    }
-    return Array.from(groups.entries());
-  }, [logs]);
-
   const ageInDays = profile?.dateOfBirth ? daysSince(profile.dateOfBirth) : null;
 
   return (
@@ -163,7 +89,7 @@ export default function BabyPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <button type="button" className="btn-secondary btn-sm" onClick={openProfileForm}>
+          <button type="button" className="btn-secondary btn-sm" onClick={() => setIsProfileOpen(true)}>
             <IconPencil className="h-4 w-4" />
             פרופיל
           </button>
@@ -179,248 +105,29 @@ export default function BabyPage() {
       </div>
 
       {activeTab === 'add' ? (
-        <div className="card">
-          <h2 className="section-title mb-4">רשום פעילות חדשה</h2>
-          <form
-            onSubmit={logForm.handleSubmit(async (values) => {
-              await createLog.mutateAsync(values);
-              logForm.reset({ type: 'FEEDING', occurredAt: toDateTimeInputValue() });
-            })}
-            className="space-y-4"
-          >
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {logTypes.map((item) => {
-                const isActive = logForm.watch('type') === item.type;
-                return (
-                  <button
-                    key={item.type}
-                    type="button"
-                    onClick={() => logForm.setValue('type', item.type)}
-                    aria-pressed={isActive}
-                    className={`flex flex-col items-center gap-2 rounded-8 border p-4 transition-colors ${
-                      isActive
-                        ? 'border-forest bg-sage-light text-forest'
-                        : 'border-border bg-surface text-ink hover:bg-cream'
-                    }`}
-                  >
-                    <item.icon className="h-6 w-6" />
-                    <span className="text-sm font-medium">{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="log-occurred" className="label">
-                  מועד
-                </label>
-                <input
-                  id="log-occurred"
-                  type="datetime-local"
-                  className="input"
-                  {...logForm.register('occurredAt')}
-                />
-                {logForm.formState.errors.occurredAt && (
-                  <p className="mt-1 text-xs text-error">
-                    {logForm.formState.errors.occurredAt.message}
-                  </p>
-                )}
-              </div>
-
-              {logForm.watch('type') === 'FEEDING' && (
-                <div>
-                  <label htmlFor="log-amount" className="label">
-                    כמות (מ״ל)
-                  </label>
-                  <input
-                    id="log-amount"
-                    type="number"
-                    min={0}
-                    inputMode="numeric"
-                    className="input"
-                    {...logForm.register('amountMl')}
-                  />
-                </div>
-              )}
-
-              {logForm.watch('type') === 'SLEEP' && (
-                <div>
-                  <label htmlFor="log-duration" className="label">
-                    משך (דקות)
-                  </label>
-                  <input
-                    id="log-duration"
-                    type="number"
-                    min={0}
-                    inputMode="numeric"
-                    className="input"
-                    {...logForm.register('durationMinutes')}
-                  />
-                </div>
-              )}
-
-              {logForm.watch('type') === 'DIAPER' && (
-                <div>
-                  <label htmlFor="log-diaper" className="label">
-                    סוג
-                  </label>
-                  <select id="log-diaper" className="input" {...logForm.register('diaperType')}>
-                    <option value="">לא צוין</option>
-                    <option value="WET">רטוב</option>
-                    <option value="DIRTY">מלוכלך</option>
-                    <option value="BOTH">שניהם</option>
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="log-note" className="label">
-                הערה
-              </label>
-              <textarea id="log-note" rows={2} className="input" {...logForm.register('note')} />
-            </div>
-
-            {createLog.isError && (
-              <p className="text-xs text-error" role="alert">
-                {createLog.error instanceof Error ? createLog.error.message : 'שמירת הרשומה נכשלה'}
-              </p>
-            )}
-
-            <button type="submit" className="btn-primary btn-sm" disabled={createLog.isPending}>
-              {createLog.isPending ? 'שומר…' : 'שמירת רשומה'}
-            </button>
-          </form>
-        </div>
-      ) : logsLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <LoadingSpinner size="lg" />
-        </div>
-      ) : (logs ?? []).length === 0 ? (
-        <div className="card">
-          <EmptyState
-            icon={IconBabyBottle}
-            title="אין רשומות עדיין"
-            description="התחילו לרשום את הפעילות הראשונה של התינוק"
-            action={
-              <button type="button" className="btn-primary btn-sm" onClick={() => setActiveTab('add')}>
-                <IconPlus className="h-4 w-4" />
-                רשום פעילות
-              </button>
-            }
-          />
-        </div>
+        <BabyLogForm
+          isPending={createLog.isPending}
+          error={createLog.error}
+          onSubmit={(values) => createLog.mutateAsync(values)}
+        />
       ) : (
-        <div className="space-y-5">
-          {groupedLogs.map(([day, dayLogs]) => (
-            <section key={day}>
-              <h2 className="mb-2 text-sm font-semibold text-ink">{formatDate(day)}</h2>
-              <ul className="space-y-2">
-                {dayLogs.map((log) => {
-                  const meta = logTypes.find((item) => item.type === log.type);
-                  const Icon = meta?.icon ?? IconFile;
-                  const details = detailSummary(log);
-
-                  return (
-                    <li key={log.id} className="card flex flex-wrap items-center gap-3 py-3">
-                      <span
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sage-light text-forest"
-                        aria-hidden="true"
-                      >
-                        <Icon className="h-5 w-5" />
-                      </span>
-
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-ink">
-                          {meta?.label ?? log.type} · {formatTime(log.occurredAt)}
-                        </p>
-                        {(details.length > 0 || log.note) && (
-                          <p className="break-words text-xs text-ink-secondary">
-                            {[...details, log.note].filter(Boolean).join(' · ')}
-                          </p>
-                        )}
-                      </div>
-
-                      <DeleteButton
-                        itemLabel={`הרשומה מ-${formatTime(log.occurredAt)}`}
-                        disabled={deleteLog.isPending}
-                        onConfirm={() => deleteLog.mutate(log.id)}
-                      />
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
+        <BabyTimeline
+          logs={logs ?? []}
+          isLoading={logsLoading}
+          isDeleting={deleteLog.isPending}
+          onAdd={() => setActiveTab('add')}
+          onDelete={(id) => deleteLog.mutate(id)}
+        />
       )}
 
-      <Modal
+      <BabyProfileModal
         open={isProfileOpen}
-        title="פרופיל התינוק/ת"
+        profile={profile}
+        isPending={saveProfile.isPending}
+        error={saveProfile.error}
         onClose={() => setIsProfileOpen(false)}
-        footer={
-          <>
-            <button
-              type="submit"
-              form="baby-profile-form"
-              className="btn-primary btn-sm"
-              disabled={saveProfile.isPending}
-            >
-              {saveProfile.isPending ? 'שומר…' : 'שמירה'}
-            </button>
-            <button
-              type="button"
-              className="btn-secondary btn-sm"
-              onClick={() => setIsProfileOpen(false)}
-            >
-              ביטול
-            </button>
-          </>
-        }
-      >
-        <form
-          id="baby-profile-form"
-          onSubmit={profileForm.handleSubmit((values) => saveProfile.mutateAsync(values))}
-          className="space-y-4"
-        >
-          <div>
-            <label htmlFor="baby-name" className="label">
-              שם
-            </label>
-            <input
-              id="baby-name"
-              className={`input ${profileForm.formState.errors.displayName ? 'input-error' : ''}`}
-              {...profileForm.register('displayName')}
-            />
-            {profileForm.formState.errors.displayName && (
-              <p className="mt-1 text-xs text-error">
-                {profileForm.formState.errors.displayName.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="baby-dob" className="label">
-              תאריך לידה
-            </label>
-            <input
-              id="baby-dob"
-              type="date"
-              className="input"
-              max={toDateInputValue()}
-              {...profileForm.register('dateOfBirth')}
-            />
-          </div>
-
-          {saveProfile.isError && (
-            <p className="text-xs text-error" role="alert">
-              {saveProfile.error instanceof Error ? saveProfile.error.message : 'השמירה נכשלה'}
-            </p>
-          )}
-        </form>
-      </Modal>
+        onSubmit={(values) => saveProfile.mutate(values)}
+      />
     </div>
   );
 }
