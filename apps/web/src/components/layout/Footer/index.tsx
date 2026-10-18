@@ -21,7 +21,7 @@ export default function Footer({ className = '' }: FooterProps) {
       className={`border-t border-border bg-surface py-8 print:hidden ${className}`.trim()}
     >
       <div className="mx-auto flex max-w-content flex-col items-center gap-3 px-4 text-center text-sm text-ink-secondary">
-        <BrandLogo />
+        <BrandLogo size="md" />
 
         <p>כל מה שהמשפחה צריכה, במקום אחד</p>
 
