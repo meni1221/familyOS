@@ -1,39 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  IconBell,
-  IconCalendar,
-  IconCheck,
-  IconChecklist,
-  IconCoin,
-  IconInfoCircle,
-} from '@tabler/icons-react';
+import { IconBell, IconCheck } from '@tabler/icons-react';
 import { api } from '../../lib/api';
-import { formatDateTime } from '../../lib/format';
 import EmptyState from '../../components/ui/EmptyState';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-
-interface Notification {
-  id: string;
-  type: string;
-  title: string;
-  message: string;
-  readAt?: string | null;
-  createdAt: string;
-}
+import type { Notification } from '../../lib/types';
+import NotificationList from './NotificationList';
 
 async function fetchNotifications(): Promise<Notification[]> {
   const response = await api.get<{ data: Notification[] }>('/api/v1/notifications');
   return response.data ?? [];
 }
 
-const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-  TASK_ASSIGNED: IconChecklist,
-  TASK_DUE_SOON: IconChecklist,
-  EVENT_REMINDER: IconCalendar,
-  EXPENSE_ADDED: IconCoin,
-  WEEKLY_SUMMARY: IconInfoCircle,
-};
-
+/**
+ * The notification centre: the unread counter, "mark all" and the list. The
+ * list lives next to this file.
+ */
 export default function NotificationsPage() {
   const client = useQueryClient();
 
@@ -83,9 +64,7 @@ export default function NotificationsPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">התראות</h1>
-          {unread > 0 && (
-            <p className="text-sm text-ink-secondary">{unread} התראות שלא נקראו</p>
-          )}
+          {unread > 0 && <p className="text-sm text-ink-secondary">{unread} התראות שלא נקראו</p>}
         </div>
         <button
           type="button"
@@ -104,63 +83,11 @@ export default function NotificationsPage() {
         </p>
       )}
 
-      {(notifications ?? []).length === 0 ? (
-        <div className="card">
-          <EmptyState
-            icon={IconBell}
-            title="אין התראות"
-            description="כשיהיו התראות חדשות, הן יופיעו כאן"
-          />
-        </div>
-      ) : (
-        <ul className="space-y-2">
-          {(notifications ?? []).map((notification) => {
-            const Icon = typeIcons[notification.type] ?? IconBell;
-            const isUnread = !notification.readAt;
-
-            return (
-              <li
-                key={notification.id}
-                className={`card flex items-start gap-3 py-3 ${
-                  isUnread ? 'border-forest/40' : ''
-                }`}
-              >
-                <span
-                  className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                    isUnread ? 'bg-sage-light text-forest' : 'bg-cream text-ink-secondary'
-                  }`}
-                  aria-hidden="true"
-                >
-                  <Icon className="h-5 w-5" />
-                </span>
-
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-ink">{notification.title}</p>
-                  {notification.message && (
-                    <p className="break-words text-sm text-ink-secondary">
-                      {notification.message}
-                    </p>
-                  )}
-                  <p className="mt-1 text-xs text-ink-secondary">
-                    {formatDateTime(notification.createdAt)}
-                  </p>
-                </div>
-
-                {isUnread && (
-                  <button
-                    type="button"
-                    className="btn-ghost btn-sm shrink-0"
-                    onClick={() => markOne.mutate(notification.id)}
-                    disabled={markOne.isPending}
-                  >
-                    סמן כנקרא
-                  </button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      <NotificationList
+        notifications={notifications ?? []}
+        isMarking={markOne.isPending}
+        onMarkRead={(id) => markOne.mutate(id)}
+      />
     </div>
   );
 }
