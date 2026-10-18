@@ -211,6 +211,24 @@ describe('FamilyOS end-to-end journey', () => {
     expect(response.json.user.familyId).toBeTruthy();
   });
 
+  it('distinguishes a duplicate sign-up from a bad password', async () => {
+    // Registering an address that exists is a conflict, not an authentication
+    // failure, and the message must survive to the client.
+    const duplicate = await request('POST', '/api/v1/auth/register', {
+      body: { ...owner, displayName: 'כפילות' },
+    });
+
+    expect(duplicate.status).toBe(409);
+    expect(duplicate.json.message).toBe('כתובת אימייל כבר רשומה');
+
+    const wrongPassword = await request('POST', '/api/v1/auth/login', {
+      body: { email: owner.email, password: 'definitely-not-the-password' },
+    });
+
+    expect(wrongPassword.status).toBe(401);
+    expect(wrongPassword.json.message).toBe('אימייל או סיסמה שגויים');
+  });
+
   it('resolves the session through /auth/me', async () => {
     const response = await request('GET', '/api/v1/auth/me');
     expect(response.status).toBe(200);

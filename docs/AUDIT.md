@@ -168,12 +168,13 @@ expenseAdded: bool, weeklySummary: bool, email: bool }` (defaults: all true exce
 `npm run test:e2e -w apps/api` (requires local MongoDB) builds the API into its own
 `dist-e2e/` folder and spawns `dist-e2e/main.js` against a throwaway database
 (`FamilyOs_e2e_<pid>`, dropped on start), then drives it from the outside over real HTTP **and**
-socket.io with the same middleware stack the browser hits. **20/20 checks pass.** `npm test -w
+socket.io with the same middleware stack the browser hits. **21/21 checks pass.** `npm test -w
 apps/api` stays database-free (11 unit checks). The separate output folder is deliberate: the
 suite rebuilds on every run, and `nest start --watch` owns `dist/`, so sharing it would kill the
 dev server mid-session.
 
-Covered by the suite: registration + session cookie, `/auth/me`, socket handshake via cookie
+Covered by the suite: registration + session cookie, duplicate sign-up → 409 vs wrong
+password → 401, `/auth/me`, socket handshake via cookie
 *and* handshake token, anonymous socket dropped, task CRUD with `task:created|updated`,
 completion timestamps, invalid assignee → 400, calendar create + inverted range → 400 + range
 read, budget/expense CRUD with `budget:created` / `expense:created`, ILS/MONTHLY defaults, baby
@@ -187,6 +188,8 @@ unauthenticated reads and writes → 401, logout.
 
 | ID | Sev | Fix | Why it mattered |
 |----|-----|-----|-----------------|
+| AU-2 | P1 | Registering an address that already exists now answers **409 Conflict** (it used to be 401). | 401 means "authentication failed", so a failed sign-up was indistinguishable from an expired session in the browser log — the second most common thing a new user does is re-submit an address they already registered. |
+| FE-1 | P1 | Login/Register now use the shared `api` client and surface `ApiError.message`, and they seed the `['auth']` react-query cache with the returned user before navigating. | Two bugs in one screen: it read `err.error?.message` while Nest puts the text in `message` (so every server message, e.g. "wrong password" or "email already registered", collapsed into a generic "שגיאה בהתחברות"), and after a successful sign-in `ProtectedRoute` still saw the cached *anonymous* session (fresh for 5 minutes) and bounced the user straight back to `/login`. |
 | MD-1 | P2 | Every `@Prop()` now declares its Mongo type explicitly (`type: String`, `type: Date`, `min: 0`, enums). | The schemas only worked because `tsc` emits `design:type` metadata. Under esbuild/swc (vitest, and any future bundler-based tooling) each schema threw *"Cannot determine a type"* at runtime, blocking in-process integration tests. Compiler-agnostic now. |
 | AU-1 | P2 | `GET /auth/me` returns **401** instead of `200` with an empty body when the session is gone. | A signed-out client had to treat a JSON parse failure as "anonymous"; the route is now consistent with every other authenticated endpoint. `useAuth` already handles a non-OK response. |
 | TS-1 | P3 | `nest build` now uses `tsconfig.build.json`, so `test/**` is typechecked but never emitted. | The stale `prisma/**/*` include was dropped and tests are no longer compiled into `dist`. |

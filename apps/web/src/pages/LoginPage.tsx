@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { IconLogin } from '@tabler/icons-react';
 import BrandLogo from '../components/ui/BrandLogo';
+import { api, ApiError } from '../lib/api';
+import type { AuthUser } from '../hooks/useAuth';
 
 const loginSchema = z.object({
   email: z.string().email('כתובת אימייל לא תקינה'),
@@ -15,6 +18,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [error, setError] = useState('');
   const {
     register,
@@ -27,20 +31,14 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setError('');
     try {
-      const res = await fetch('/api/v1/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        setError(err.error?.message ?? 'שגיאה בהתחברות');
-        return;
-      }
+      const result = await api.post<{ user: AuthUser }>('/api/v1/auth/login', data);
+
+      // Seed the auth cache before navigating: `ProtectedRoute` reads it
+      // immediately, and a stale `null` would bounce the user back here.
+      queryClient.setQueryData(['auth'], result.user);
       navigate('/app');
-    } catch {
-      setError('שגיאת רשת. נסו שוב.');
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'שגיאה בהתחברות');
     }
   };
 

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import { Model } from 'mongoose';
@@ -27,7 +27,9 @@ export class AuthService {
     const email = dto.email.toLowerCase().trim();
     const existing = await this.userModel.findOne({ email }).exec();
     if (existing) {
-      throw new UnauthorizedException('כתובת אימייל כבר רשומה');
+      // 409, not 401: the request is well-formed, the address simply exists.
+      // A 401 here made a failed sign-up look like a session problem in the UI.
+      throw new ConflictException('כתובת אימייל כבר רשומה');
     }
 
     const passwordHash = await bcrypt.hash(dto.password, 12);

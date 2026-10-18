@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { IconUserPlus } from '@tabler/icons-react';
 import BrandLogo from '../components/ui/BrandLogo';
+import { api, ApiError } from '../lib/api';
+import type { AuthUser } from '../hooks/useAuth';
 
 const registerSchema = z.object({
   displayName: z.string().min(2, 'שם צריך להכיל לפחות 2 תווים'),
@@ -20,6 +23,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [error, setError] = useState('');
   const {
     register,
@@ -32,24 +36,20 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setError('');
     try {
-      const res = await fetch('/api/v1/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          displayName: data.displayName,
-          email: data.email,
-          password: data.password,
-        }),
+      const result = await api.post<{ user: AuthUser }>('/api/v1/auth/register', {
+        displayName: data.displayName,
+        email: data.email,
+        password: data.password,
       });
-      if (!res.ok) {
-        const err = await res.json();
-        setError(err.error?.message ?? 'שגיאה בהרשמה');
-        return;
-      }
+
+      // Seed the auth cache before navigating, otherwise `ProtectedRoute` still
+      // sees the cached anonymous session and sends the user back to /login.
+      queryClient.setQueryData(['auth'], result.user);
       navigate('/app');
-    } catch {
-      setError('שגיאת רשת. נסו שוב.');
+    } catch (err) {
+      // `ApiError` carries the server's Hebrew message (e.g. the 409 for an
+      // address that is already registered).
+      setError(err instanceof ApiError ? err.message : 'שגיאה בהרשמה');
     }
   };
 
