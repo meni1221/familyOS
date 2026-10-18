@@ -15,6 +15,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import BrandLogo from '../components/ui/BrandLogo';
+import Footer from '../components/layout/Footer';
 
 const features = [
   {
@@ -259,27 +260,7 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-surface py-8">
-        <div className="mx-auto max-w-content px-4 text-center text-sm text-ink-secondary">
-          <p className="mb-2">FamilyOS — כל מה שהמשפחה צריכה, במקום אחד</p>
-          <div className="mb-3 flex items-center justify-center gap-4">
-            <Link to="/privacy" className="hover:text-ink">מדיניות פרטיות</Link>
-            <span className="text-border">|</span>
-            <Link to="/accessibility" className="hover:text-ink">הצהרת נגישות</Link>
-          </div>
-          <p>
-            נבנה על ידי{' '}
-            <a
-              href="https://levi-tec.menilevi0533011599.workers.dev/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-forest hover:underline"
-            >
-              levi-tec
-            </a>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
