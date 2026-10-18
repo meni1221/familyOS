@@ -11,9 +11,9 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List events by date range' })
-  @ApiQuery({ name: 'start', type: String, required: true })
-  @ApiQuery({ name: 'end', type: String, required: true })
+  @ApiOperation({ summary: 'List events by date range (defaults to the current month)' })
+  @ApiQuery({ name: 'start', type: String, required: false })
+  @ApiQuery({ name: 'end', type: String, required: false })
   async getEvents(
     @Query('start') start: string,
     @Query('end') end: string,
@@ -21,7 +21,26 @@ export class CalendarController {
   ) {
     const user = (req as any).user;
     if (!user) return { data: [] };
-    return this.calendarService.getEvents(user.familyId, new Date(start), new Date(end));
+
+    const { start: from, end: to } = this.resolveRange(start, end);
+    return this.calendarService.getEvents(user.familyId, from, to);
+  }
+
+  private resolveRange(start?: string, end?: string): { start: Date; end: Date } {
+    const parsedStart = start ? new Date(start) : undefined;
+    const parsedEnd = end ? new Date(end) : undefined;
+
+    const now = new Date();
+    const fallbackStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const fallbackEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const isValid = (value?: Date): value is Date =>
+      !!value && !Number.isNaN(value.getTime());
+
+    return {
+      start: isValid(parsedStart) ? parsedStart : fallbackStart,
+      end: isValid(parsedEnd) ? parsedEnd : fallbackEnd,
+    };
   }
 
   @Post()
