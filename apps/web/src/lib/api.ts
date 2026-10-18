@@ -1,5 +1,5 @@
 /**
- * Thin, typed wrapper around `fetch` for the FamilyOS API.
+ * Thin, typed wrapper around `fetch` for the Shlanu API.
  *
  * Every call goes through here so that credentials, error handling and
  * payload shapes stay consistent across pages. The API is same-origin (Vite

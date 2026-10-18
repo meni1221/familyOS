@@ -41,7 +41,7 @@ export function configureApp(app: INestApplication): INestApplication {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('FamilyOS API')
+    .setTitle('Shlanu API')
     .setDescription('Family life management SaaS API')
     .setVersion('1.0')
     .build();

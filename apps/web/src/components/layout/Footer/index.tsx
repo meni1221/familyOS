@@ -49,7 +49,7 @@ export default function Footer({ className = '' }: FooterProps) {
           </a>
         </p>
 
-        <p className="text-caption">© {year} FamilyOS</p>
+        <p className="text-caption">© {year} שלנו</p>
       </div>
     </footer>
   );

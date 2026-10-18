@@ -16,7 +16,7 @@ interface BrandLogoProps {
 }
 
 /**
- * The FamilyOS brand mark + wordmark.
+ * The brand mark + wordmark.
  * The image is decorative (alt="") because the wordmark already carries the
  * accessible name, avoiding a duplicated announcement in screen readers.
  */
@@ -31,7 +31,7 @@ export default function BrandLogo({ to, size = 'sm', className = '' }: BrandLogo
         aria-hidden="true"
         className={`${styles.image} shrink-0 rounded-4`}
       />
-      <span className={`${styles.text} font-bold text-ink`}>FamilyOS</span>
+      <span className={`${styles.text} font-bold text-ink`}>שלנו</span>
     </>
   );
 
@@ -39,7 +39,7 @@ export default function BrandLogo({ to, size = 'sm', className = '' }: BrandLogo
 
   if (to) {
     return (
-      <Link to={to} className={classes} aria-label="FamilyOS — לדף הבית">
+      <Link to={to} className={classes} aria-label="שלנו — לדף הבית">
         {content}
       </Link>
     );
