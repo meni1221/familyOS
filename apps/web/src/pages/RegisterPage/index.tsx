@@ -5,11 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconUserPlus } from '@tabler/icons-react';
 import AuthCard from '../../components/layout/AuthCard';
+import { useSeo } from '../../hooks/useSeo';
 import { api, ApiError } from '../../lib/api';
 import type { AuthUser } from '../../hooks/useAuth';
 import { registerSchema, type RegisterFormData } from './schemas';
 
 export default function RegisterPage() {
+  useSeo({ title: 'הרשמה', noIndex: true, path: '/register' });
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [error, setError] = useState('');

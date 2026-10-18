@@ -5,11 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconLogin } from '@tabler/icons-react';
 import AuthCard from '../../components/layout/AuthCard';
+import { useSeo } from '../../hooks/useSeo';
 import { api, ApiError } from '../../lib/api';
 import type { AuthUser } from '../../hooks/useAuth';
 import { loginSchema, type LoginFormData } from './schemas';
 
 export default function LoginPage() {
+  useSeo({ title: 'התחברות', noIndex: true, path: '/login' });
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [error, setError] = useState('');

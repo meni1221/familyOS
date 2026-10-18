@@ -1,0 +1,11 @@
+# שלנו — https://shlanu.app
+# The public pages are meant to be found. Everything under /app sits behind a
+# login and is marked noindex by the app itself.
+
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://shlanu.app/sitemap.xml

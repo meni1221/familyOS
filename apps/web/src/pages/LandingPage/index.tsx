@@ -1,4 +1,6 @@
 import Footer from '../../components/layout/Footer';
+import { useSeo } from '../../hooks/useSeo';
+import { SITE_TAGLINE } from '../../lib/seo';
 import LandingHeader from './LandingHeader';
 import LandingHero from './LandingHero';
 import FeatureGrid from './FeatureGrid';
@@ -11,6 +13,8 @@ import LandingCta from './LandingCta';
  * this file; the copy they render lives in `content.ts`.
  */
 export default function LandingPage() {
+  useSeo({ title: SITE_TAGLINE, path: '/' });
+
   return (
     <div className="min-h-screen bg-canvas">
       <LandingHeader />

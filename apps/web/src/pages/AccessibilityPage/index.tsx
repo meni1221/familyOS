@@ -1,4 +1,8 @@
+import { useSeo } from '../../hooks/useSeo';
+
 export default function AccessibilityPage() {
+  useSeo({ title: 'הצהרת נגישות', path: '/accessibility' });
+
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="page-title mb-6">הצהרת נגישות</h1>

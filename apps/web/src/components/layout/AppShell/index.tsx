@@ -4,12 +4,17 @@ import Header from '../Header';
 import Footer from '../Footer';
 import MobileNav from '../MobileNav';
 import { SkipLink } from '../../accessibility';
+import { useSeo } from '../../../hooks/useSeo';
 
 /**
  * The header spans the whole viewport and the sidebar starts underneath it,
  * so the top bar reads as one continuous strip on every screen size.
+ *
+ * The app sits behind a login, so it keeps itself out of search indexes.
  */
 export default function AppShell() {
+  useSeo({ title: 'האזור האישי', noIndex: true });
+
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       <SkipLink />

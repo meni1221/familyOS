@@ -1,4 +1,8 @@
+import { useSeo } from '../../hooks/useSeo';
+
 export default function PrivacyPage() {
+  useSeo({ title: 'מדיניות פרטיות', path: '/privacy' });
+
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="page-title mb-6">מדיניות פרטיות</h1>
