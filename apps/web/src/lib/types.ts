@@ -1,7 +1,7 @@
 /**
  * Single import surface for the web app's API types.
  *
- * The canonical definitions live in `@familyos/shared-types` so the API and the
+ * The canonical definitions live in `@shlanu/shared-types` so the API and the
  * web client cannot drift apart; anything purely presentational is added here.
  */
 export type {
@@ -28,9 +28,9 @@ export type {
   TaskStatus,
   UserProfile,
   UserRole,
-} from '@familyos/shared-types';
+} from '@shlanu/shared-types';
 
-import type { DashboardData as SharedDashboardData, Expense as SharedExpense } from '@familyos/shared-types';
+import type { DashboardData as SharedDashboardData, Expense as SharedExpense } from '@shlanu/shared-types';
 
 /** Envelope used by every list endpoint. */
 export interface ListResponse<T> {
