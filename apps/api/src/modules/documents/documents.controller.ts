@@ -15,7 +15,8 @@
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthenticatedRequest } from '../../middleware/authenticated-request';
 import { DocumentsService, allowedMimeTypes, maxFileSizeBytes } from './documents.service';
 import { UpdateDocumentDto, UploadDocumentDto } from './dto/index';
 import { UploadedFile as UploadedFileShape } from './uploads.types';
@@ -27,8 +28,8 @@ export class DocumentsController {
 
   @Get()
   @ApiOperation({ summary: 'List documents' })
-  async getDocuments(@Req() req: Request) {
-    const user = (req as any).user;
+  async getDocuments(@Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) return { data: [] };
     return this.documentsService.getDocuments(user.familyId);
   }
@@ -52,9 +53,9 @@ export class DocumentsController {
   async createDocument(
     @UploadedFile() file: UploadedFileShape,
     @Body() body: UploadDocumentDto,
-    @Req() req: Request,
+    @Req() req: AuthenticatedRequest,
   ) {
-    const user = (req as any).user;
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.documentsService.createDocument(user.familyId, user.id, file, body);
   }
@@ -64,10 +65,10 @@ export class DocumentsController {
   @ApiParam({ name: 'id', type: String })
   async download(
     @Param('id') id: string,
-    @Req() req: Request,
+    @Req() req: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    const user = (req as any).user;
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
 
     const { absolutePath, originalName, contentType } =
@@ -84,9 +85,9 @@ export class DocumentsController {
   async updateDocument(
     @Param('id') id: string,
     @Body() body: UpdateDocumentDto,
-    @Req() req: Request,
+    @Req() req: AuthenticatedRequest,
   ) {
-    const user = (req as any).user;
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.documentsService.updateDocument(user.familyId, id, body);
   }
@@ -94,8 +95,8 @@ export class DocumentsController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a document and its stored file' })
   @ApiParam({ name: 'id', type: String })
-  async deleteDocument(@Param('id') id: string, @Req() req: Request) {
-    const user = (req as any).user;
+  async deleteDocument(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.documentsService.deleteDocument(user.familyId, id);
   }

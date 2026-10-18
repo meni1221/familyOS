@@ -9,7 +9,7 @@
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { SettingsService } from './settings.service';
-import { Request } from 'express';
+import { AuthenticatedRequest } from '../../middleware/authenticated-request';
 import { UpdateProfileDto, UpdatePreferencesDto, ChangePasswordDto } from './dto';
 
 @ApiTags('settings')
@@ -19,8 +19,8 @@ export class SettingsController {
 
   @Get('profile')
   @ApiOperation({ summary: 'Get user profile settings' })
-  async getProfile(@Req() req: Request) {
-    const user = (req as any).user;
+  async getProfile(@Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.settingsService.getProfile(user.id);
   }
@@ -28,8 +28,8 @@ export class SettingsController {
   @Patch('profile')
   @ApiOperation({ summary: 'Update user profile' })
   @ApiBody({ type: UpdateProfileDto })
-  async updateProfile(@Body() body: UpdateProfileDto, @Req() req: Request) {
-    const user = (req as any).user;
+  async updateProfile(@Body() body: UpdateProfileDto, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.settingsService.updateProfile(user.id, body);
   }
@@ -37,8 +37,8 @@ export class SettingsController {
   @Patch('preferences')
   @ApiOperation({ summary: 'Update user preferences' })
   @ApiBody({ type: UpdatePreferencesDto })
-  async updatePreferences(@Body() body: UpdatePreferencesDto, @Req() req: Request) {
-    const user = (req as any).user;
+  async updatePreferences(@Body() body: UpdatePreferencesDto, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.settingsService.updatePreferences(user.id, body);
   }
@@ -46,8 +46,8 @@ export class SettingsController {
   @Post('password')
   @ApiOperation({ summary: 'Change the current user password' })
   @ApiBody({ type: ChangePasswordDto })
-  async changePassword(@Body() body: ChangePasswordDto, @Req() req: Request) {
-    const user = (req as any).user;
+  async changePassword(@Body() body: ChangePasswordDto, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.settingsService.changePassword(user.id, body);
   }

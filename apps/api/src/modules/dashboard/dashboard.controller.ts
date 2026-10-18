@@ -1,6 +1,6 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Request } from 'express';
+import { AuthenticatedRequest } from '../../middleware/authenticated-request';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Task, TaskDocument } from '../../database/models/task.model';
@@ -29,8 +29,8 @@ export class DashboardController {
 
   @Get()
   @ApiOperation({ summary: 'Aggregated overview for the current family' })
-  async getDashboard(@Req() req: Request) {
-    const user = (req as any).user as { id: string; familyId: string } | undefined;
+  async getDashboard(@Req() req: AuthenticatedRequest) {
+    const user = req.user;
 
     if (!user?.familyId) {
       return emptyDashboard();

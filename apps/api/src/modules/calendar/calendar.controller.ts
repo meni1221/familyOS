@@ -12,7 +12,7 @@
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CalendarService } from './calendar.service';
-import { Request } from 'express';
+import { AuthenticatedRequest } from '../../middleware/authenticated-request';
 import { CreateEventDto, UpdateEventDto } from './dto/index';
 
 @ApiTags('calendar')
@@ -27,9 +27,9 @@ export class CalendarController {
   async getEvents(
     @Query('start') start: string,
     @Query('end') end: string,
-    @Req() req: Request
+    @Req() req: AuthenticatedRequest
   ) {
-    const user = (req as any).user;
+    const user = req.user;
     if (!user) return { data: [] };
 
     const { start: from, end: to } = this.resolveRange(start, end);
@@ -56,8 +56,8 @@ export class CalendarController {
   @Post()
   @ApiOperation({ summary: 'Create a new event' })
   @ApiBody({ type: CreateEventDto })
-  async createEvent(@Body() body: CreateEventDto, @Req() req: Request) {
-    const user = (req as any).user;
+  async createEvent(@Body() body: CreateEventDto, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.calendarService.createEvent(user.familyId, user.id, body);
   }
@@ -69,9 +69,9 @@ export class CalendarController {
   async updateEvent(
     @Param('id') id: string,
     @Body() body: UpdateEventDto,
-    @Req() req: Request
+    @Req() req: AuthenticatedRequest
   ) {
-    const user = (req as any).user;
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.calendarService.updateEvent(user.familyId, id, body);
   }
@@ -79,8 +79,8 @@ export class CalendarController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an event' })
   @ApiParam({ name: 'id', type: String })
-  async deleteEvent(@Param('id') id: string, @Req() req: Request) {
-    const user = (req as any).user;
+  async deleteEvent(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.calendarService.deleteEvent(user.familyId, id);
   }

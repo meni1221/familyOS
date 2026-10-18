@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
-import { Request } from 'express';
+import { AuthenticatedRequest } from '../../middleware/authenticated-request';
 import { CreateTaskDto, UpdateTaskDto } from './dto/index';
 
 @ApiTags('tasks')
@@ -11,8 +11,8 @@ export class TasksController {
 
   @Get()
   @ApiOperation({ summary: 'List tasks for current family' })
-  async getTasks(@Req() req: Request) {
-    const user = (req as any).user;
+  async getTasks(@Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) return { data: [] };
     return this.tasksService.getFamilyTasks(user.familyId);
   }
@@ -20,8 +20,8 @@ export class TasksController {
   @Post()
   @ApiOperation({ summary: 'Create a new task' })
   @ApiBody({ type: CreateTaskDto })
-  async createTask(@Body() body: CreateTaskDto, @Req() req: Request) {
-    const user = (req as any).user;
+  async createTask(@Body() body: CreateTaskDto, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.tasksService.createTask(user.familyId, user.id, body);
   }
@@ -33,9 +33,9 @@ export class TasksController {
   async updateTask(
     @Param('id') id: string,
     @Body() body: UpdateTaskDto,
-    @Req() req: Request
+    @Req() req: AuthenticatedRequest
   ) {
-    const user = (req as any).user;
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.tasksService.updateTask(user.familyId, id, body);
   }
@@ -43,8 +43,8 @@ export class TasksController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a task' })
   @ApiParam({ name: 'id', type: String })
-  async deleteTask(@Param('id') id: string, @Req() req: Request) {
-    const user = (req as any).user;
+  async deleteTask(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.tasksService.deleteTask(user.familyId, id);
   }

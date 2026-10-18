@@ -1,6 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { hashToken, sessionStore } from '../modules/auth/session.store';
+import { AuthenticatedRequest } from './authenticated-request';
 
 /**
  * Resolves the session cookie into `req.user`.
@@ -13,20 +14,20 @@ import { hashToken, sessionStore } from '../modules/auth/session.store';
  */
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  use(req: Request, _res: Response, next: NextFunction) {
+  use(req: AuthenticatedRequest, _res: Response, next: NextFunction) {
     this.resolve(req)
       .catch(() => undefined)
       .finally(() => next());
   }
 
-  private async resolve(req: Request): Promise<void> {
+  private async resolve(req: AuthenticatedRequest): Promise<void> {
     const token = req.cookies?.session;
     if (!token) return;
 
     const session = await sessionStore.get(hashToken(token));
 
     if (session && session.expiresAt > Date.now()) {
-      (req as any).user = {
+      req.user = {
         id: session.userId,
         familyId: session.familyId ?? session.userId,
       };
