@@ -18,8 +18,7 @@ import ProfilePage from './pages/ProfilePage';
 import AccessibilityPage from './pages/AccessibilityPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
-import SkipLink from './components/accessibility/SkipLink';
-import AccessibilityWidget from './components/accessibility/AccessibilityWidget';
+import { AccessibilityWidget, SkipLink } from './components/accessibility';
 import { useRealtimeConnection } from './hooks/useRealtime';
 
 /** Mounts the realtime socket once, for the lifetime of the app. */
