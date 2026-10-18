@@ -2,6 +2,7 @@ import { IconTrash } from '@tabler/icons-react';
 import Badge from '../../../ui/Badge';
 import { useRevokeInvitation } from '../../../../hooks/useFamily';
 import { useToast } from '../../../../hooks/useToast';
+import { useConfirm } from '../../../../hooks/useConfirm';
 import { errorMessage } from '../../../../lib/errorMessage';
 import { formatDate } from '../../../../lib/format';
 import type { FamilyInvitation } from '../../../../lib/types';
@@ -17,8 +18,19 @@ interface InvitationListProps {
 export default function InvitationList({ invitations, canInvite }: InvitationListProps) {
   const revokeInvitation = useRevokeInvitation();
   const toast = useToast();
+  const confirm = useConfirm();
 
-  const revoke = (id: string, email: string) => {
+  const revoke = async (id: string, email: string) => {
+    const confirmed = await confirm({
+      title: 'ביטול הזמנה',
+      description: `לבטל את ההזמנה שנשלחה אל ${email}? הקישור שכבר נשלח יפסיק לעבוד.`,
+      confirmLabel: 'ביטול ההזמנה',
+      cancelLabel: 'סגירה',
+      tone: 'danger',
+    });
+
+    if (!confirmed) return;
+
     revokeInvitation.mutate(id, {
       onSuccess: () => toast.success('ההזמנה בוטלה', email),
       onError: (error) => toast.error('ביטול ההזמנה נכשל', errorMessage(error)),

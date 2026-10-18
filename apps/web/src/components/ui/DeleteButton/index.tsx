@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import { IconTrash } from '@tabler/icons-react';
+import { useConfirm } from '../../../hooks/useConfirm';
 
 interface DeleteButtonProps {
   onConfirm: () => void;
@@ -10,9 +10,9 @@ interface DeleteButtonProps {
 }
 
 /**
- * Two-step destructive action: the first click arms the button, the second
- * confirms. Avoids a blocking `window.confirm()` while still preventing
- * accidental deletes; the armed state resets on blur or after a few seconds.
+ * The delete action of a list row: one click, then the app's own confirm
+ * dialog. Nothing is removed until the dialog is answered, and the button
+ * itself carries no hidden second state to disarm.
  */
 export default function DeleteButton({
   onConfirm,
@@ -20,45 +20,29 @@ export default function DeleteButton({
   disabled = false,
   className = '',
 }: DeleteButtonProps) {
-  const [armed, setArmed] = useState(false);
-  const timerRef = useRef<number | undefined>(undefined);
+  const confirm = useConfirm();
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-    };
-  }, []);
+  const handleClick = async () => {
+    const confirmed = await confirm({
+      title: 'אישור מחיקה',
+      description: `למחוק ${itemLabel}? אי אפשר לבטל את הפעולה.`,
+      confirmLabel: 'מחיקה',
+      tone: 'danger',
+    });
 
-  const arm = () => {
-    setArmed(true);
-    if (timerRef.current) window.clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => setArmed(false), 4000);
-  };
-
-  const handleClick = () => {
-    if (!armed) {
-      arm();
-      return;
-    }
-
-    if (timerRef.current) window.clearTimeout(timerRef.current);
-    setArmed(false);
-    onConfirm();
+    if (confirmed) onConfirm();
   };
 
   return (
     <button
       type="button"
       onClick={handleClick}
-      onBlur={() => setArmed(false)}
       disabled={disabled}
-      className={`btn-ghost btn-sm shrink-0 ${
-        armed ? 'bg-red-50 text-error hover:bg-red-100' : 'text-error'
-      } ${className}`}
-      aria-label={armed ? `אישור מחיקה של ${itemLabel}` : `מחיקת ${itemLabel}`}
+      className={`btn-ghost btn-sm shrink-0 text-error ${className}`}
+      aria-label={`מחיקת ${itemLabel}`}
     >
       <IconTrash className="h-4 w-4" />
-      {armed ? 'אישור מחיקה?' : 'מחיקה'}
+      מחיקה
     </button>
   );
 }
