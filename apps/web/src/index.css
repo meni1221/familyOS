@@ -22,6 +22,29 @@
     line-height: 1.55;
   }
 
+  /*
+   * Site content is not selectable, so it cannot be copied out of the page.
+   * Everything that takes input opts back into normal text behaviour, as does
+   * anything marked with `data-copyable`.
+   */
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  select,
+  [contenteditable='true'],
+  [data-copyable] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  img {
+    -webkit-user-drag: none;
+  }
+
   /* Skip link and screen reader only */
   .sr-only {
     position: absolute;

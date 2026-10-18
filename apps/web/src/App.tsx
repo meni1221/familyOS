@@ -19,6 +19,7 @@ import AccessibilityPage from './pages/AccessibilityPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import { AccessibilityWidget, SkipLink } from './components/accessibility';
+import { ContentGuard } from './components/security';
 import { useRealtimeConnection } from './hooks/useRealtime';
 
 /** Mounts the realtime socket once, for the lifetime of the app. */
@@ -133,6 +134,7 @@ export default function App() {
       {/* Global, mounted once: available on every page, public or protected. */}
       <RealtimeBridge />
       <LocaleSync />
+      <ContentGuard />
       <AccessibilityWidget />
     </>
   );
