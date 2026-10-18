@@ -1,4 +1,4 @@
-# FamilyOS — Audit & Remediation Tracker
+# Shlanu — Audit & Remediation Tracker
 
 Audit date: 2026-10-18
 Scope: `apps/api` (NestJS + Mongoose), `apps/web` (React + Vite + Tailwind), infra/docs.

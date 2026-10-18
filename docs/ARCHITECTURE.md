@@ -1,7 +1,7 @@
-# FamilyOS — Architecture
+# Shlanu — Architecture
 
 ## Overview
-FamilyOS is a modular monolith SaaS application built with a React frontend and NestJS backend, using PostgreSQL as the primary data store.
+Shlanu is a modular monolith SaaS application built with a React frontend and NestJS backend, using PostgreSQL as the primary data store.
 
 ## Technology Stack
 
@@ -35,7 +35,7 @@ FamilyOS is a modular monolith SaaS application built with a React frontend and 
 ## Repository Structure
 
 ```
-familyOS/
+shlanu/
 ├── apps/
 │   ├── web/              # React frontend (Vite)
 │   └── api/              # NestJS backend

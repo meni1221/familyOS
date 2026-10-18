@@ -40,11 +40,11 @@ jobs:
 
       - name: Deploy application
         run: |
-          echo "Deploy FamilyOS to production environment"
+          echo "Deploy Shlanu to production environment"
           echo "Application built successfully"
           echo "Database migrations executed"
           echo "Ready for container deployment"
 
       - name: Notify deployment
         run: |
-          echo "FamilyOS deployment completed at $(date)"
+          echo "Shlanu deployment completed at $(date)"

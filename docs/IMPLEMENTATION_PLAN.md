@@ -1,4 +1,4 @@
-# FamilyOS — Implementation Plan
+# Shlanu — Implementation Plan
 
 ## Phase 0 — Repository and Planning ✅
 - [x] Inspect repository

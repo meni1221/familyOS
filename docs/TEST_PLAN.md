@@ -1,4 +1,4 @@
-# FamilyOS — Test Plan
+# Shlanu — Test Plan
 
 ## Testing Strategy
 

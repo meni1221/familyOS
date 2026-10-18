@@ -1,4 +1,4 @@
-# FamilyOS — Team Ownership
+# Shlanu — Team Ownership
 
 ## Team Structure
 

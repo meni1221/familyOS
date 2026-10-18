@@ -1,8 +1,8 @@
-# FamilyOS
+# Shlanu
 
 > כל מה שהמשפחה צריכה, במקום אחד
 
-FamilyOS is a family life management SaaS application that helps families coordinate daily tasks, schedules, baby routines, household spending, documents, and reminders through a shared, secure workspace.
+Shlanu is a family life management SaaS application that helps families coordinate daily tasks, schedules, baby routines, household spending, documents, and reminders through a shared, secure workspace.
 
 ## Features
 
@@ -46,7 +46,7 @@ FamilyOS is a family life management SaaS application that helps families coordi
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd familyOS
+cd shlanu
 ```
 
 2. Install dependencies:
@@ -88,7 +88,7 @@ npm run dev
 ## Project Structure
 
 ```
-familyOS/
+shlanu/
 ├── apps/
 │   ├── web/              # React frontend
 │   └── api/              # NestJS backend

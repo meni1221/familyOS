@@ -1,4 +1,4 @@
-# FamilyOS — Architecture Decision Records
+# Shlanu — Architecture Decision Records
 
 ## ADR-001: Modular Monolith
 **Status**: Accepted

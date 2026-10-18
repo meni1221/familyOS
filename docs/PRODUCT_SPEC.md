@@ -1,7 +1,7 @@
-# FamilyOS — Product Specification
+# Shlanu — Product Specification
 
 ## Product Name
-**FamilyOS**
+**Shlanu**
 
 ## Category
 Family life management SaaS
@@ -18,7 +18,7 @@ Israel, with internationalization built into the architecture.
 Hebrew: "כל מה שהמשפחה צריכה, במקום אחד."
 
 ## Core Value Proposition
-FamilyOS helps families coordinate daily tasks, schedules, baby routines, household spending, documents, and reminders through a shared, secure workspace.
+Shlanu helps families coordinate daily tasks, schedules, baby routines, household spending, documents, and reminders through a shared, secure workspace.
 
 ## Product Principles
 1. Family comes first. Minimize cognitive load.

@@ -1,4 +1,4 @@
-# FamilyOS — Design System
+# Shlanu — Design System
 
 ## Design Philosophy
 "Warm editorial minimalism meets polished modern SaaS."
