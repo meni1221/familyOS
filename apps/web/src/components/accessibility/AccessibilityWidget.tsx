@@ -99,12 +99,12 @@ export default function AccessibilityWidget() {
         aria-haspopup="dialog"
         aria-label="תפריט נגישות"
         title="תפריט נגישות"
-        className="flex h-16 w-16 items-center justify-center rounded-full bg-forest text-white shadow-modal transition-all hover:scale-105 hover:bg-forest-deep md:h-20 md:w-20"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-forest text-white shadow-modal transition-all hover:scale-105 hover:bg-forest-deep md:h-16 md:w-16"
       >
         {isOpen ? (
-          <IconX className="h-10 w-10 md:h-14 md:w-14" />
+          <IconX className="h-8 w-8 md:h-9 md:w-9" />
         ) : (
-          <IconAccessible className="h-10 w-10 md:h-14 md:w-14" />
+          <IconAccessible className="h-8 w-8 md:h-9 md:w-9" />
         )}
       </button>
     </div>

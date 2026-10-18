@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 const LOGO_SIZES = {
   sm: { image: 'h-8 w-8', text: 'text-lg' },
   md: { image: 'h-10 w-10', text: 'text-xl' },
+  lg: { image: 'h-12 w-12', text: 'text-2xl' },
 } as const;
 
 interface BrandLogoProps {
