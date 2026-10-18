@@ -5,16 +5,16 @@ export type FamilyMembershipDocument = FamilyMembership & Document;
 
 @Schema({ timestamps: true, collection: 'family_memberships' })
 export class FamilyMembership {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ default: 'MEMBER', enum: ['OWNER', 'MEMBER'] })
+  @Prop({ type: String, default: 'MEMBER', enum: ['OWNER', 'MEMBER'] })
   role: string;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   joinedAt: Date;
 }
 

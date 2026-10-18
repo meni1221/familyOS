@@ -5,31 +5,31 @@ export type FamilyInvitationDocument = FamilyInvitation & Document;
 
 @Schema({ timestamps: true, collection: 'family_invitations' })
 export class FamilyInvitation {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true, lowercase: true })
   email: string;
 
-  @Prop({ default: 'MEMBER', enum: ['OWNER', 'MEMBER'] })
+  @Prop({ type: String, default: 'MEMBER', enum: ['OWNER', 'MEMBER'] })
   role: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ type: String, required: true, unique: true })
   tokenHash: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
   expiresAt: Date;
 
-  @Prop()
+  @Prop({ type: Date, default: null })
   acceptedAt: Date;
 
-  @Prop()
+  @Prop({ type: Date, default: null })
   revokedAt: Date;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   createdByUserId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 }
 

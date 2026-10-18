@@ -5,22 +5,22 @@ export type BabyProfileDocument = BabyProfile & Document;
 
 @Schema({ timestamps: true, collection: 'baby_profiles' })
 export class BabyProfile {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   displayName: string;
 
-  @Prop()
+  @Prop({ type: Date })
   dateOfBirth: Date;
 
-  @Prop({ default: true })
+  @Prop({ type: Boolean, default: true })
   trackingEnabled: boolean;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 }
 

@@ -5,22 +5,22 @@ export type FamilyDocument = Family & Document;
 
 @Schema({ timestamps: true, collection: 'families' })
 export class Family {
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   name: string;
 
-  @Prop({ default: 'he' })
+  @Prop({ type: String, default: 'he' })
   defaultLocale: string;
 
-  @Prop({ default: 'ILS' })
+  @Prop({ type: String, default: 'ILS' })
   defaultCurrency: string;
 
-  @Prop({ default: 'Asia/Jerusalem' })
+  @Prop({ type: String, default: 'Asia/Jerusalem' })
   timezone: string;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 }
 

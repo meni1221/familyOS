@@ -5,22 +5,22 @@ export type UserDocument = User & Document;
 
 @Schema({ _id: false })
 export class NotificationPreferences {
-  @Prop({ default: true })
+  @Prop({ type: Boolean, default: true })
   taskAssigned: boolean;
 
-  @Prop({ default: true })
+  @Prop({ type: Boolean, default: true })
   taskDueSoon: boolean;
 
-  @Prop({ default: true })
+  @Prop({ type: Boolean, default: true })
   eventReminder: boolean;
 
-  @Prop({ default: true })
+  @Prop({ type: Boolean, default: true })
   expenseAdded: boolean;
 
-  @Prop({ default: true })
+  @Prop({ type: Boolean, default: true })
   weeklySummary: boolean;
 
-  @Prop({ default: false })
+  @Prop({ type: Boolean, default: false })
   email: boolean;
 }
 
@@ -28,31 +28,31 @@ export const NotificationPreferencesSchema = SchemaFactory.createForClass(Notifi
 
 @Schema({ timestamps: true, collection: 'users' })
 export class User {
-  @Prop({ required: true, unique: true, lowercase: true })
+  @Prop({ type: String, required: true, unique: true, lowercase: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   displayName: string;
 
-  @Prop()
+  @Prop({ type: String })
   passwordHash?: string;
 
-  @Prop({ default: 'he' })
+  @Prop({ type: String, default: 'he', enum: ['he', 'en'] })
   preferredLocale: string;
 
-  @Prop({ default: 'Asia/Jerusalem' })
+  @Prop({ type: String, default: 'Asia/Jerusalem' })
   timezone: string;
 
   @Prop({ type: NotificationPreferencesSchema, default: () => ({}) })
   notificationPreferences: NotificationPreferences;
 
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Family' }] })
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Family' }], default: [] })
   families: Types.ObjectId[];
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 }
 

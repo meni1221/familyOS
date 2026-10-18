@@ -5,31 +5,31 @@ export type NotificationDocument = Notification & Document;
 
 @Schema({ timestamps: true, collection: 'notifications' })
 export class Notification {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   recipientUserId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   type: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   message: string;
 
-  @Prop()
+  @Prop({ type: String })
   relatedEntityType: string;
 
-  @Prop()
+  @Prop({ type: String })
   relatedEntityId: string;
 
-  @Prop()
+  @Prop({ type: Date, default: null })
   readAt: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 }
 

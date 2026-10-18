@@ -5,43 +5,44 @@ export type DocumentDocument = DocumentModel & Document;
 
 @Schema({ timestamps: true, collection: 'documents' })
 export class DocumentModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   title: string;
 
-  @Prop()
+  @Prop({ type: String })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   category: string;
 
-  @Prop({ required: true, unique: true })
+  /** Path of the file relative to the uploads root, e.g. `<familyId>/<uuid>.pdf`. */
+  @Prop({ type: String, required: true, unique: true })
   storageKey: string;
 
-  @Prop()
+  @Prop({ type: String })
   originalName: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   contentType: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Number, required: true, min: 0 })
   sizeBytes: number;
 
-  @Prop()
+  @Prop({ type: Date })
   issuedAt: Date;
 
-  @Prop()
+  @Prop({ type: Date })
   expiresAt: Date;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   uploadedByUserId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 }
 

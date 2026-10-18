@@ -5,34 +5,38 @@ export type BabyLogDocument = BabyLog & Document;
 
 @Schema({ timestamps: true, collection: 'baby_logs' })
 export class BabyLog {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'BabyProfile' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'BabyProfile', required: true })
   babyProfileId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true, enum: ['FEEDING', 'SLEEP', 'DIAPER', 'NOTE'] })
+  @Prop({
+    type: String,
+    required: true,
+    enum: ['FEEDING', 'SLEEP', 'DIAPER', 'NOTE'],
+  })
   type: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
   occurredAt: Date;
 
-  @Prop()
+  @Prop({ type: Date })
   endedAt: Date;
 
   @Prop({ type: Object })
   details: Record<string, unknown>;
 
-  @Prop()
+  @Prop({ type: String })
   note: string;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   createdByUserId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 }
 

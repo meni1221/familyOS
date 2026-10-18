@@ -5,40 +5,40 @@ export type CalendarEventDocument = CalendarEvent & Document;
 
 @Schema({ timestamps: true, collection: 'calendar_events' })
 export class CalendarEvent {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   title: string;
 
-  @Prop()
+  @Prop({ type: String })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
   startsAt: Date;
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
   endsAt: Date;
 
-  @Prop({ default: false })
+  @Prop({ type: Boolean, default: false })
   isAllDay: boolean;
 
-  @Prop({ default: 'Asia/Jerusalem' })
+  @Prop({ type: String, default: 'Asia/Jerusalem' })
   timezone: string;
 
-  @Prop()
+  @Prop({ type: String })
   location: string;
 
-  @Prop()
+  @Prop({ type: String })
   category: string;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   createdByUserId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 }
 

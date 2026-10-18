@@ -5,25 +5,25 @@ export type AuditLogDocument = AuditLog & Document;
 
 @Schema({ timestamps: true, collection: 'audit_logs' })
 export class AuditLog {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   familyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   actorUserId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   action: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   entityType: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   entityId: string;
 
   @Prop({ type: Object })
   safeMetadata: Record<string, unknown>;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 }
 
