@@ -17,6 +17,13 @@ import PrivacyPage from './pages/PrivacyPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import SkipLink from './components/accessibility/SkipLink';
 import AccessibilityWidget from './components/accessibility/AccessibilityWidget';
+import { useRealtimeConnection } from './hooks/useRealtime';
+
+/** Mounts the realtime socket once, for the lifetime of the app. */
+function RealtimeBridge() {
+  useRealtimeConnection();
+  return null;
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -107,6 +114,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {/* Global, mounted once: available on every page, public or protected. */}
+      <RealtimeBridge />
       <AccessibilityWidget />
     </>
   );
