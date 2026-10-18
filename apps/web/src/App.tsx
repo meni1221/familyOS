@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
+import { applyLocale, getStoredLocale, normalizeLocale } from './lib/locale';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -22,6 +24,20 @@ import { useRealtimeConnection } from './hooks/useRealtime';
 /** Mounts the realtime socket once, for the lifetime of the app. */
 function RealtimeBridge() {
   useRealtimeConnection();
+  return null;
+}
+
+/**
+ * Keeps `<html lang/dir>` and the formatter locale in sync with the language
+ * saved on the account (falling back to the last choice made on this device).
+ */
+function LocaleSync() {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    applyLocale(user ? normalizeLocale(user.preferredLocale) : getStoredLocale());
+  }, [user]);
+
   return null;
 }
 
@@ -115,6 +131,7 @@ export default function App() {
       </Routes>
       {/* Global, mounted once: available on every page, public or protected. */}
       <RealtimeBridge />
+      <LocaleSync />
       <AccessibilityWidget />
     </>
   );

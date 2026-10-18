@@ -17,47 +17,12 @@ import {
   FONT_SIZE_MIN,
   FONT_SIZE_STEP,
 } from './settings';
+import SwitchRow from '../ui/Switch';
 
 interface AccessibilityMenuProps {
   settings: AccessibilitySettings;
   onChange: (patch: Partial<AccessibilitySettings>) => void;
   onClose: () => void;
-}
-
-interface ToggleRowProps {
-  icon: React.ReactNode;
-  label: string;
-  checked: boolean;
-  onToggle: () => void;
-}
-
-function ToggleRow({ icon, label, checked, onToggle }: ToggleRowProps) {
-  return (
-    <div className="flex items-center justify-between gap-3 rounded-4 border border-border px-3 py-2">
-      <span className="flex items-center gap-2 text-sm text-ink">
-        <span className="text-ink-secondary" aria-hidden="true">
-          {icon}
-        </span>
-        {label}
-      </span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
-        onClick={onToggle}
-        className={`relative h-4 w-8 shrink-0 rounded-full transition-colors ${
-          checked ? 'bg-forest' : 'bg-border'
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${
-            checked ? 'end-0.5' : 'start-0.5'
-          }`}
-        />
-      </button>
-    </div>
-  );
 }
 
 /**
@@ -157,25 +122,25 @@ const AccessibilityMenu = forwardRef<HTMLDivElement, AccessibilityMenuProps>(
             </button>
           </div>
 
-          <ToggleRow
+          <SwitchRow
             icon={<IconPlayerPause className="h-4 w-4" />}
             label="השבת אנימציות"
             checked={settings.animationsDisabled}
-            onToggle={() => onChange({ animationsDisabled: !settings.animationsDisabled })}
+            onChange={(next) => onChange({ animationsDisabled: next })}
           />
 
-          <ToggleRow
+          <SwitchRow
             icon={<IconPhotoOff className="h-4 w-4" />}
             label="הסתר תמונות"
             checked={settings.imagesHidden}
-            onToggle={() => onChange({ imagesHidden: !settings.imagesHidden })}
+            onChange={(next) => onChange({ imagesHidden: next })}
           />
 
-          <ToggleRow
+          <SwitchRow
             icon={<IconVolumeOff className="h-4 w-4" />}
             label="השתק קול"
             checked={settings.soundMuted}
-            onToggle={() => onChange({ soundMuted: !settings.soundMuted })}
+            onChange={(next) => onChange({ soundMuted: next })}
           />
         </div>
 
