@@ -20,6 +20,9 @@ export class DocumentModel {
   @Prop({ required: true, unique: true })
   storageKey: string;
 
+  @Prop()
+  originalName: string;
+
   @Prop({ required: true })
   contentType: string;
 
