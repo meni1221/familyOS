@@ -282,9 +282,9 @@ export class FamiliesService {
     // Switch the active family for the current session (best-effort).
     if (sessionToken) {
       const key = hashToken(sessionToken);
-      const session = sessionStore.get(key);
+      const session = await sessionStore.get(key);
       if (session) {
-        sessionStore.set(key, { ...session, familyId });
+        await sessionStore.set(key, { ...session, familyId });
       }
     }
 

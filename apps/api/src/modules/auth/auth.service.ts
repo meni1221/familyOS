@@ -79,11 +79,11 @@ export class AuthService {
   }
 
   async logout(sessionToken: string) {
-    sessionStore.delete(hashToken(sessionToken));
+    await sessionStore.delete(hashToken(sessionToken));
   }
 
   async validateSession(sessionToken: string) {
-    const session = sessionStore.get(hashToken(sessionToken));
+    const session = await sessionStore.get(hashToken(sessionToken));
     if (!session || session.expiresAt < Date.now()) {
       return null;
     }
@@ -112,7 +112,7 @@ export class AuthService {
   private async createSession(user: UserDocument, familyId?: string) {
     const sessionToken = randomBytes(32).toString('hex');
 
-    sessionStore.set(hashToken(sessionToken), {
+    await sessionStore.set(hashToken(sessionToken), {
       userId: user._id.toString(),
       familyId,
       expiresAt: Date.now() + SESSION_TTL_MS,

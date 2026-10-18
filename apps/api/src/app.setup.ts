@@ -1,6 +1,8 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { getModelToken } from '@nestjs/mongoose';
 import { NestApplicationOptions } from '@nestjs/common/interfaces/nest-application-options.interface';
+import { Model } from 'mongoose';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { LoggingMiddleware } from './middleware/logging.middleware';
@@ -8,6 +10,8 @@ import { SecurityHeadersMiddleware } from './middleware/security-headers.middlew
 import { RateLimitMiddleware } from './middleware/rate-limit.middleware';
 import { CsrfMiddleware } from './middleware/csrf.middleware';
 import { AuthMiddleware } from './middleware/auth.middleware';
+import { Session } from './database/models/session.model';
+import { bindSessionModel } from './modules/auth/session.store';
 import { AppModule } from './app.module';
 
 /**
@@ -18,6 +22,10 @@ import { AppModule } from './app.module';
  * single, reviewable place.
  */
 export function configureApp(app: INestApplication): INestApplication {
+  // The session store is a module singleton (the auth middleware is built by
+  // hand below), so it receives its model once, here.
+  bindSessionModel(app.get<Model<Session>>(getModelToken(Session.name)));
+
   app.use(cookieParser());
   app.use(new LoggingMiddleware().use.bind(new LoggingMiddleware()));
   app.use(new SecurityHeadersMiddleware().use.bind(new SecurityHeadersMiddleware()));

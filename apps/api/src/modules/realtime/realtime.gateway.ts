@@ -31,7 +31,7 @@ function parseCookieHeader(header: string | undefined): Record<string, string> {
  *
  * Authentication reuses the HTTP session: the handshake `session` cookie (or an
  * explicit `auth.token`, handy for tests and non-browser clients) is hashed and
- * looked up in the same in-memory store the HTTP middleware uses. Only then is
+ * looked up in the same session store the HTTP middleware uses. Only then is
  * the socket joined to `family:<familyId>`, which is the only room events are
  * broadcast to — a client can never subscribe to another family.
  */
@@ -47,8 +47,8 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   private readonly logger = new Logger(RealtimeGateway.name);
 
-  handleConnection(client: Socket) {
-    const session = this.resolveSession(client);
+  async handleConnection(client: Socket) {
+    const session = await this.resolveSession(client);
 
     if (!session) {
       this.logger.warn(`Rejected unauthenticated socket ${client.id}`);
@@ -77,8 +77,8 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
    * active family (e.g. accepting an invitation mid-session).
    */
   @SubscribeMessage('realtime:subscribe')
-  handleSubscribe(@ConnectedSocket() client: Socket, @MessageBody() body: unknown) {
-    const session = this.resolveSession(client);
+  async handleSubscribe(@ConnectedSocket() client: Socket, @MessageBody() body: unknown) {
+    const session = await this.resolveSession(client);
     if (!session) {
       client.disconnect(true);
       return { ok: false };
@@ -102,7 +102,7 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
     return { ok: true, familyId };
   }
 
-  private resolveSession(client: Socket): SessionData | null {
+  private async resolveSession(client: Socket): Promise<SessionData | null> {
     const authToken =
       typeof client.handshake.auth?.token === 'string'
         ? client.handshake.auth.token
@@ -112,7 +112,7 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
     const token = authToken ?? cookieToken;
     if (!token) return null;
 
-    const session = sessionStore.get(hashToken(token));
+    const session = await sessionStore.get(hashToken(token));
     if (!session || session.expiresAt < Date.now()) return null;
 
     return session;

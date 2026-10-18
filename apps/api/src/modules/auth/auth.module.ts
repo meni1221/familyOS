@@ -8,6 +8,7 @@ import {
   FamilyMembership,
   FamilyMembershipSchema,
 } from '../../database/models/family-membership.model';
+import { Session, SessionSchema } from '../../database/models/session.model';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {
       { name: User.name, schema: UserSchema },
       { name: Family.name, schema: FamilySchema },
       { name: FamilyMembership.name, schema: FamilyMembershipSchema },
+      { name: Session.name, schema: SessionSchema },
     ]),
   ],
   controllers: [AuthController],
