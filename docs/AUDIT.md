@@ -210,3 +210,10 @@ unauthenticated reads and writes → 401, logout.
 - SE-1..SE-7 above, plus: no browser automation (Playwright/Puppeteer are not installed), so the
   RTL/mobile visual checklist in §E2E plan step 4 remains manual.
 
+### Manually verified (not automated)
+
+- **Realtime through the dev proxy**: a socket.io client that logs in over `http://localhost:5173`,
+  upgrades to WebSocket through Vite's `/socket.io` proxy and receives `task:created` for a task
+  written over HTTP on the same origin. The automated suite only talks to the API port directly, so
+  this was checked by hand once (the proxy config is in `apps/web/vite.config.ts`).
+
