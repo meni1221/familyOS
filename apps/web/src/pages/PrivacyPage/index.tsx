@@ -82,7 +82,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="section-title mb-2">יצירת קשר</h2>
           <div className="text-body space-y-1">
-            <p>טלפון: 054-2068580</p>
+            <p>טלפון: 053-3011599</p>
             <p>דוא"ל: [להשלמה]</p>
           </div>
         </section>
