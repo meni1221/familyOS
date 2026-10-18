@@ -11,6 +11,7 @@ import {
   IconUsers,
   IconSparkles,
 } from '@tabler/icons-react';
+import BrandLogo from '../components/ui/BrandLogo';
 
 const features = [
   {
@@ -75,10 +76,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-content items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-4 bg-forest">
-              <span className="text-sm font-bold text-white">F</span>
-            </div>
-            <span className="text-lg font-bold text-ink">FamilyOS</span>
+            <BrandLogo to="/" />
           </div>
           <nav className="hidden items-center gap-6 md:flex">
             <a href="#features" className="text-sm text-ink-secondary hover:text-ink">

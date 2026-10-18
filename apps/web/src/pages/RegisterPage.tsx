@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { IconUserPlus } from '@tabler/icons-react';
+import BrandLogo from '../components/ui/BrandLogo';
 
 const registerSchema = z.object({
   displayName: z.string().min(2, 'שם צריך להכיל לפחות 2 תווים'),
@@ -56,12 +57,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-4 bg-forest">
-              <span className="text-lg font-bold text-white">F</span>
-            </div>
-            <span className="text-xl font-bold text-ink">FamilyOS</span>
-          </Link>
+          <BrandLogo to="/" size="md" />
         </div>
         <div className="card">
           <h1 className="mb-1 text-center text-xl font-bold text-ink">הרשמה</h1>

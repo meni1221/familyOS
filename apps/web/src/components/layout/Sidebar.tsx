@@ -8,6 +8,7 @@ import {
   IconFile,
   IconSettings,
 } from '@tabler/icons-react';
+import BrandLogo from '../ui/BrandLogo';
 
 const navItems = [
   { to: '/app', icon: IconLayoutDashboard, label: 'סקירה כללית', end: true },
@@ -22,11 +23,8 @@ const navItems = [
 export default function Sidebar() {
   return (
     <aside className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col border-e border-border bg-surface md:flex">
-      <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-4 bg-forest">
-          <span className="text-sm font-bold text-white">F</span>
-        </div>
-        <span className="text-lg font-bold text-ink">FamilyOS</span>
+      <div className="flex h-16 items-center border-b border-border px-6">
+        <BrandLogo to="/app" />
       </div>
       <nav className="flex-1 space-y-1 p-3">
         {navItems.map((item) => (
