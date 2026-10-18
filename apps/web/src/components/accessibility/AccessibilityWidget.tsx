@@ -102,9 +102,9 @@ export default function AccessibilityWidget() {
         className="flex h-16 w-16 items-center justify-center rounded-full bg-forest text-white shadow-modal transition-all hover:scale-105 hover:bg-forest-deep md:h-20 md:w-20"
       >
         {isOpen ? (
-          <IconX className="h-9 w-9 md:h-12 md:w-12" />
+          <IconX className="h-10 w-10 md:h-14 md:w-14" />
         ) : (
-          <IconAccessible className="h-9 w-9 md:h-12 md:w-12" />
+          <IconAccessible className="h-10 w-10 md:h-14 md:w-14" />
         )}
       </button>
     </div>
