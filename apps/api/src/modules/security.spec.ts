@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import { createHash, randomBytes } from 'node:crypto';
 
 describe('Security Tests - Family Isolation', () => {
   describe('Cross-Family Access Prevention', () => {
@@ -53,17 +54,15 @@ describe('Security Tests - Family Isolation', () => {
 
   describe('Session Security', () => {
     it('should use SHA-256 for token hashing', () => {
-      const crypto = require('crypto');
       const token = 'test-token';
-      const hash = crypto.createHash('sha256').update(token).digest('hex');
+      const hash = createHash('sha256').update(token).digest('hex');
       expect(hash).toHaveLength(64);
       expect(hash).not.toBe(token);
     });
 
     it('should generate secure random session tokens', () => {
-      const crypto = require('crypto');
-      const token1 = crypto.randomBytes(32).toString('hex');
-      const token2 = crypto.randomBytes(32).toString('hex');
+      const token1 = randomBytes(32).toString('hex');
+      const token2 = randomBytes(32).toString('hex');
       expect(token1).not.toBe(token2);
       expect(token1.length).toBe(64);
     });

@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { createApp } from './app.setup';
 
 const bootstrap = async () => {
@@ -5,7 +6,7 @@ const bootstrap = async () => {
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port);
-  console.log(`Shlanu API running on http://localhost:${port}`);
+  Logger.log(`Shlanu API running on http://localhost:${port}`, 'Bootstrap');
 };
 
 bootstrap();

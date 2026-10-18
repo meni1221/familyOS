@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Injectable } from '@nestjs/common';
 import { Connection } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
 

@@ -39,8 +39,8 @@ shlanu/
 │   ├── web/              # React frontend (Vite)
 │   └── api/              # NestJS backend
 ├── packages/
-│   ├── shared-types/     # Shared TypeScript types
-│   └── shared-config/    # Shared ESLint/TS config
+│   └── shared-types/     # Shared TypeScript types
+├── eslint.config.mjs    # Lint rules for the whole workspace
 ├── docs/                 # Documentation
 ├── scripts/              # Utility scripts
 ├── docker-compose.yml    # Local development

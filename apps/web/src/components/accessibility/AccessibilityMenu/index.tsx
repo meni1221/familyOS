@@ -30,7 +30,7 @@ interface AccessibilityMenuProps {
  * `AccessibilityWidget`, which also decides where the panel is anchored.
  */
 const AccessibilityMenu = forwardRef<HTMLDivElement, AccessibilityMenuProps>(
-  function AccessibilityMenu({ settings, onChange, onClose }, ref) {
+  ({ settings, onChange, onClose }, ref) => {
     const contrastIndex = CONTRAST_MODES.indexOf(settings.contrast);
 
     const cycleContrast = () => {
@@ -157,5 +157,7 @@ const AccessibilityMenu = forwardRef<HTMLDivElement, AccessibilityMenuProps>(
     );
   }
 );
+
+AccessibilityMenu.displayName = 'AccessibilityMenu';
 
 export default AccessibilityMenu;

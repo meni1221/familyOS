@@ -31,7 +31,7 @@ const uploadsDir = join(tmpdir(), `shlanu-e2e-uploads-${process.pid}`);
 
 let server: ChildProcess | undefined;
 let serverLog = '';
-let baseUrl = `http://127.0.0.1:${TEST_PORT}`;
+const baseUrl = `http://127.0.0.1:${TEST_PORT}`;
 let socket: Socket | undefined;
 
 const stamp = Date.now();

@@ -87,8 +87,8 @@ shlanu/
 │   ├── web/              # React frontend
 │   └── api/              # NestJS backend
 ├── packages/
-│   ├── shared-types/     # Shared TypeScript types
-│   └── shared-config/    # Shared configuration
+│   └── shared-types/     # Shared TypeScript types
+├── eslint.config.mjs    # Lint rules for the whole workspace
 ├── docs/                 # Documentation
 ├── docker-compose.yml    # Local infrastructure
 └── README.md
