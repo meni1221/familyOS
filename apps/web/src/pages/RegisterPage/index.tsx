@@ -3,23 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { IconUserPlus } from '@tabler/icons-react';
-import BrandLogo from '../../components/ui/BrandLogo';
+import AuthCard from '../../components/layout/AuthCard';
 import { api, ApiError } from '../../lib/api';
 import type { AuthUser } from '../../hooks/useAuth';
-
-const registerSchema = z.object({
-  displayName: z.string().min(2, 'שם צריך להכיל לפחות 2 תווים'),
-  email: z.string().email('כתובת אימייל לא תקינה'),
-  password: z.string().min(8, 'סיסמה צריכה להכיל לפחות 8 תווים'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'הסיסמאות לא תואמות',
-  path: ['confirmPassword'],
-});
-
-type RegisterFormData = z.infer<typeof registerSchema>;
+import { registerSchema, type RegisterFormData } from './schemas';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -54,99 +42,76 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <BrandLogo to="/" size="md" />
-        </div>
-        <div className="card">
-          <h1 className="mb-1 text-center text-xl font-bold text-ink">הרשמה</h1>
-          <p className="mb-6 text-center text-sm text-ink-secondary">
-            צרו חשבון והתחילו לנהל את המשפחה
-          </p>
-          {error && (
-            <div className="mb-4 rounded-4 bg-red-50 p-3 text-sm text-error">
-              {error}
-            </div>
+    <AuthCard title="הרשמה" subtitle="צרו חשבון והתחילו לנהל את המשפחה" error={error}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label htmlFor="displayName" className="label">
+            שם מלא
+          </label>
+          <input
+            id="displayName"
+            type="text"
+            className={`input ${errors.displayName ? 'input-error' : ''}`}
+            placeholder="ישראל ישראלי"
+            {...register('displayName')}
+          />
+          {errors.displayName && (
+            <p className="mt-1 text-xs text-error">{errors.displayName.message}</p>
           )}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label htmlFor="displayName" className="label">
-                שם מלא
-              </label>
-              <input
-                id="displayName"
-                type="text"
-                className={`input ${errors.displayName ? 'input-error' : ''}`}
-                placeholder="ישראל ישראלי"
-                {...register('displayName')}
-              />
-              {errors.displayName && (
-                <p className="mt-1 text-xs text-error">{errors.displayName.message}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="email" className="label">
-                אימייל
-              </label>
-              <input
-                id="email"
-                type="email"
-                className={`input ${errors.email ? 'input-error' : ''}`}
-                placeholder="you@example.com"
-                {...register('email')}
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-error">{errors.email.message}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="password" className="label">
-                סיסמה
-              </label>
-              <input
-                id="password"
-                type="password"
-                className={`input ${errors.password ? 'input-error' : ''}`}
-                placeholder="לפחות 8 תווים"
-                {...register('password')}
-              />
-              {errors.password && (
-                <p className="mt-1 text-xs text-error">{errors.password.message}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="label">
-                אימות סיסמה
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                className={`input ${errors.confirmPassword ? 'input-error' : ''}`}
-                placeholder="וודאו את הסיסמה"
-                {...register('confirmPassword')}
-              />
-              {errors.confirmPassword && (
-                <p className="mt-1 text-xs text-error">{errors.confirmPassword.message}</p>
-              )}
-            </div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-primary w-full"
-            >
-              <IconUserPlus className="h-4 w-4" />
-              {isSubmitting ? 'נרשם...' : 'הרשמה'}
-            </button>
-          </form>
-          <p className="mt-4 text-center text-sm text-ink-secondary">
-            כבר יש לכם חשבון?{' '}
-            <Link to="/login" className="font-medium text-forest hover:underline">
-              התחברו
-            </Link>
-          </p>
         </div>
-      </div>
-    </div>
+        <div>
+          <label htmlFor="email" className="label">
+            אימייל
+          </label>
+          <input
+            id="email"
+            type="email"
+            className={`input ${errors.email ? 'input-error' : ''}`}
+            placeholder="you@example.com"
+            {...register('email')}
+          />
+          {errors.email && <p className="mt-1 text-xs text-error">{errors.email.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="password" className="label">
+            סיסמה
+          </label>
+          <input
+            id="password"
+            type="password"
+            className={`input ${errors.password ? 'input-error' : ''}`}
+            placeholder="לפחות 8 תווים"
+            {...register('password')}
+          />
+          {errors.password && <p className="mt-1 text-xs text-error">{errors.password.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="confirmPassword" className="label">
+            אימות סיסמה
+          </label>
+          <input
+            id="confirmPassword"
+            type="password"
+            className={`input ${errors.confirmPassword ? 'input-error' : ''}`}
+            placeholder="וודאו את הסיסמה"
+            {...register('confirmPassword')}
+          />
+          {errors.confirmPassword && (
+            <p className="mt-1 text-xs text-error">{errors.confirmPassword.message}</p>
+          )}
+        </div>
+        <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
+          <IconUserPlus className="h-4 w-4" />
+          {isSubmitting ? 'נרשם...' : 'הרשמה'}
+        </button>
+      </form>
+
+      <p className="mt-4 text-center text-sm text-ink-secondary">
+        כבר יש לכם חשבון?{' '}
+        <Link to="/login" className="font-medium text-forest hover:underline">
+          התחברו
+        </Link>
+      </p>
+    </AuthCard>
   );
 }
