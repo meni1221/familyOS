@@ -14,7 +14,7 @@
     "build": "npm run build -w packages/shared-types && npm run build -w apps/web && npm run build -w apps/api",
     "lint": "npm run lint -w apps/web && npm run lint -w apps/api",
     "test": "npm run test -w apps/web && npm run test -w apps/api",
-    "test:e2e": "npm run test:e2e -w apps/web",
+    "test:e2e": "npm run test:e2e -w apps/api",
     "db:seed": "npm run db:seed -w apps/api"
   },
   "devDependencies": {
