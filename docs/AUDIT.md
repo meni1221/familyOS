@@ -217,3 +217,40 @@ unauthenticated reads and writes → 401, logout.
   written over HTTP on the same origin. The automated suite only talks to the API port directly, so
   this was checked by hand once (the proxy config is in `apps/web/vite.config.ts`).
 
+## 10. Frontend structure - one folder per component
+
+Every component and page lives in a folder named after it, with the component itself in
+`index.tsx`, so a component and anything it grows into share one home:
+
+```
+apps/web/src/
+  components/
+    ui/            Badge, BrandLogo, DeleteButton, EmptyState, LoadingSpinner, Modal, Switch
+    layout/        AppShell, AuthCard, Footer, Header, MobileNav, Sidebar
+    accessibility/ AccessibilityMenu, AccessibilityWidget, SkipLink
+    settings/      SectionCard, ProfileSection, PreferencesSection, FamilySection, ...
+  pages/
+    BudgetPage/    index.tsx + BudgetSummary, BudgetList, ExpenseList, BudgetFormModal, ...
+```
+
+Rules of thumb that came out of the refactor:
+
+- Imports point at the **folder** (`from '../ui/Badge'`), so a component can gain files without
+  touching a single importer. That is what made the mechanical move a rename-only change.
+- A page keeps the **data layer** (react-query queries and mutations) and the page header; its
+  sections, lists and dialogs sit next to it in their own folders.
+- Two pages that share a screen shape share a component: `LoginPage` and `RegisterPage` both render
+  `AuthCard`, and every page and the landing page render the same `Footer`.
+- Non-component modules stay plain files: `schemas.ts` (Zod), `content.ts` (copy), `labels.ts`
+  (display maps), `calendarUtils.ts`-style helpers. They are not components, so they are not folders.
+- Dialogs own their form state (`useForm` + a reset on open) and receive `isPending` / `error` plus
+  an `onSubmit` callback, so the mutation and the cache invalidation stay in the page.
+
+### Known gap: no linter is installed
+
+`apps/web/package.json` and `apps/api/package.json` declare `lint: eslint src/ --max-warnings 0`,
+but ESLint is **not** in either `devDependencies` and there is no config file, so `npm run lint`
+fails with `'eslint' is not recognized`. The gates that do run and were used for every commit in
+this refactor are: `npx tsc --noEmit -p apps/web/tsconfig.json`, `npm run build -w apps/web`,
+`npm run test -w apps/web`, the API `tsc`/unit tests, and `npm run test:e2e -w apps/api`.
+
