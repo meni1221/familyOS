@@ -26,8 +26,8 @@ export default {
         'error-light': 'var(--color-error-light)',
       },
       fontFamily: {
-        sans: ['Heebo', 'Inter', 'system-ui', 'sans-serif'],
-        numeric: ['JetBrains Mono', 'monospace'],
+        sans: ['Heebo', 'system-ui', 'sans-serif'],
+        numeric: ['Heebo', 'system-ui', 'sans-serif'],
       },
       spacing: {
         '4': 'var(--space-4)',

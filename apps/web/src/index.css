@@ -12,7 +12,7 @@
 
 @layer base {
   html {
-    font-family: 'Heebo', 'Inter', system-ui, sans-serif;
+    font-family: 'Heebo', system-ui, sans-serif;
     scroll-behavior: smooth;
   }
 
@@ -20,10 +20,6 @@
     @apply bg-canvas text-ink antialiased;
     font-size: 0.875rem;
     line-height: 1.55;
-  }
-
-  [dir='ltr'] body {
-    font-family: 'Inter', 'Heebo', system-ui, sans-serif;
   }
 
   /* Skip link and screen reader only */
@@ -256,7 +252,7 @@
   }
 
   .text-numeric {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Heebo', system-ui, sans-serif;
     font-variant-numeric: tabular-nums;
   }
 }
