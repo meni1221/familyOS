@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { IconCheck, IconPlus } from '@tabler/icons-react';
 import Badge from '../../../components/ui/Badge';
 import DeleteButton from '../../../components/ui/DeleteButton';
@@ -9,6 +10,8 @@ import { priorityLabels, priorityVariants, statusLabels } from '../taskLabels';
 interface TaskListProps {
   tasks: Task[];
   members: FamilyMember[];
+  /** Task to bring into view, set when arriving from a notification. */
+  focusId?: string;
   /** A status flip is in flight. */
   isUpdating: boolean;
   /** A deletion is in flight, so every delete button waits. */
@@ -24,6 +27,7 @@ interface TaskListProps {
 export default function TaskList({
   tasks,
   members,
+  focusId,
   isUpdating,
   isDeleting,
   deleteError,
@@ -33,6 +37,12 @@ export default function TaskList({
 }: TaskListProps) {
   const memberName = (userId?: string) =>
     members.find((member) => member.id === userId)?.displayName;
+
+  const focusedRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (focusId) focusedRef.current?.scrollIntoView({ block: 'center' });
+  }, [focusId]);
 
   return (
     <>
@@ -58,9 +68,16 @@ export default function TaskList({
         <div className="space-y-2">
           {tasks.map((task) => {
             const isCompleted = task.status === 'COMPLETED';
+            const isFocused = task.id === focusId;
 
             return (
-              <div key={task.id} className="card flex flex-wrap items-center gap-3 py-3">
+              <div
+                key={task.id}
+                ref={isFocused ? focusedRef : undefined}
+                className={`card flex flex-wrap items-center gap-3 py-3 ${
+                  isFocused ? 'border-forest ring-2 ring-forest/30' : ''
+                }`}
+              >
                 <button
                   type="button"
                   onClick={() => onToggle(task)}

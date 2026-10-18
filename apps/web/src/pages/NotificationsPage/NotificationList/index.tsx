@@ -1,7 +1,9 @@
-import { IconBell } from '@tabler/icons-react';
+import { IconBell, IconChevronLeft } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import EmptyState from '../../../components/ui/EmptyState';
 import { formatDateTime } from '../../../lib/format';
 import type { Notification } from '../../../lib/types';
+import { notificationHref } from '../notificationHref';
 import { notificationIcon } from '../typeIcons';
 
 interface NotificationListProps {
@@ -11,7 +13,11 @@ interface NotificationListProps {
   onMarkRead: (id: string) => void;
 }
 
-/** The notifications, unread ones marked and each with its own mark-read. */
+/**
+ * The notifications, unread ones marked and each with its own mark-read. When a
+ * notification knows which item it is about, the row is a link into that item
+ * and reading it also marks it as read.
+ */
 export default function NotificationList({
   notifications,
   isMarking,
@@ -34,12 +40,10 @@ export default function NotificationList({
       {notifications.map((notification) => {
         const Icon = notificationIcon(notification.type);
         const isUnread = !notification.readAt;
+        const href = notificationHref(notification);
 
-        return (
-          <li
-            key={notification.id}
-            className={`card flex items-start gap-3 py-3 ${isUnread ? 'border-forest/40' : ''}`}
-          >
+        const body = (
+          <>
             <span
               className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
                 isUnread ? 'bg-sage-light text-forest' : 'bg-cream text-ink-secondary'
@@ -50,7 +54,9 @@ export default function NotificationList({
             </span>
 
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-ink">{notification.title}</p>
+              <p className="text-sm font-medium text-ink group-hover:text-forest">
+                {notification.title}
+              </p>
               {notification.message && (
                 <p className="break-words text-sm text-ink-secondary">{notification.message}</p>
               )}
@@ -58,6 +64,31 @@ export default function NotificationList({
                 {formatDateTime(notification.createdAt)}
               </p>
             </div>
+          </>
+        );
+
+        return (
+          <li
+            key={notification.id}
+            className={`card flex items-start gap-3 py-3 ${isUnread ? 'border-forest/40' : ''}`}
+          >
+            {href ? (
+              <Link
+                to={href}
+                onClick={() => {
+                  if (isUnread) onMarkRead(notification.id);
+                }}
+                className="group flex min-w-0 flex-1 items-start gap-3"
+              >
+                {body}
+                <IconChevronLeft
+                  className="mt-2 h-4 w-4 shrink-0 text-ink-secondary"
+                  aria-hidden="true"
+                />
+              </Link>
+            ) : (
+              <div className="flex min-w-0 flex-1 items-start gap-3">{body}</div>
+            )}
 
             {isUnread && (
               <button

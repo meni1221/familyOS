@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconCheck, IconPlus } from '@tabler/icons-react';
+import { useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { useFamilyMembers } from '../../hooks/useFamily';
 import EmptyState from '../../components/ui/EmptyState';
@@ -25,6 +26,16 @@ export default function TasksPage() {
   const client = useQueryClient();
   const [filter, setFilter] = useState<TaskFilter>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // A notification link arrives as `/app/tasks?focus=<id>`: the task is then
+  // brought into view, which also means showing the whole list rather than
+  // whatever filter was left behind.
+  const [searchParams] = useSearchParams();
+  const focusId = searchParams.get('focus') ?? undefined;
+
+  useEffect(() => {
+    if (focusId) setFilter('all');
+  }, [focusId]);
 
   const { data: tasks, isLoading, error } = useQuery({
     queryKey: ['tasks'],
@@ -101,6 +112,7 @@ export default function TasksPage() {
       <TaskList
         tasks={filteredTasks}
         members={members ?? []}
+        focusId={focusId}
         isUpdating={updateTask.isPending}
         isDeleting={deleteTask.isPending}
         deleteError={deleteTask.error}
