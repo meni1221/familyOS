@@ -1,9 +1,23 @@
-﻿import { Controller, Get, Post, Patch, Delete, Body, Param, Req } from '@nestjs/common';
+﻿import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { BudgetService } from './budget.service';
 import { Request } from 'express';
-import { ValidationPipe } from '@nestjs/common';
-import { CreateExpenseDto } from './dto/index';
+import {
+  CreateBudgetDto,
+  UpdateBudgetDto,
+  CreateExpenseDto,
+  UpdateExpenseDto,
+} from './dto/index';
 
 @ApiTags('budget')
 @Controller('api/v1/budget')
@@ -18,6 +32,15 @@ export class BudgetController {
     return this.budgetService.getBudgets(user.familyId);
   }
 
+  @Post()
+  @ApiOperation({ summary: 'Create a budget' })
+  @ApiBody({ type: CreateBudgetDto })
+  async createBudget(@Body() body: CreateBudgetDto, @Req() req: Request) {
+    const user = (req as any).user;
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
+    return this.budgetService.createBudget(user.familyId, body);
+  }
+
   @Get('expenses')
   @ApiOperation({ summary: 'List expenses' })
   async getExpenses(@Req() req: Request) {
@@ -29,21 +52,23 @@ export class BudgetController {
   @Post('expenses')
   @ApiOperation({ summary: 'Create an expense' })
   @ApiBody({ type: CreateExpenseDto })
-  async createExpense(
-    @Body(new ValidationPipe({ whitelist: true, transform: true })) body: CreateExpenseDto,
-    @Req() req: Request
-  ) {
+  async createExpense(@Body() body: CreateExpenseDto, @Req() req: Request) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.budgetService.createExpense(user.familyId, user.id, body);
   }
 
   @Patch('expenses/:id')
   @ApiOperation({ summary: 'Update an expense' })
   @ApiParam({ name: 'id', type: String })
-  async updateExpense(@Param('id') id: string, @Body() body: any, @Req() req: Request) {
+  @ApiBody({ type: UpdateExpenseDto })
+  async updateExpense(
+    @Param('id') id: string,
+    @Body() body: UpdateExpenseDto,
+    @Req() req: Request
+  ) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.budgetService.updateExpense(user.familyId, id, body);
   }
 
@@ -52,7 +77,30 @@ export class BudgetController {
   @ApiParam({ name: 'id', type: String })
   async deleteExpense(@Param('id') id: string, @Req() req: Request) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.budgetService.deleteExpense(user.familyId, id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a budget' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiBody({ type: UpdateBudgetDto })
+  async updateBudget(
+    @Param('id') id: string,
+    @Body() body: UpdateBudgetDto,
+    @Req() req: Request
+  ) {
+    const user = (req as any).user;
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
+    return this.budgetService.updateBudget(user.familyId, id, body);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a budget' })
+  @ApiParam({ name: 'id', type: String })
+  async deleteBudget(@Param('id') id: string, @Req() req: Request) {
+    const user = (req as any).user;
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
+    return this.budgetService.deleteBudget(user.familyId, id);
   }
 }

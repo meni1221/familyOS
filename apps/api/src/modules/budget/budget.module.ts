@@ -4,6 +4,7 @@ import { BudgetController } from './budget.controller';
 import { BudgetService } from './budget.service';
 import { Budget, BudgetSchema } from '../../database/models/budget.model';
 import { Expense, ExpenseSchema } from '../../database/models/expense.model';
+import { RealtimeModule } from '../realtime/realtime.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { Expense, ExpenseSchema } from '../../database/models/expense.model';
       { name: Budget.name, schema: BudgetSchema },
       { name: Expense.name, schema: ExpenseSchema },
     ]),
+    RealtimeModule,
   ],
   controllers: [BudgetController],
   providers: [BudgetService],
