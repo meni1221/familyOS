@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
 import { Request } from 'express';
-import { ValidationPipe } from '@nestjs/common';
 import { CreateTaskDto, UpdateTaskDto } from './dto/index';
 
 @ApiTags('tasks')
@@ -21,12 +20,9 @@ export class TasksController {
   @Post()
   @ApiOperation({ summary: 'Create a new task' })
   @ApiBody({ type: CreateTaskDto })
-  async createTask(
-    @Body(new ValidationPipe({ whitelist: true, transform: true })) body: CreateTaskDto,
-    @Req() req: Request
-  ) {
+  async createTask(@Body() body: CreateTaskDto, @Req() req: Request) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.tasksService.createTask(user.familyId, user.id, body);
   }
 
@@ -36,11 +32,11 @@ export class TasksController {
   @ApiBody({ type: UpdateTaskDto })
   async updateTask(
     @Param('id') id: string,
-    @Body(new ValidationPipe({ whitelist: true, transform: true })) body: UpdateTaskDto,
+    @Body() body: UpdateTaskDto,
     @Req() req: Request
   ) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.tasksService.updateTask(user.familyId, id, body);
   }
 
@@ -49,7 +45,7 @@ export class TasksController {
   @ApiParam({ name: 'id', type: String })
   async deleteTask(@Param('id') id: string, @Req() req: Request) {
     const user = (req as any).user;
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
     return this.tasksService.deleteTask(user.familyId, id);
   }
 }

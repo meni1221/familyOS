@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsIn, IsDateString, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsIn, IsDateString, IsMongoId } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateTaskDto {
@@ -32,8 +32,8 @@ export class UpdateTaskDto {
   @IsDateString()
   dueAt?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-assignee' })
+  @ApiPropertyOptional({ example: '507f1f77bcf86cd799439011' })
   @IsOptional()
-  @IsUUID()
+  @IsMongoId({ message: 'מזהה המשתמש שהוקצה אינו תקין' })
   assigneeUserId?: string;
 }
