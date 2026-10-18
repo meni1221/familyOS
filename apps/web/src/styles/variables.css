@@ -1,0 +1,63 @@
+:root {
+  /* Brand Colors */
+  --color-forest: #21483C;
+  --color-forest-deep: #17392F;
+  --color-sage: #82998A;
+  --color-sage-light: #E8EDE8;
+  --color-gold: #D9A05F;
+  --color-gold-light: #F5E6D3;
+
+  /* Background Colors */
+  --color-canvas: #FAF7F0;
+  --color-surface: #FFFFFF;
+  --color-cream: #F2EBDD;
+  --color-sand: #E8D5B8;
+  --color-sand-light: #F5EDE3;
+
+  /* Text Colors */
+  --color-ink: #26352F;
+  --color-ink-secondary: #6F7B73;
+
+  /* Border Colors */
+  --color-border: #E5E0D6;
+
+  /* Status Colors */
+  --color-success: #3F8063;
+  --color-success-light: #E8F0EB;
+  --color-warning: #C58A3A;
+  --color-warning-light: #F5EDE3;
+  --color-error: #B94E48;
+  --color-error-light: #F5E8E8;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(38, 53, 47, 0.06), 0 1px 2px rgba(38, 53, 47, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(38, 53, 47, 0.08), 0 2px 4px rgba(38, 53, 47, 0.04);
+  --shadow-modal: 0 8px 30px rgba(38, 53, 47, 0.12), 0 2px 8px rgba(38, 53, 47, 0.08);
+
+  /* Typography */
+  --font-sans: 'Heebo', 'Inter', system-ui, sans-serif;
+  --font-numeric: 'JetBrains Mono', monospace;
+
+  /* Spacing */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+
+  /* Border Radius */
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+}
+
+/* Dark mode support (future) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Reserved for future dark mode */
+  }
+}
