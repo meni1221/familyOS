@@ -20,7 +20,7 @@ interface BrandLogoProps {
  * The image is decorative (alt="") because the wordmark already carries the
  * accessible name, avoiding a duplicated announcement in screen readers.
  */
-export default function BrandLogo({ to, size = 'sm', className = '' }: BrandLogoProps) {
+const BrandLogo = ({ to, size = 'sm', className = '' }: BrandLogoProps) => {
   const styles = LOGO_SIZES[size];
 
   const content = (
@@ -46,4 +46,6 @@ export default function BrandLogo({ to, size = 'sm', className = '' }: BrandLogo
   }
 
   return <span className={classes}>{content}</span>;
-}
+};
+
+export default BrandLogo;

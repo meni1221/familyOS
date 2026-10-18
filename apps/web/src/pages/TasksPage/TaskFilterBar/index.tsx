@@ -12,7 +12,7 @@ interface TaskFilterBarProps {
 }
 
 /** All / open / completed, as one row of toggle buttons. */
-export default function TaskFilterBar({ filter, onChange }: TaskFilterBarProps) {
+const TaskFilterBar = ({ filter, onChange }: TaskFilterBarProps) => {
   return (
     <div className="mb-4 flex gap-2">
       {FILTERS.map((item) => (
@@ -32,4 +32,6 @@ export default function TaskFilterBar({ filter, onChange }: TaskFilterBarProps) 
       ))}
     </div>
   );
-}
+};
+
+export default TaskFilterBar;

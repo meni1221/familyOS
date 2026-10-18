@@ -2,7 +2,7 @@ import { FEATURES } from '../content';
 import SectionHeading from '../SectionHeading';
 
 /** What the product does, one card per pillar. */
-export default function FeatureGrid() {
+const FeatureGrid = () => {
   return (
     <section id="features" className="border-y border-border bg-surface py-16 md:py-24">
       <div className="mx-auto max-w-content px-4">
@@ -24,4 +24,6 @@ export default function FeatureGrid() {
       </div>
     </section>
   );
-}
+};
+
+export default FeatureGrid;

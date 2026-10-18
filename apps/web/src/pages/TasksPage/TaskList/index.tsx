@@ -24,7 +24,7 @@ interface TaskListProps {
 }
 
 /** The filtered task list, each row with its checkbox, badges and delete. */
-export default function TaskList({
+const TaskList = ({
   tasks,
   members,
   focusId,
@@ -34,7 +34,7 @@ export default function TaskList({
   onCreate,
   onToggle,
   onDelete,
-}: TaskListProps) {
+}: TaskListProps) => {
   const memberName = (userId?: string) =>
     members.find((member) => member.id === userId)?.displayName;
 
@@ -132,4 +132,6 @@ export default function TaskList({
       )}
     </>
   );
-}
+};
+
+export default TaskList;

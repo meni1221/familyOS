@@ -12,7 +12,7 @@ import LandingCta from './LandingCta';
  * The public front door. Each band of the page is its own component next to
  * this file; the copy they render lives in `content.ts`.
  */
-export default function LandingPage() {
+const LandingPage = () => {
   useSeo({ title: SITE_TAGLINE, path: '/' });
 
   return (
@@ -30,4 +30,6 @@ export default function LandingPage() {
       <Footer />
     </div>
   );
-}
+};
+
+export default LandingPage;

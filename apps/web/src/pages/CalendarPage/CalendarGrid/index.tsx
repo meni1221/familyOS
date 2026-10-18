@@ -18,14 +18,14 @@ interface CalendarGridProps {
 }
 
 /** The month card: navigation, weekday header and the day cells. */
-export default function CalendarGrid({
+const CalendarGrid = ({
   currentDate,
   events,
   isLoading,
   hasError,
   onMonthChange,
   onSelectDay,
-}: CalendarGridProps) {
+}: CalendarGridProps) => {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -130,4 +130,6 @@ export default function CalendarGrid({
       )}
     </div>
   );
-}
+};
+
+export default CalendarGrid;

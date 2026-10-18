@@ -5,7 +5,7 @@ import BrandLogo from '../../../components/ui/BrandLogo';
 import { NAV_LINKS } from '../content';
 
 /** The public header: brand, anchors, and the mobile menu panel. */
-export default function LandingHeader() {
+const LandingHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -79,4 +79,6 @@ export default function LandingHeader() {
       )}
     </header>
   );
-}
+};
+
+export default LandingHeader;

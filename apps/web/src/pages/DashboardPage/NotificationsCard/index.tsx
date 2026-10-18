@@ -6,7 +6,7 @@ interface NotificationsCardProps {
 }
 
 /** How many notifications are still unread. */
-export default function NotificationsCard({ unreadCount }: NotificationsCardProps) {
+const NotificationsCard = ({ unreadCount }: NotificationsCardProps) => {
   return (
     <DashboardCard title="התראות" to="/app/notifications">
       <div className="flex items-center gap-3">
@@ -20,4 +20,6 @@ export default function NotificationsCard({ unreadCount }: NotificationsCardProp
       </div>
     </DashboardCard>
   );
-}
+};
+
+export default NotificationsCard;

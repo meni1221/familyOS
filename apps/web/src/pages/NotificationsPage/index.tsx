@@ -8,16 +8,16 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import type { Notification } from '../../lib/types';
 import NotificationList from './NotificationList';
 
-async function fetchNotifications(): Promise<Notification[]> {
+const fetchNotifications = async (): Promise<Notification[]> => {
   const response = await api.get<{ data: Notification[] }>('/api/v1/notifications');
   return response.data ?? [];
-}
+};
 
 /**
  * The notification centre: the unread counter, "mark all" and the list. The
  * list lives next to this file.
  */
-export default function NotificationsPage() {
+const NotificationsPage = () => {
   const client = useQueryClient();
   const toast = useToast();
 
@@ -97,4 +97,6 @@ export default function NotificationsPage() {
       />
     </div>
   );
-}
+};
+
+export default NotificationsPage;

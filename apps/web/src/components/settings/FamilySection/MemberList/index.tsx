@@ -7,7 +7,7 @@ interface MemberListProps {
 }
 
 /** Who belongs to the family, with their role. */
-export default function MemberList({ members }: MemberListProps) {
+const MemberList = ({ members }: MemberListProps) => {
   return (
     <ul className="space-y-2">
       {members.map((member) => (
@@ -33,4 +33,6 @@ export default function MemberList({ members }: MemberListProps) {
       {members.length === 0 && <li className="text-sm text-ink-secondary">אין חברים להצגה</li>}
     </ul>
   );
-}
+};
+
+export default MemberList;

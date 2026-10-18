@@ -6,7 +6,7 @@ interface BadgeProps {
   className?: string;
 }
 
-export default function Badge({ variant = 'neutral', children, className }: BadgeProps) {
+const Badge = ({ variant = 'neutral', children, className }: BadgeProps) => {
   const variantClasses = {
     success: 'bg-green-100 text-success',
     warning: 'bg-amber-100 text-warning',
@@ -25,4 +25,6 @@ export default function Badge({ variant = 'neutral', children, className }: Badg
       {children}
     </span>
   );
-}
+};
+
+export default Badge;

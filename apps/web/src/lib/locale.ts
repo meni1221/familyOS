@@ -22,21 +22,21 @@ const FORMAT_LOCALES: Record<Locale, string> = {
   en: 'en-GB',
 };
 
-export function normalizeLocale(value: string | null | undefined): Locale {
+export const normalizeLocale = (value: string | null | undefined): Locale => {
   return value === 'en' ? 'en' : 'he';
-}
+};
 
-export function getStoredLocale(): Locale {
+export const getStoredLocale = (): Locale => {
   if (typeof window === 'undefined') return 'he';
   try {
     return normalizeLocale(window.localStorage.getItem(STORAGE_KEY));
   } catch {
     return 'he';
   }
-}
+};
 
 /** Applies a locale to the document and remembers it for the next visit. */
-export function applyLocale(locale: Locale): void {
+export const applyLocale = (locale: Locale): void => {
   const direction = locale === 'he' ? 'rtl' : 'ltr';
   const root = document.documentElement;
 
@@ -49,4 +49,4 @@ export function applyLocale(locale: Locale): void {
   } catch {
     // Private browsing: the preference just won't survive a reload.
   }
-}
+};

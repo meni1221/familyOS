@@ -27,7 +27,7 @@ const schema = z.object({
 
 type ProfileFormData = z.infer<typeof schema>;
 
-export default function ProfileSection() {
+const ProfileSection = () => {
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
   const toast = useToast();
@@ -143,4 +143,6 @@ export default function ProfileSection() {
       )}
     </SectionCard>
   );
-}
+};
+
+export default ProfileSection;

@@ -12,7 +12,7 @@ import { useSeo } from '../../../hooks/useSeo';
  *
  * The app sits behind a login, so it keeps itself out of search indexes.
  */
-export default function AppShell() {
+const AppShell = () => {
   useSeo({ title: 'האזור האישי', noIndex: true });
 
   return (
@@ -35,4 +35,6 @@ export default function AppShell() {
       </div>
     </div>
   );
-}
+};
+
+export default AppShell;

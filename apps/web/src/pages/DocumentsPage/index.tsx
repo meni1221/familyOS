@@ -13,7 +13,7 @@ import type { DocumentFormData } from './schemas';
  * The family document store: the list and the upload dialog. The pieces live
  * next to this file.
  */
-export default function DocumentsPage() {
+const DocumentsPage = () => {
   const client = useQueryClient();
   const toast = useToast();
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -91,4 +91,6 @@ export default function DocumentsPage() {
       />
     </div>
   );
-}
+};
+
+export default DocumentsPage;

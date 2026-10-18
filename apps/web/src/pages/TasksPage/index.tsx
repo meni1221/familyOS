@@ -15,16 +15,16 @@ import TaskFormModal from './TaskFormModal';
 import type { TaskFilter } from './types';
 import type { TaskFormData } from './schemas';
 
-async function fetchTasks(): Promise<Task[]> {
+const fetchTasks = async (): Promise<Task[]> => {
   const response = await api.get<{ data: Task[] }>('/api/v1/tasks');
   return response.data ?? [];
-}
+};
 
 /**
  * The family task board: the filter row, the list and the dialog that adds a
  * task. The pieces live next to this file.
  */
-export default function TasksPage() {
+const TasksPage = () => {
   const client = useQueryClient();
   const toast = useToast();
   const [filter, setFilter] = useState<TaskFilter>('all');
@@ -148,4 +148,6 @@ export default function TasksPage() {
       />
     </div>
   );
-}
+};
+
+export default TasksPage;

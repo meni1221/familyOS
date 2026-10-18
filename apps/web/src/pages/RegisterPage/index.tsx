@@ -10,7 +10,7 @@ import { api, ApiError } from '../../lib/api';
 import type { AuthUser } from '../../hooks/useAuth';
 import { registerSchema, type RegisterFormData } from './schemas';
 
-export default function RegisterPage() {
+const RegisterPage = () => {
   useSeo({ title: 'הרשמה', noIndex: true, path: '/register' });
 
   const navigate = useNavigate();
@@ -117,4 +117,6 @@ export default function RegisterPage() {
       </p>
     </AuthCard>
   );
-}
+};
+
+export default RegisterPage;

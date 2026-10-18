@@ -15,7 +15,7 @@ interface InviteFormProps {
  * Invites someone by email and shows the resulting link, since the server does
  * not send mail yet.
  */
-export default function InviteForm({ canInvite }: InviteFormProps) {
+const InviteForm = ({ canInvite }: InviteFormProps) => {
   const createInvitation = useCreateInvitation();
   const toast = useToast();
   const [inviteUrl, setInviteUrl] = useState('');
@@ -130,4 +130,6 @@ export default function InviteForm({ canInvite }: InviteFormProps) {
       )}
     </>
   );
-}
+};
+
+export default InviteForm;

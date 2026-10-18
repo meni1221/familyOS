@@ -10,7 +10,7 @@ interface AuthCardProps {
 }
 
 /** The centred card the login and register screens share. */
-export default function AuthCard({ title, subtitle, error, children }: AuthCardProps) {
+const AuthCard = ({ title, subtitle, error, children }: AuthCardProps) => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-md">
@@ -26,4 +26,6 @@ export default function AuthCard({ title, subtitle, error, children }: AuthCardP
       </div>
     </div>
   );
-}
+};
+
+export default AuthCard;

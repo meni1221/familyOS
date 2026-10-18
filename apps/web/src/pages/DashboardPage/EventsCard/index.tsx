@@ -7,7 +7,7 @@ interface EventsCardProps {
 }
 
 /** Up to three events happening today. */
-export default function EventsCard({ events }: EventsCardProps) {
+const EventsCard = ({ events }: EventsCardProps) => {
   return (
     <DashboardCard title="אירועים היום" to="/app/calendar">
       {events.length ? (
@@ -26,4 +26,6 @@ export default function EventsCard({ events }: EventsCardProps) {
       )}
     </DashboardCard>
   );
-}
+};
+
+export default EventsCard;

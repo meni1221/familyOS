@@ -7,7 +7,7 @@ interface TasksCardProps {
 }
 
 /** Up to three tasks due today, plus how many are past their date. */
-export default function TasksCard({ tasks, overdueCount }: TasksCardProps) {
+const TasksCard = ({ tasks, overdueCount }: TasksCardProps) => {
   return (
     <DashboardCard title="משימות להיום" to="/app/tasks">
       {tasks.length ? (
@@ -28,4 +28,6 @@ export default function TasksCard({ tasks, overdueCount }: TasksCardProps) {
       )}
     </DashboardCard>
   );
-}
+};
+
+export default TasksCard;

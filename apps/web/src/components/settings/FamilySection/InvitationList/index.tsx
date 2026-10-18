@@ -15,7 +15,7 @@ interface InvitationListProps {
 }
 
 /** The invitations sent so far, with their state and expiry. */
-export default function InvitationList({ invitations, canInvite }: InvitationListProps) {
+const InvitationList = ({ invitations, canInvite }: InvitationListProps) => {
   const revokeInvitation = useRevokeInvitation();
   const toast = useToast();
   const confirm = useConfirm();
@@ -70,4 +70,6 @@ export default function InvitationList({ invitations, canInvite }: InvitationLis
       )}
     </ul>
   );
-}
+};
+
+export default InvitationList;

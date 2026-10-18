@@ -11,12 +11,12 @@ interface BudgetSummaryProps {
 }
 
 /** The three numbers people open the budget screen for. */
-export default function BudgetSummary({
+const BudgetSummary = ({
   monthlyExpenses,
   budgetTotal,
   remaining,
   currency,
-}: BudgetSummaryProps) {
+}: BudgetSummaryProps) => {
   return (
     <div className="mb-6 grid gap-4 md:grid-cols-3">
       <div className="card">
@@ -43,4 +43,6 @@ export default function BudgetSummary({
       </div>
     </div>
   );
-}
+};
+
+export default BudgetSummary;

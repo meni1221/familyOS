@@ -8,7 +8,7 @@ import { useToast } from '../../../hooks/useToast';
  * (`/app/settings?invite=<token>`). The token is only consumed on demand, so a
  * user who is still signed in as somebody else is not silently joined.
  */
-export default function InvitationBanner() {
+const InvitationBanner = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const acceptInvitation = useAcceptInvitation();
   const toast = useToast();
@@ -68,4 +68,6 @@ export default function InvitationBanner() {
       )}
     </div>
   );
-}
+};
+
+export default InvitationBanner;

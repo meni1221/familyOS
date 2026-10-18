@@ -25,16 +25,16 @@ import { ContentGuard } from './components/security';
 import { useRealtimeConnection } from './hooks/useRealtime';
 
 /** Mounts the realtime socket once, for the lifetime of the app. */
-function RealtimeBridge() {
+const RealtimeBridge = () => {
   useRealtimeConnection();
   return null;
-}
+};
 
 /**
  * Keeps `<html lang/dir>` and the formatter locale in sync with the language
  * saved on the account (falling back to the last choice made on this device).
  */
-function LocaleSync() {
+const LocaleSync = () => {
   const { user } = useAuth();
 
   useEffect(() => {
@@ -42,9 +42,9 @@ function LocaleSync() {
   }, [user]);
 
   return null;
-}
+};
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -60,9 +60,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return <>{children}</>;
-}
+};
 
-function PublicRoute({ children }: { children: React.ReactNode }) {
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -78,9 +78,9 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   }
 
   return <>{children}</>;
-}
+};
 
-export default function App() {
+const App = () => {
   return (
     <ToastProvider>
       <ConfirmProvider>
@@ -143,4 +143,6 @@ export default function App() {
       <AccessibilityWidget />
     </ToastProvider>
   );
-}
+};
+
+export default App;

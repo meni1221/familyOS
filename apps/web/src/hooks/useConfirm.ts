@@ -15,7 +15,7 @@ import { ConfirmContext } from '../components/ui/ConfirmProvider/context';
  * });
  * ```
  */
-export function useConfirm() {
+export const useConfirm = () => {
   const confirm = useContext(ConfirmContext);
 
   if (!confirm) {
@@ -23,4 +23,4 @@ export function useConfirm() {
   }
 
   return confirm;
-}
+};

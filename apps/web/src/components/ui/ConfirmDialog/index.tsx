@@ -21,7 +21,7 @@ interface ConfirmDialogProps {
  * button rather than on the confirming action, so `Enter` cannot destroy
  * anything by accident.
  */
-export default function ConfirmDialog({
+const ConfirmDialog = ({
   open,
   title,
   description,
@@ -30,7 +30,7 @@ export default function ConfirmDialog({
   tone,
   onConfirm,
   onCancel,
-}: ConfirmDialogProps) {
+}: ConfirmDialogProps) => {
   return (
     <Modal
       open={open}
@@ -55,4 +55,6 @@ export default function ConfirmDialog({
       {description && <p className="text-sm text-ink-secondary">{description}</p>}
     </Modal>
   );
-}
+};
+
+export default ConfirmDialog;

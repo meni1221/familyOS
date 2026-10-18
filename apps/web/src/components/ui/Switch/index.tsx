@@ -11,14 +11,14 @@ interface SwitchRowProps {
  * Accessible on/off row: a real `role="switch"` button with a 24×44px hit area
  * (WCAG 2.2 target size) and the label wired up through `aria-label`.
  */
-export default function SwitchRow({
+const SwitchRow = ({
   label,
   checked,
   onChange,
   description,
   icon,
   disabled = false,
-}: SwitchRowProps) {
+}: SwitchRowProps) => {
   return (
     <div className="flex items-center justify-between gap-3 rounded-4 border border-border px-3 py-2">
       <span className="flex min-w-0 items-center gap-2">
@@ -54,4 +54,6 @@ export default function SwitchRow({
       </button>
     </div>
   );
-}
+};
+
+export default SwitchRow;

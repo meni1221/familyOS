@@ -13,7 +13,7 @@ interface FooterProps {
  * The single footer for the whole product — marketing page and app alike — so
  * the brand, the legal links and the credit never drift apart.
  */
-export default function Footer({ className = '' }: FooterProps) {
+const Footer = ({ className = '' }: FooterProps) => {
   const year = new Date().getFullYear();
 
   return (
@@ -53,4 +53,6 @@ export default function Footer({ className = '' }: FooterProps) {
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

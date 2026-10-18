@@ -1,6 +1,6 @@
 import { useSeo } from '../../hooks/useSeo';
 
-export default function PrivacyPage() {
+const PrivacyPage = () => {
   useSeo({ title: 'מדיניות פרטיות', path: '/privacy' });
 
   return (
@@ -92,4 +92,6 @@ export default function PrivacyPage() {
       </div>
     </div>
   );
-}
+};
+
+export default PrivacyPage;

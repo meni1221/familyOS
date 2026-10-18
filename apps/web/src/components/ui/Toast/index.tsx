@@ -41,7 +41,7 @@ interface ToastProps {
 }
 
 /** One message: icon, text, and the way out. */
-export default function Toast({ toast, onDismiss, onPause, onResume }: ToastProps) {
+const Toast = ({ toast, onDismiss, onPause, onResume }: ToastProps) => {
   const { icon: Icon, shell, iconClass } = VARIANT_STYLES[toast.variant];
 
   return (
@@ -72,4 +72,6 @@ export default function Toast({ toast, onDismiss, onPause, onResume }: ToastProp
       </button>
     </div>
   );
-}
+};
+
+export default Toast;

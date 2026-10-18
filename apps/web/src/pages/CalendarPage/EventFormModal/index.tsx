@@ -16,14 +16,14 @@ interface EventFormModalProps {
 }
 
 /** Dialog for adding one calendar event. */
-export default function EventFormModal({
+const EventFormModal = ({
   open,
   defaultDate,
   isPending,
   error,
   onClose,
   onSubmit,
-}: EventFormModalProps) {
+}: EventFormModalProps) => {
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -155,4 +155,6 @@ export default function EventFormModal({
       </form>
     </Modal>
   );
-}
+};
+
+export default EventFormModal;

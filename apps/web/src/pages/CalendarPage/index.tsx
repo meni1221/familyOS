@@ -16,7 +16,7 @@ import type { EventFormData } from './schemas';
  * The family calendar: one month at a time, with the list of that month's events
  * underneath. The grid, the list and the dialog live next to this file.
  */
-export default function CalendarPage() {
+const CalendarPage = () => {
   const client = useQueryClient();
   const toast = useToast();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -118,4 +118,6 @@ export default function CalendarPage() {
       />
     </div>
   );
-}
+};
+
+export default CalendarPage;

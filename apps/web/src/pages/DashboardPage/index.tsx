@@ -12,15 +12,15 @@ import BudgetCard from './BudgetCard';
 import BabyCard from './BabyCard';
 import QuickActions from './QuickActions';
 
-async function fetchDashboard(): Promise<DashboardPayload> {
+const fetchDashboard = async (): Promise<DashboardPayload> => {
   return api.get<DashboardPayload>('/api/v1/dashboard');
-}
+};
 
 /**
  * The first screen after login: what is due, what is happening, and shortcuts.
  * Each card lives next to this file.
  */
-export default function DashboardPage() {
+const DashboardPage = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['dashboard'],
     queryFn: fetchDashboard,
@@ -74,4 +74,6 @@ export default function DashboardPage() {
       <QuickActions />
     </div>
   );
-}
+};
+
+export default DashboardPage;

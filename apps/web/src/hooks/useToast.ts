@@ -10,7 +10,7 @@ import { ToastContext } from '../components/ui/Toast/context';
  * toast.success('המשימה נוצרה');
  * ```
  */
-export function useToast() {
+export const useToast = () => {
   const api = useContext(ToastContext);
 
   if (!api) {
@@ -18,4 +18,4 @@ export function useToast() {
   }
 
   return api;
-}
+};

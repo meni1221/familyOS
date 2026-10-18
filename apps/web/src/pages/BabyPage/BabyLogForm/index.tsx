@@ -13,7 +13,7 @@ interface BabyLogFormProps {
 }
 
 /** Records one event: feeding, sleep, diaper or a plain note. */
-export default function BabyLogForm({ isPending, error, onSubmit }: BabyLogFormProps) {
+const BabyLogForm = ({ isPending, error, onSubmit }: BabyLogFormProps) => {
   const form = useForm<LogFormData>({
     resolver: zodResolver(logSchema),
     defaultValues: { type: 'FEEDING', occurredAt: toDateTimeInputValue() },
@@ -132,4 +132,6 @@ export default function BabyLogForm({ isPending, error, onSubmit }: BabyLogFormP
       </form>
     </div>
   );
-}
+};
+
+export default BabyLogForm;

@@ -14,7 +14,7 @@ interface ExpenseListProps {
 }
 
 /** Every expense recorded, newest first as the API returns them. */
-export default function ExpenseList({ expenses, isDeleting, onCreate, onDelete }: ExpenseListProps) {
+const ExpenseList = ({ expenses, isDeleting, onCreate, onDelete }: ExpenseListProps) => {
   return (
     <div>
       <h2 className="section-title mb-3">הוצאות</h2>
@@ -69,4 +69,6 @@ export default function ExpenseList({ expenses, isDeleting, onCreate, onDelete }
       )}
     </div>
   );
-}
+};
+
+export default ExpenseList;

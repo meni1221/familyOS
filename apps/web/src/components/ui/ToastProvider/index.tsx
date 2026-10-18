@@ -26,7 +26,7 @@ const MAX_VISIBLE = 3;
  * (errors through `role="alert"`), and their countdown pauses while the user
  * hovers or focuses them.
  */
-export default function ToastProvider({ children }: { children: ReactNode }) {
+const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<ToastRecord[]>([]);
   const timers = useRef(new Map<number, number>());
   const nextId = useRef(1);
@@ -140,4 +140,6 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
       </div>
     </ToastContext.Provider>
   );
-}
+};
+
+export default ToastProvider;

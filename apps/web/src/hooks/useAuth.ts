@@ -16,16 +16,16 @@ interface AuthState {
   refetch: () => void;
 }
 
-async function fetchCurrentUser(): Promise<AuthUser | null> {
+const fetchCurrentUser = async (): Promise<AuthUser | null> => {
   try {
     return await api.get<AuthUser | null>('/api/v1/auth/me');
   } catch {
     // Not signed in (or the API is briefly unreachable): treat as anonymous.
     return null;
   }
-}
+};
 
-export function useAuth(): AuthState {
+export const useAuth = (): AuthState => {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['auth'],
     queryFn: fetchCurrentUser,
@@ -40,10 +40,10 @@ export function useAuth(): AuthState {
       void refetch();
     },
   };
-}
+};
 
 /** Ends the session server-side and drops every cached query. */
-export function useLogout() {
+export const useLogout = () => {
   const client = useQueryClient();
 
   return async () => {
@@ -56,4 +56,4 @@ export function useLogout() {
       client.clear();
     }
   };
-}
+};

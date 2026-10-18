@@ -15,13 +15,13 @@ interface EventListProps {
 }
 
 /** Everything on the calendar this month, as a plain list. */
-export default function EventList({
+const EventList = ({
   events,
   isDeleting,
   deleteError,
   onCreate,
   onDelete,
-}: EventListProps) {
+}: EventListProps) => {
   return (
     <div className="mt-6">
       <h2 className="section-title mb-3">אירועי החודש</h2>
@@ -75,4 +75,6 @@ export default function EventList({
       )}
     </div>
   );
-}
+};
+
+export default EventList;

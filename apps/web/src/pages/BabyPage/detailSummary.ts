@@ -7,7 +7,7 @@ const DIAPER_LABELS: Record<string, string> = {
 };
 
 /** The extras of a log — amount, sleep length, diaper kind — as display parts. */
-export function detailSummary(log: BabyLog): string[] {
+export const detailSummary = (log: BabyLog): string[] => {
   const parts: string[] = [];
   const details = (log.details ?? {}) as Record<string, unknown>;
 
@@ -18,4 +18,4 @@ export function detailSummary(log: BabyLog): string[] {
   }
 
   return parts;
-}
+};

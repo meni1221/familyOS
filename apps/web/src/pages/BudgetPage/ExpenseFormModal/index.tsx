@@ -18,14 +18,14 @@ interface ExpenseFormModalProps {
 }
 
 /** Dialog for recording one expense. */
-export default function ExpenseFormModal({
+const ExpenseFormModal = ({
   open,
   defaultCurrency,
   isPending,
   error,
   onClose,
   onSubmit,
-}: ExpenseFormModalProps) {
+}: ExpenseFormModalProps) => {
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
@@ -156,4 +156,6 @@ export default function ExpenseFormModal({
       </form>
     </Modal>
   );
-}
+};
+
+export default ExpenseFormModal;

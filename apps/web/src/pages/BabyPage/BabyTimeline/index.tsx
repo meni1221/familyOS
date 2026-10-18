@@ -18,13 +18,13 @@ interface BabyTimelineProps {
 }
 
 /** The recorded activity, grouped by day, newest first. */
-export default function BabyTimeline({
+const BabyTimeline = ({
   logs,
   isLoading,
   isDeleting,
   onAdd,
   onDelete,
-}: BabyTimelineProps) {
+}: BabyTimelineProps) => {
   const groupedLogs = useMemo(() => {
     const groups = new Map<string, BabyLog[]>();
     for (const log of logs) {
@@ -106,4 +106,6 @@ export default function BabyTimeline({
       ))}
     </div>
   );
-}
+};
+
+export default BabyTimeline;

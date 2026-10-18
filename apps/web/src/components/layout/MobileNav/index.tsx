@@ -15,7 +15,7 @@ const navItems = [
   { to: '/app/budget', icon: IconWallet, label: 'תקציב' },
 ];
 
-export default function MobileNav() {
+const MobileNav = () => {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
       {navItems.map((item) => (
@@ -35,4 +35,6 @@ export default function MobileNav() {
       ))}
     </nav>
   );
-}
+};
+
+export default MobileNav;

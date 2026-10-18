@@ -18,14 +18,14 @@ interface TaskFormModalProps {
 }
 
 /** Dialog for adding one task. */
-export default function TaskFormModal({
+const TaskFormModal = ({
   open,
   members,
   isPending,
   error,
   onClose,
   onSubmit,
-}: TaskFormModalProps) {
+}: TaskFormModalProps) => {
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     defaultValues: { priority: 'MEDIUM', title: '', description: '', category: '' },
@@ -157,4 +157,6 @@ export default function TaskFormModal({
       </form>
     </Modal>
   );
-}
+};
+
+export default TaskFormModal;

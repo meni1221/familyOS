@@ -10,7 +10,7 @@ import { api, ApiError } from '../../lib/api';
 import type { AuthUser } from '../../hooks/useAuth';
 import { loginSchema, type LoginFormData } from './schemas';
 
-export default function LoginPage() {
+const LoginPage = () => {
   useSeo({ title: 'התחברות', noIndex: true, path: '/login' });
 
   const navigate = useNavigate();
@@ -81,4 +81,6 @@ export default function LoginPage() {
       </p>
     </AuthCard>
   );
-}
+};
+
+export default LoginPage;

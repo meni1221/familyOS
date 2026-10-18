@@ -15,7 +15,7 @@ import type { LogFormData, ProfileFormData } from './schemas';
  * The baby routine: the profile, the activity timeline and the form that feeds
  * it. The pieces live next to this file.
  */
-export default function BabyPage() {
+const BabyPage = () => {
   const client = useQueryClient();
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<'timeline' | 'add'>('timeline');
@@ -141,4 +141,6 @@ export default function BabyPage() {
       />
     </div>
   );
-}
+};
+
+export default BabyPage;

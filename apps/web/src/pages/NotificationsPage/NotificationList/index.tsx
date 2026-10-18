@@ -18,11 +18,11 @@ interface NotificationListProps {
  * notification knows which item it is about, the row is a link into that item
  * and reading it also marks it as read.
  */
-export default function NotificationList({
+const NotificationList = ({
   notifications,
   isMarking,
   onMarkRead,
-}: NotificationListProps) {
+}: NotificationListProps) => {
   if (notifications.length === 0) {
     return (
       <div className="card">
@@ -105,4 +105,6 @@ export default function NotificationList({
       })}
     </ul>
   );
-}
+};
+
+export default NotificationList;

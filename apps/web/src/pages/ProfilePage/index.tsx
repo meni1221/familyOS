@@ -4,7 +4,7 @@ import { PasswordSection, ProfileSection } from '../../components/settings';
  * The account view reached from the avatar menu: who you are plus the
  * credentials to keep it that way. Family and app preferences stay in settings.
  */
-export default function ProfilePage() {
+const ProfilePage = () => {
   return (
     <div>
       <div className="page-header">
@@ -20,4 +20,6 @@ export default function ProfilePage() {
       </div>
     </div>
   );
-}
+};
+
+export default ProfilePage;

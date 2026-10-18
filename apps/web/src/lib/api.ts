@@ -28,7 +28,7 @@ interface RequestOptions {
   signal?: AbortSignal;
 }
 
-function extractMessage(payload: unknown, status: number): string {
+const extractMessage = (payload: unknown, status: number): string => {
   if (typeof payload === 'string' && payload.trim()) {
     return payload;
   }
@@ -49,21 +49,21 @@ function extractMessage(payload: unknown, status: number): string {
   if (status === 404) return 'הפריט המבוקש לא נמצא';
   if (status >= 500) return 'אירעה שגיאה בשרת. נסו שוב מאוחר יותר.';
   return 'אירעה שגיאה. נסו שוב.';
-}
+};
 
-function extractCode(payload: unknown): string | undefined {
+const extractCode = (payload: unknown): string | undefined => {
   if (payload && typeof payload === 'object') {
     const code = (payload as { error?: { code?: unknown } }).error?.code;
     if (typeof code === 'string') return code;
   }
   return undefined;
-}
+};
 
-async function request<T>(
+const request = async <T>(
   method: string,
   path: string,
   options: RequestOptions = {}
-): Promise<T> {
+): Promise<T> => {
   const headers: Record<string, string> = {};
   let body: BodyInit | undefined;
 
@@ -111,7 +111,7 @@ async function request<T>(
   }
 
   return payload as T;
-}
+};
 
 export const api = {
   get: <T>(path: string, signal?: AbortSignal) => request<T>('GET', path, { signal }),

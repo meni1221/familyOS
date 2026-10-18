@@ -2,7 +2,7 @@ import { BENEFITS } from '../content';
 import SectionHeading from '../SectionHeading';
 
 /** The privacy and calm argument, as a two-column list. */
-export default function SecuritySection() {
+const SecuritySection = () => {
   return (
     <section id="security" className="border-y border-border bg-surface py-16 md:py-24">
       <div className="mx-auto max-w-content px-4">
@@ -23,4 +23,6 @@ export default function SecuritySection() {
       </div>
     </section>
   );
-}
+};
+
+export default SecuritySection;

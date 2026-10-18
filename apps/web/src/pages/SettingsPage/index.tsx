@@ -7,7 +7,7 @@ import {
 } from '../../components/settings';
 import { useLogout } from '../../hooks/useAuth';
 
-export default function SettingsPage() {
+const SettingsPage = () => {
   const logout = useLogout();
   const navigate = useNavigate();
 
@@ -48,4 +48,6 @@ export default function SettingsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default SettingsPage;

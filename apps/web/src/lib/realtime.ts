@@ -71,23 +71,23 @@ export const REALTIME_INVALIDATIONS: Record<RealtimeEvent, string[][]> = {
  * Create a socket bound to the same origin. Auth rides on the session cookie
  * (`withCredentials`), so no token handling is required on the client.
  */
-export function createRealtimeSocket(): Socket {
+export const createRealtimeSocket = (): Socket => {
   return io({
     path: '/socket.io',
     withCredentials: true,
     transports: ['websocket', 'polling'],
     reconnection: true,
   });
-}
+};
 
 /**
  * Subscribe every realtime event and invalidate the matching react-query keys.
  * Returns a cleanup that removes exactly the listeners it added.
  */
-export function attachRealtimeInvalidations(
+export const attachRealtimeInvalidations = (
   socket: Socket,
   client: QueryClient
-): () => void {
+): (() => void) => {
   const subscriptions: Array<{ event: RealtimeEvent; handler: () => void }> = [];
 
   for (const event of REALTIME_EVENTS) {
@@ -105,4 +105,4 @@ export function attachRealtimeInvalidations(
       socket.off(event, handler);
     }
   };
-}
+};

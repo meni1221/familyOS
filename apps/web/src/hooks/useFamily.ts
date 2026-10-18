@@ -11,32 +11,32 @@ const membersKey = ['family', 'members'];
 const invitationsKey = ['family', 'invitations'];
 const currentKey = ['family', 'current'];
 
-export function useCurrentFamily() {
+export const useCurrentFamily = () => {
   return useQuery({
     queryKey: currentKey,
     queryFn: async () =>
       (await api.get<{ data: CurrentFamily }>('/api/v1/families/current')).data,
   });
-}
+};
 
-export function useFamilyMembers() {
+export const useFamilyMembers = () => {
   return useQuery({
     queryKey: membersKey,
     queryFn: async () =>
       (await api.get<{ data: FamilyMember[] }>('/api/v1/families/members')).data ?? [],
   });
-}
+};
 
-export function useFamilyInvitations() {
+export const useFamilyInvitations = () => {
   return useQuery({
     queryKey: invitationsKey,
     queryFn: async () =>
       (await api.get<{ data: FamilyInvitation[] }>('/api/v1/families/invitations')).data ?? [],
   });
-}
+};
 
 /** Creates an invitation and returns its copyable `inviteUrl`. */
-export function useCreateInvitation() {
+export const useCreateInvitation = () => {
   const client = useQueryClient();
 
   return useMutation({
@@ -48,9 +48,9 @@ export function useCreateInvitation() {
       void client.invalidateQueries({ queryKey: invitationsKey });
     },
   });
-}
+};
 
-export function useRevokeInvitation() {
+export const useRevokeInvitation = () => {
   const client = useQueryClient();
 
   return useMutation({
@@ -60,10 +60,10 @@ export function useRevokeInvitation() {
       void client.invalidateQueries({ queryKey: invitationsKey });
     },
   });
-}
+};
 
 /** Accepts an invite token, then refreshes everything family-scoped. */
-export function useAcceptInvitation() {
+export const useAcceptInvitation = () => {
   const client = useQueryClient();
 
   return useMutation({
@@ -82,4 +82,4 @@ export function useAcceptInvitation() {
       void client.invalidateQueries({ queryKey: ['baby'] });
     },
   });
-}
+};

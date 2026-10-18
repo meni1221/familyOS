@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 /** The first screen: the promise and the two calls to action. */
-export default function LandingHero() {
+const LandingHero = () => {
   return (
     <section className="mx-auto max-w-content px-4 py-16 md:py-24">
       <div className="mx-auto max-w-2xl text-center">
@@ -22,4 +22,6 @@ export default function LandingHero() {
       </div>
     </section>
   );
-}
+};
+
+export default LandingHero;

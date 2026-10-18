@@ -35,7 +35,7 @@ const FOCUSABLE_ROUTES = new Set(['/app/tasks']);
  * The in-app destination of a notification, or `null` when the notification
  * only lives in the list itself (a system message, for instance).
  */
-export function notificationHref(notification: Notification): string | null {
+export const notificationHref = (notification: Notification): string | null => {
   const route =
     (notification.relatedEntityType && ENTITY_ROUTES[notification.relatedEntityType]) ||
     TYPE_ROUTES[notification.type] ||
@@ -49,4 +49,4 @@ export function notificationHref(notification: Notification): string | null {
   }
 
   return route;
-}
+};

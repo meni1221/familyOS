@@ -13,7 +13,7 @@ interface BudgetListProps {
 }
 
 /** The budgets the family set up, each in its own currency. */
-export default function BudgetList({ budgets, isDeleting, onCreate, onDelete }: BudgetListProps) {
+const BudgetList = ({ budgets, isDeleting, onCreate, onDelete }: BudgetListProps) => {
   return (
     <div className="mb-6">
       <h2 className="section-title mb-3">תקציבים</h2>
@@ -56,4 +56,6 @@ export default function BudgetList({ budgets, isDeleting, onCreate, onDelete }: 
       )}
     </div>
   );
-}
+};
+
+export default BudgetList;

@@ -23,7 +23,7 @@ const schema = z
 
 type PasswordFormData = z.infer<typeof schema>;
 
-export default function PasswordSection() {
+const PasswordSection = () => {
   const changePassword = useChangePassword();
   const toast = useToast();
 
@@ -119,4 +119,6 @@ export default function PasswordSection() {
       </form>
     </SectionCard>
   );
-}
+};
+
+export default PasswordSection;

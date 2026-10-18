@@ -25,7 +25,7 @@ const QUICK_ACTIONS: QuickAction[] = [
 ];
 
 /** The six shortcuts under the dashboard cards. */
-export default function QuickActions() {
+const QuickActions = () => {
   return (
     <div className="mt-6">
       <h2 className="section-title mb-3">פעולות מהירות</h2>
@@ -43,4 +43,6 @@ export default function QuickActions() {
       </div>
     </div>
   );
-}
+};
+
+export default QuickActions;

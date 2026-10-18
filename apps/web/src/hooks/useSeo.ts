@@ -11,7 +11,7 @@ interface SeoOptions {
   path?: string;
 }
 
-function setMeta(attribute: 'name' | 'property', key: string, content: string) {
+const setMeta = (attribute: 'name' | 'property', key: string, content: string) => {
   let tag = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
 
   if (!tag) {
@@ -21,9 +21,9 @@ function setMeta(attribute: 'name' | 'property', key: string, content: string) {
   }
 
   tag.setAttribute('content', content);
-}
+};
 
-function setCanonical(href: string) {
+const setCanonical = (href: string) => {
   let link = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
 
   if (!link) {
@@ -33,7 +33,7 @@ function setCanonical(href: string) {
   }
 
   link.href = href;
-}
+};
 
 /**
  * Keeps the document title, the description, the robots instruction and the
@@ -42,7 +42,7 @@ function setCanonical(href: string) {
  * The values live in `index.html` for the landing page — the one copy a crawler
  * sees before any JavaScript runs — and this hook takes over from there.
  */
-export function useSeo({ title, description = DEFAULT_DESCRIPTION, noIndex = false, path }: SeoOptions) {
+export const useSeo = ({ title, description = DEFAULT_DESCRIPTION, noIndex = false, path }: SeoOptions) => {
   useEffect(() => {
     const fullTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`;
     const url = `${SITE_URL}${path ?? window.location.pathname}`;
@@ -55,4 +55,4 @@ export function useSeo({ title, description = DEFAULT_DESCRIPTION, noIndex = fal
     setMeta('property', 'og:url', url);
     setCanonical(url);
   }, [title, description, noIndex, path]);
-}
+};

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 /** The closing call to action. */
-export default function LandingCta() {
+const LandingCta = () => {
   return (
     <section className="py-16 md:py-24">
       <div className="mx-auto max-w-content px-4 text-center">
@@ -15,4 +15,6 @@ export default function LandingCta() {
       </div>
     </section>
   );
-}
+};
+
+export default LandingCta;

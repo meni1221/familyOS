@@ -11,7 +11,7 @@ interface DashboardCardProps {
 }
 
 /** One dashboard card: a title, a link to the full screen, and its content. */
-export default function DashboardCard({ title, to, className = '', children }: DashboardCardProps) {
+const DashboardCard = ({ title, to, className = '', children }: DashboardCardProps) => {
   return (
     <div className={`card ${className}`.trim()}>
       <div className="card-header">
@@ -23,4 +23,6 @@ export default function DashboardCard({ title, to, className = '', children }: D
       {children}
     </div>
   );
-}
+};
+
+export default DashboardCard;

@@ -7,13 +7,13 @@ interface SectionCardProps {
 }
 
 /** Consistent wrapper for every settings block. */
-export default function SectionCard({
+const SectionCard = ({
   title,
   description,
   icon: Icon,
   action,
   children,
-}: SectionCardProps) {
+}: SectionCardProps) => {
   return (
     <section className="card">
       <div className="card-header">
@@ -36,4 +36,6 @@ export default function SectionCard({
       {children}
     </section>
   );
-}
+};
+
+export default SectionCard;

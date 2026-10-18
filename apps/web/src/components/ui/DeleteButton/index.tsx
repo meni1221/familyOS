@@ -14,12 +14,12 @@ interface DeleteButtonProps {
  * dialog. Nothing is removed until the dialog is answered, and the button
  * itself carries no hidden second state to disarm.
  */
-export default function DeleteButton({
+const DeleteButton = ({
   onConfirm,
   itemLabel,
   disabled = false,
   className = '',
-}: DeleteButtonProps) {
+}: DeleteButtonProps) => {
   const confirm = useConfirm();
 
   const handleClick = async () => {
@@ -45,4 +45,6 @@ export default function DeleteButton({
       מחיקה
     </button>
   );
-}
+};
+
+export default DeleteButton;

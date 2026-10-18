@@ -18,7 +18,7 @@ import type { BudgetFormData, ExpenseFormData } from './schemas';
  * The family budget: what was budgeted, what was spent this month, and the two
  * dialogs that add to either list. The pieces live next to this file.
  */
-export default function BudgetPage() {
+const BudgetPage = () => {
   const client = useQueryClient();
   const toast = useToast();
   const { data: family } = useCurrentFamily();
@@ -176,4 +176,6 @@ export default function BudgetPage() {
       />
     </div>
   );
-}
+};
+
+export default BudgetPage;

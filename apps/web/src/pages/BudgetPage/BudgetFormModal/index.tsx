@@ -18,14 +18,14 @@ interface BudgetFormModalProps {
 }
 
 /** Dialog for adding one budget. */
-export default function BudgetFormModal({
+const BudgetFormModal = ({
   open,
   defaultCurrency,
   isPending,
   error,
   onClose,
   onSubmit,
-}: BudgetFormModalProps) {
+}: BudgetFormModalProps) => {
   const form = useForm<BudgetFormData>({
     resolver: zodResolver(budgetSchema),
     defaultValues: { name: '', amount: 0, period: 'MONTHLY', currency: defaultCurrency },
@@ -125,4 +125,6 @@ export default function BudgetFormModal({
       </form>
     </Modal>
   );
-}
+};
+
+export default BudgetFormModal;

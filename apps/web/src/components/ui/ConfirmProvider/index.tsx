@@ -14,7 +14,7 @@ type PendingConfirm = ConfirmOptions & { resolve: (confirmed: boolean) => void }
  * if (await confirm({ title: 'למחוק את הקובץ?', tone: 'danger' })) remove();
  * ```
  */
-export default function ConfirmProvider({ children }: { children: ReactNode }) {
+const ConfirmProvider = ({ children }: { children: ReactNode }) => {
   const [pending, setPending] = useState<PendingConfirm | null>(null);
 
   const confirm = useCallback<ConfirmFn>(
@@ -53,4 +53,6 @@ export default function ConfirmProvider({ children }: { children: ReactNode }) {
       />
     </ConfirmContext.Provider>
   );
-}
+};
+
+export default ConfirmProvider;

@@ -18,14 +18,14 @@ interface BabyProfileModalProps {
 }
 
 /** Name and date of birth, which the age in the header is derived from. */
-export default function BabyProfileModal({
+const BabyProfileModal = ({
   open,
   profile,
   isPending,
   error,
   onClose,
   onSubmit,
-}: BabyProfileModalProps) {
+}: BabyProfileModalProps) => {
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: { displayName: '', dateOfBirth: '' },
@@ -98,4 +98,6 @@ export default function BabyProfileModal({
       </form>
     </Modal>
   );
-}
+};
+
+export default BabyProfileModal;

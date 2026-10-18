@@ -7,7 +7,7 @@ interface BudgetCardProps {
 }
 
 /** This month's spending against the budget. */
-export default function BudgetCard({ budget }: BudgetCardProps) {
+const BudgetCard = ({ budget }: BudgetCardProps) => {
   return (
     <DashboardCard title="תקציב החודש" to="/app/budget">
       {budget ? (
@@ -38,4 +38,6 @@ export default function BudgetCard({ budget }: BudgetCardProps) {
       )}
     </DashboardCard>
   );
-}
+};
+
+export default BudgetCard;

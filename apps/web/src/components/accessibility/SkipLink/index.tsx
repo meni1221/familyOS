@@ -1,4 +1,4 @@
-export default function SkipLink() {
+const SkipLink = () => {
   return (
     <a
       href="#main-content"
@@ -7,4 +7,6 @@ export default function SkipLink() {
                   דלג לתוכן עיקרי
           </a>
   );
-}
+};
+
+export default SkipLink;

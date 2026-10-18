@@ -15,13 +15,13 @@ interface DocumentFormModalProps {
 }
 
 /** Dialog for uploading one document, file checks included. */
-export default function DocumentFormModal({
+const DocumentFormModal = ({
   open,
   isPending,
   error,
   onClose,
   onSubmit,
-}: DocumentFormModalProps) {
+}: DocumentFormModalProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -160,4 +160,6 @@ export default function DocumentFormModal({
       </form>
     </Modal>
   );
-}
+};
+
+export default DocumentFormModal;

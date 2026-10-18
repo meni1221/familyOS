@@ -14,7 +14,7 @@ import {
  * It sits at the bottom of the *inline-end* side: bottom-left in Hebrew (RTL,
  * away from the sidebar) and bottom-right in English (LTR).
  */
-export default function AccessibilityWidget() {
+const AccessibilityWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState<AccessibilitySettings>(() =>
     loadAccessibilitySettings()
@@ -109,4 +109,6 @@ export default function AccessibilityWidget() {
       </button>
     </div>
   );
-}
+};
+
+export default AccessibilityWidget;

@@ -23,7 +23,7 @@ const navItems = [
  * Starts below the full-width header (`top-20`, matching its height) and the
  * brand now lives in that header, so there is no logo row here.
  */
-export default function Sidebar() {
+const Sidebar = () => {
   return (
     <aside className="fixed bottom-0 start-0 top-20 z-20 hidden w-60 flex-col border-e border-border bg-surface md:flex">
       <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3 md:pt-6 lg:pt-8">
@@ -43,4 +43,6 @@ export default function Sidebar() {
       </nav>
     </aside>
   );
-}
+};
+
+export default Sidebar;

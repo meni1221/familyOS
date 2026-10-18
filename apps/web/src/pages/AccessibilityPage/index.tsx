@@ -1,6 +1,6 @@
 import { useSeo } from '../../hooks/useSeo';
 
-export default function AccessibilityPage() {
+const AccessibilityPage = () => {
   useSeo({ title: 'הצהרת נגישות', path: '/accessibility' });
 
   return (
@@ -73,4 +73,6 @@ export default function AccessibilityPage() {
       </div>
     </div>
   );
-}
+};
+
+export default AccessibilityPage;

@@ -5,7 +5,7 @@ import { useAuth, useLogout } from '../../../hooks/useAuth';
 import { useUnreadCount } from '../../../hooks/useUnreadCount';
 import BrandLogo from '../../ui/BrandLogo';
 
-export default function Header() {
+const Header = () => {
   const { user } = useAuth();
   const unreadCount = useUnreadCount();
   const logout = useLogout();
@@ -124,4 +124,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;

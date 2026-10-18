@@ -7,7 +7,7 @@ interface BabyCardProps {
 }
 
 /** The last few baby routine entries. */
-export default function BabyCard({ logs }: BabyCardProps) {
+const BabyCard = ({ logs }: BabyCardProps) => {
   return (
     <DashboardCard title="שגרת התינוק" to="/app/baby" className="md:col-span-2 lg:col-span-2">
       {logs.length ? (
@@ -27,4 +27,6 @@ export default function BabyCard({ logs }: BabyCardProps) {
       )}
     </DashboardCard>
   );
-}
+};
+
+export default BabyCard;

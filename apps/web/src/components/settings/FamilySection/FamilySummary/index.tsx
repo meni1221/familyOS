@@ -6,7 +6,7 @@ interface FamilySummaryProps {
 }
 
 /** The family name, its size and its default currency. */
-export default function FamilySummary({ family, isLoading }: FamilySummaryProps) {
+const FamilySummary = ({ family, isLoading }: FamilySummaryProps) => {
   return (
     <div className="rounded-4 bg-cream px-3 py-2">
       <p className="text-sm font-medium text-ink">
@@ -17,4 +17,6 @@ export default function FamilySummary({ family, isLoading }: FamilySummaryProps)
       </p>
     </div>
   );
-}
+};
+
+export default FamilySummary;

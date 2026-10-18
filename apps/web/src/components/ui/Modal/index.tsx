@@ -18,14 +18,14 @@ interface ModalProps {
  * backdrop to close, focus moved into the dialog on open and restored to the
  * previously focused element on close, and a locked page scroll.
  */
-export default function Modal({
+const Modal = ({
   open,
   title,
   onClose,
   children,
   footer,
   className = '',
-}: ModalProps) {
+}: ModalProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
 
@@ -100,4 +100,6 @@ export default function Modal({
       </div>
     </div>
   );
-}
+};
+
+export default Modal;

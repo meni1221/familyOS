@@ -15,6 +15,6 @@ const TYPE_ICONS: Record<string, ComponentType<{ className?: string }>> = {
 };
 
 /** Icon for a notification type, falling back to the plain bell. */
-export function notificationIcon(type: string): ComponentType<{ className?: string }> {
+export const notificationIcon = (type: string): ComponentType<{ className?: string }> => {
   return TYPE_ICONS[type] ?? IconBell;
-}
+};

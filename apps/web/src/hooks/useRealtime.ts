@@ -12,7 +12,7 @@ import { useAuth } from './useAuth';
  * The socket is only opened while the user is authenticated; on logout (or
  * unmount) every listener is removed and the connection is closed.
  */
-export function useRealtimeConnection(): { connected: boolean } {
+export const useRealtimeConnection = (): { connected: boolean } => {
   const { isAuthenticated } = useAuth();
   const [connected, setConnected] = useState(false);
 
@@ -47,4 +47,4 @@ export function useRealtimeConnection(): { connected: boolean } {
   }, [isAuthenticated]);
 
   return { connected };
-}
+};

@@ -2,7 +2,7 @@ import { STEPS } from '../content';
 import SectionHeading from '../SectionHeading';
 
 /** Three numbered steps, from signing up to running the family. */
-export default function HowItWorks() {
+const HowItWorks = () => {
   return (
     <section id="how-it-works" className="py-16 md:py-24">
       <div className="mx-auto max-w-content px-4">
@@ -21,4 +21,6 @@ export default function HowItWorks() {
       </div>
     </section>
   );
-}
+};
+
+export default HowItWorks;

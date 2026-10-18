@@ -20,7 +20,7 @@ interface DocumentListProps {
 }
 
 /** The stored documents, each with its size, date, download and delete. */
-export default function DocumentList({
+const DocumentList = ({
   documents,
   isLoading,
   hasError,
@@ -28,7 +28,7 @@ export default function DocumentList({
   deleteError,
   onCreate,
   onDelete,
-}: DocumentListProps) {
+}: DocumentListProps) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -109,4 +109,6 @@ export default function DocumentList({
       )}
     </>
   );
-}
+};
+
+export default DocumentList;

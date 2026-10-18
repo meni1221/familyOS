@@ -11,7 +11,7 @@ import InviteForm from './InviteForm';
 import InvitationList from './InvitationList';
 
 /** The family card: who is in it, and who was invited. */
-export default function FamilySection() {
+const FamilySection = () => {
   const { data: family, isLoading: familyLoading } = useCurrentFamily();
   const { data: members } = useFamilyMembers();
   const { data: invitations } = useFamilyInvitations();
@@ -36,4 +36,6 @@ export default function FamilySection() {
       </div>
     </SectionCard>
   );
-}
+};
+
+export default FamilySection;

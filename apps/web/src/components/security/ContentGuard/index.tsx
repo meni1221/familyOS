@@ -7,9 +7,9 @@ import { useEffect } from 'react';
 const EDITABLE_SELECTOR =
   'input, textarea, select, [contenteditable="true"], [data-copyable]';
 
-function isEditableTarget(target: EventTarget | null): boolean {
+const isEditableTarget = (target: EventTarget | null): boolean => {
   return target instanceof Element && target.closest(EDITABLE_SELECTOR) !== null;
-}
+};
 
 /**
  * Keeps the site's own content out of the clipboard.
@@ -20,7 +20,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
  * accepts input stays untouched, so typing, pasting into a form and copying
  * back out of one all keep working.
  */
-export default function ContentGuard() {
+const ContentGuard = () => {
   useEffect(() => {
     const block = (event: Event) => {
       if (isEditableTarget(event.target)) return;
@@ -41,4 +41,6 @@ export default function ContentGuard() {
   }, []);
 
   return null;
-}
+};
+
+export default ContentGuard;

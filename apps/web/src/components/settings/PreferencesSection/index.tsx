@@ -55,7 +55,7 @@ const PREFERENCE_FIELDS: Array<{
   },
 ];
 
-export default function PreferencesSection() {
+const PreferencesSection = () => {
   const { data: profile, isLoading } = useProfile();
   const updatePreferences = useUpdatePreferences();
 
@@ -98,4 +98,6 @@ export default function PreferencesSection() {
       )}
     </SectionCard>
   );
-}
+};
+
+export default PreferencesSection;

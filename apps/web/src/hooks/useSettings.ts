@@ -3,16 +3,16 @@ import { api } from '../lib/api';
 import type { NotificationPreferences, UserProfile } from '../lib/types';
 
 /** The signed-in user's settings (never contains password material). */
-export function useProfile() {
+export const useProfile = () => {
   return useQuery({
     queryKey: ['settings', 'profile'],
     queryFn: async () =>
       (await api.get<{ data: UserProfile }>('/api/v1/settings/profile')).data,
   });
-}
+};
 
 /** Updates the display name, timezone and/or preferred language. */
-export function useUpdateProfile() {
+export const useUpdateProfile = () => {
   const client = useQueryClient();
 
   return useMutation({
@@ -24,10 +24,10 @@ export function useUpdateProfile() {
       void client.invalidateQueries({ queryKey: ['auth'] });
     },
   });
-}
+};
 
 /** Updates the language/timezone and merges individual notification toggles. */
-export function useUpdatePreferences() {
+export const useUpdatePreferences = () => {
   const client = useQueryClient();
 
   return useMutation({
@@ -41,12 +41,12 @@ export function useUpdatePreferences() {
       void client.invalidateQueries({ queryKey: ['auth'] });
     },
   });
-}
+};
 
 /** Changes the password after verifying the current one. */
-export function useChangePassword() {
+export const useChangePassword = () => {
   return useMutation({
     mutationFn: (payload: { currentPassword: string; newPassword: string }) =>
       api.post<{ success: boolean }>('/api/v1/settings/password', payload),
   });
-}
+};

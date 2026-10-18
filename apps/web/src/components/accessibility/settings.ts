@@ -32,7 +32,7 @@ export const DEFAULT_ACCESSIBILITY_SETTINGS: AccessibilitySettings = {
 
 const STORAGE_KEY = 'shlanu:accessibility-settings';
 
-export function loadAccessibilitySettings(): AccessibilitySettings {
+export const loadAccessibilitySettings = (): AccessibilitySettings => {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_ACCESSIBILITY_SETTINGS;
@@ -42,27 +42,27 @@ export function loadAccessibilitySettings(): AccessibilitySettings {
   } catch {
     return DEFAULT_ACCESSIBILITY_SETTINGS;
   }
-}
+};
 
-export function saveAccessibilitySettings(settings: AccessibilitySettings): void {
+export const saveAccessibilitySettings = (settings: AccessibilitySettings): void => {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   } catch {
     // Storage can be unavailable (private browsing); the preferences still apply
     // for the current session.
   }
-}
+};
 
 /**
  * Applies the preferences to the document root. Every visual rule lives in CSS
  * and is driven by `data-*` attributes on `<html>`, so reverting a preference is
  * simply a matter of resetting the attribute.
  */
-export function applyAccessibilitySettings(settings: AccessibilitySettings): void {
+export const applyAccessibilitySettings = (settings: AccessibilitySettings): void => {
   const root = document.documentElement;
 
   root.style.fontSize = `${settings.fontSize}%`;
   root.setAttribute('data-contrast', settings.contrast);
   root.setAttribute('data-hide-images', String(settings.imagesHidden));
   root.setAttribute('data-reduce-motion', String(settings.animationsDisabled));
-}
+};
