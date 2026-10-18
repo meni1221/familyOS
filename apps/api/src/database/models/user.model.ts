@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type UserDocument = User & Document;
 
@@ -20,7 +20,7 @@ export class User {
   @Prop({ default: 'Asia/Jerusalem' })
   timezone: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Family' }] })
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Family' }] })
   families: Types.ObjectId[];
 
   @Prop({ default: Date.now })

@@ -6,6 +6,7 @@ import { LoggingMiddleware } from './middleware/logging.middleware';
 import { SecurityHeadersMiddleware } from './middleware/security-headers.middleware';
 import { CsrfMiddleware } from './middleware/csrf.middleware';
 import { RateLimitMiddleware } from './middleware/rate-limit.middleware';
+import { AuthMiddleware } from './middleware/auth.middleware';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -16,6 +17,7 @@ async function bootstrap() {
   app.use(new SecurityHeadersMiddleware().use.bind(new SecurityHeadersMiddleware()));
   app.use(new RateLimitMiddleware().use.bind(new RateLimitMiddleware()));
   app.use(new CsrfMiddleware().use.bind(new CsrfMiddleware()));
+  app.use(new AuthMiddleware().use.bind(new AuthMiddleware()));
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 

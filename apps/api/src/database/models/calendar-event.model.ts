@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type CalendarEventDocument = CalendarEvent & Document;
 
 @Schema({ timestamps: true, collection: 'calendar_events' })
 export class CalendarEvent {
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Family' })
-  familyId: Types.ObjectId;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  familyId: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
   title: string;
@@ -32,8 +32,8 @@ export class CalendarEvent {
   @Prop()
   category: string;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
-  createdByUserId: Types.ObjectId;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  createdByUserId: MongooseSchema.Types.ObjectId;
 
   @Prop({ default: Date.now })
   createdAt: Date;

@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type TaskDocument = Task & Document;
 
 @Schema({ timestamps: true, collection: 'tasks' })
 export class Task {
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Family' })
-  familyId: Types.ObjectId;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Family' })
+  familyId: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
   title: string;
@@ -23,8 +23,8 @@ export class Task {
   @Prop()
   category: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  assigneeUserId: Types.ObjectId;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  assigneeUserId: MongooseSchema.Types.ObjectId;
 
   @Prop()
   dueAt: Date;
@@ -32,8 +32,8 @@ export class Task {
   @Prop()
   completedAt: Date;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
-  createdByUserId: Types.ObjectId;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  createdByUserId: MongooseSchema.Types.ObjectId;
 
   @Prop({ default: Date.now })
   createdAt: Date;

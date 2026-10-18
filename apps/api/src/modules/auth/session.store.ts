@@ -1,23 +1,24 @@
 import { createHash } from 'crypto';
 
-interface SessionData {
+export interface SessionData {
   userId: string;
+  familyId?: string;
   expiresAt: number;
 }
 
 export class SessionStore {
-  private store = new Map<string, SessionData>();
+  private readonly store = new Map<string, SessionData>();
 
-  set(token: string, data: SessionData) {
-    this.store.set(token, data);
+  set(tokenHash: string, data: SessionData) {
+    this.store.set(tokenHash, data);
   }
 
-  get(token: string): SessionData | undefined {
-    return this.store.get(token);
+  get(tokenHash: string): SessionData | undefined {
+    return this.store.get(tokenHash);
   }
 
-  delete(token: string) {
-    this.store.delete(token);
+  delete(tokenHash: string) {
+    this.store.delete(tokenHash);
   }
 
   cleanup() {
@@ -32,5 +33,10 @@ export class SessionStore {
 
 export const sessionStore = new SessionStore();
 
-// Cleanup expired sessions every 5 minutes
-setInterval(() => sessionStore.cleanup(), 300000);
+export function hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
+}
+
+// Cleanup expired sessions every 5 minutes (does not keep the process alive)
+const cleanupTimer = setInterval(() => sessionStore.cleanup(), 300_000);
+cleanupTimer.unref?.();

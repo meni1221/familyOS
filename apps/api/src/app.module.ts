@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { RealtimeModule } from './modules/realtime/realtime.module';
 import { HealthModule } from './modules/health/health.module';
@@ -11,9 +12,14 @@ import { BudgetModule } from './modules/budget/budget.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SettingsModule } from './modules/settings/settings.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.local', '.env'],
+    }),
     DatabaseModule,
     RealtimeModule,
     HealthModule,
@@ -26,6 +32,7 @@ import { SettingsModule } from './modules/settings/settings.module';
     DocumentsModule,
     NotificationsModule,
     SettingsModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}
