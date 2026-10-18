@@ -44,23 +44,20 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-surface px-4 md:px-6">
-      <div className="md:hidden">
-        <BrandLogo to="/app" />
-      </div>
-      <div className="hidden md:block" />
+    <header className="sticky top-0 z-30 flex h-20 items-center justify-between gap-4 border-b border-border bg-surface px-4 md:px-6">
+      <BrandLogo to="/app" size="md" />
 
       <div className="flex items-center gap-2">
         <Link
           to="/app/notifications"
-          className="relative flex h-10 w-10 items-center justify-center rounded-4 text-ink-secondary transition-colors hover:bg-cream hover:text-ink"
+          className="relative flex h-12 w-12 items-center justify-center rounded-4 text-ink-secondary transition-colors hover:bg-cream hover:text-ink"
           aria-label={
             unreadCount > 0 ? `התראות, ${unreadCount} שלא נקראו` : 'התראות'
           }
         >
-          <IconBell className="h-5 w-5" />
+          <IconBell className="h-6 w-6" />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -end-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-error px-1 text-[11px] font-semibold text-white">
+            <span className="absolute top-0 end-0 flex h-6 min-w-6 items-center justify-center rounded-full bg-error px-1 text-xs font-semibold text-white">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
@@ -72,15 +69,15 @@ export default function Header() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
-            className="flex items-center gap-2 rounded-4 px-2 py-1 text-ink transition-colors hover:bg-cream"
+            className="flex items-center gap-2 rounded-4 px-2 py-1.5 text-ink transition-colors hover:bg-cream"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sage-light text-sm font-semibold text-forest">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sage-light text-base font-semibold text-forest">
               {user?.displayName?.charAt(0) ?? '?'}
             </span>
-            <span className="hidden max-w-[10rem] truncate text-sm font-medium md:block">
+            <span className="hidden max-w-[12rem] truncate text-base font-medium md:block">
               {user?.displayName ?? 'משתמש'}
             </span>
-            <IconChevronDown className="hidden h-4 w-4 text-ink-secondary md:block" />
+            <IconChevronDown className="hidden h-5 w-5 text-ink-secondary md:block" />
           </button>
 
           {menuOpen && (

@@ -8,7 +8,6 @@ import {
   IconFile,
   IconSettings,
 } from '@tabler/icons-react';
-import BrandLogo from '../ui/BrandLogo';
 
 const navItems = [
   { to: '/app', icon: IconLayoutDashboard, label: 'סקירה כללית', end: true },
@@ -20,12 +19,13 @@ const navItems = [
   { to: '/app/settings', icon: IconSettings, label: 'הגדרות' },
 ];
 
+/**
+ * Starts below the full-width header (`top-20`, matching its height) and the
+ * brand now lives in that header, so there is no logo row here.
+ */
 export default function Sidebar() {
   return (
-    <aside className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col border-e border-border bg-surface md:flex">
-      <div className="flex h-16 items-center border-b border-border px-6">
-        <BrandLogo to="/app" />
-      </div>
+    <aside className="fixed bottom-0 start-0 top-20 z-20 hidden w-60 flex-col border-e border-border bg-surface md:flex">
       <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
         {navItems.map((item) => (
           <NavLink

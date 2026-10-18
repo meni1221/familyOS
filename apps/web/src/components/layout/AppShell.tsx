@@ -4,19 +4,27 @@ import Header from './Header';
 import MobileNav from './MobileNav';
 import SkipLink from '../accessibility/SkipLink';
 
+/**
+ * The header spans the whole viewport and the sidebar starts underneath it,
+ * so the top bar reads as one continuous strip on every screen size.
+ */
 export default function AppShell() {
   return (
-    <div className="flex min-h-screen bg-canvas">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <SkipLink />
-      <Sidebar />
-      <div className="flex flex-1 flex-col md:ms-60">
-        <Header />
-        <main className="flex-1 p-4 pb-24 md:p-6 md:pb-8 lg:p-8" id="main-content">
-          <div className="mx-auto max-w-content">
-            <Outlet />
-          </div>
-        </main>
-        <MobileNav />
+      <Header />
+
+      <div className="flex flex-1">
+        <Sidebar />
+
+        <div className="flex flex-1 flex-col md:ms-60">
+          <main className="flex-1 p-4 pb-24 md:p-6 md:pb-8 lg:p-8" id="main-content">
+            <div className="mx-auto max-w-content">
+              <Outlet />
+            </div>
+          </main>
+          <MobileNav />
+        </div>
       </div>
     </div>
   );
