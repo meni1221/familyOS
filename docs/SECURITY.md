@@ -53,14 +53,6 @@
 - Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options)
 - Sensitive data never logged
 
-### File Storage
-- Private object storage (no public access)
-- Short-lived signed URLs for downloads
-- Authorization before any storage operation
-- File type validation
-- Size limits (10MB default)
-- Safe storage keys (no user-controlled paths)
-
 ### Invitations
 - Cryptographically random tokens
 - Token hashing (never store raw tokens)
@@ -69,15 +61,23 @@
 - Revocation support
 
 ### Password Reset
-- Secure random tokens
-- Token hashing
-- Expiration (1 hour)
-- Single-use enforcement
+- A 32-byte random token, stored only as a SHA-256 hash
+- Expiration (1 hour), enforced in the query and by Mongo's TTL index
+- Single-use: redeeming sets `usedAt`, a second attempt is refused
+- A new request retires the previous link
+- The response is identical whether or not the address has an account
+- Every session of the account is revoked on success
+- In production the link is never written to the log; without SMTP the request
+  is recorded as an error and no mail is sent
 
-### Audit Logging
-- Important operations logged
-- No sensitive data in logs
-- Family-scoped audit trail
+### Request Logging
+- One line per request: method, path, status, duration, request id
+- No request bodies, no cookies, no passwords, no tokens
+- `X-Request-Id` is validated before being echoed and logged
+
+### Audit Trail
+Not implemented yet: `AuditLog` has a schema but nothing writes to it, so the
+project does not claim an audit trail in this document.
 
 ## Security Headers
 ```

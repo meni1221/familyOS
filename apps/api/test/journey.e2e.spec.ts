@@ -890,8 +890,74 @@ describe('Shlanu end-to-end journey', () => {
     expect(carried.headers.get('x-request-id')).toBe('gateway.request_42');
   });
 
+  it('resets a forgotten password over a single-use link and signs the old sessions out', async () => {
+    const from = serverLog.length;
+
+    const tokenFromLog = async (): Promise<string> => {
+      for (let attempt = 0; attempt < 50; attempt += 1) {
+        const match = serverLog.slice(from).match(/reset-password\?token=([0-9a-f]{64})/);
+        if (match) return match[1];
+        await new Promise<void>((resolve) => setTimeout(resolve, 100));
+      }
+      throw new Error('the reset link never appeared in the server log');
+    };
+
+    // An address nobody registered gets the same answer as the owner's: the
+    // endpoint must not be a way to ask who has an account here.
+    const unknown = await request('POST', '/api/v1/auth/forgot-password', {
+      cookie: '',
+      body: { email: 'nobody@e2e.test' },
+    });
+    expect(unknown.status).toBe(StatusCodes.ACCEPTED);
+
+    const requested = await request('POST', '/api/v1/auth/forgot-password', {
+      cookie: '',
+      body: { email: owner.email },
+    });
+    expect(requested.status).toBe(StatusCodes.ACCEPTED);
+
+    // Mail is not configured under test, so the link is written to the server
+    // log — the only way to follow the flow without an inbox.
+    const token = await tokenFromLog();
+
+    const reset = await request('POST', '/api/v1/auth/reset-password', {
+      cookie: '',
+      body: { token, password: 'owner-pass-5678' },
+    });
+    expect(reset.status).toBe(StatusCodes.OK);
+    // The session that was open before the reset is gone: whoever knew the old
+    // password should not keep it.
+    expect((await request('GET', '/api/v1/auth/me')).status).toBe(StatusCodes.UNAUTHORIZED);
+
+    // The same link cannot be redeemed twice.
+    const reused = await request('POST', '/api/v1/auth/reset-password', {
+      cookie: '',
+      body: { token, password: 'another-pass-1234' },
+    });
+    expect(reused.status).toBe(StatusCodes.BAD_REQUEST);
+
+    expect(
+      (
+        await request('POST', '/api/v1/auth/login', {
+          cookie: '',
+          body: { email: owner.email, password: owner.password },
+        })
+      ).status
+    ).toBe(StatusCodes.UNAUTHORIZED);
+
+    const relogin = await request('POST', '/api/v1/auth/login', {
+      cookie: '',
+      body: { email: owner.email, password: 'owner-pass-5678' },
+    });
+    expect(relogin.status).toBe(StatusCodes.OK);
+
+    // The logout test below still needs a live session.
+    ownerCookie = relogin.session;
+  });
+
   it('logs out and invalidates the session', async () => {
     const logout = await request('POST', '/api/v1/auth/logout');
+    expect(logout.status).toBe(StatusCodes.OK);
     expect(logout.json.success).toBe(true);
 
     // The session is gone, so `/auth/me` now answers 401 like every other

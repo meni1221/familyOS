@@ -76,6 +76,14 @@ export class SessionStore {
     await sessions().deleteOne({ tokenHash }).exec();
   }
 
+  /**
+   * Signs a user out everywhere — after a password reset, a session opened with
+   * the old password should not survive it.
+   */
+  async deleteForUser(userId: string): Promise<void> {
+    await sessions().deleteMany({ userId }).exec();
+  }
+
   /** Safety net for deployments that disable Mongo's TTL monitor. */
   async cleanup(): Promise<void> {
     await sessions().deleteMany({ expiresAt: { $lte: new Date() } }).exec();

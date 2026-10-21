@@ -1,8 +1,18 @@
-import { Controller, Post, Body, Res, Req, Get, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Req,
+  Get,
+  HttpCode,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto } from './dto/index';
+import { PasswordResetService } from './password-reset.service';
+import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from './dto/index';
 import { Response, Request } from 'express';
 import { ValidationPipe } from '@nestjs/common';
 import { ApiSessionAuth } from '../../api-docs';
@@ -23,7 +33,10 @@ const SESSION_COOKIE_OPTIONS = {
 @ApiTags('auth')
 @Controller('api/v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly passwordReset: PasswordResetService,
+  ) {}
 
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
@@ -47,6 +60,8 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiBody({ type: LoginDto })
+  // A login creates a session, not a resource: 200, not Nest's POST default.
+  @HttpCode(StatusCodes.OK)
   @ApiResponse({
     status: StatusCodes.UNAUTHORIZED,
     description: 'The email or password is wrong.',
@@ -63,8 +78,40 @@ export class AuthController {
     res.json(result);
   }
 
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Send a password reset link' })
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiResponse({
+    status: StatusCodes.ACCEPTED,
+    description:
+      'The request was accepted. The answer is the same whether or not the address has an account.',
+  })
+  @HttpCode(StatusCodes.ACCEPTED)
+  async forgotPassword(
+    @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: ForgotPasswordDto
+  ) {
+    await this.passwordReset.request(dto.email);
+    return { success: true };
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Set a new password with a reset token' })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({
+    status: StatusCodes.BAD_REQUEST,
+    description: 'The token is unknown, already used, or expired.',
+  })
+  @HttpCode(StatusCodes.OK)
+  async resetPassword(
+    @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: ResetPasswordDto
+  ) {
+    await this.passwordReset.reset(dto.token, dto.password);
+    return { success: true };
+  }
+
   @Post('logout')
   @ApiOperation({ summary: 'Logout current user' })
+  @HttpCode(StatusCodes.OK)
   async logout(@Req() req: Request, @Res() res: Response) {
     const token = req.cookies?.session;
     if (token) {

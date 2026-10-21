@@ -66,6 +66,11 @@ const LoginPage = () => {
             {...register('password')}
           />
           {errors.password && <p className="mt-1 text-xs text-error">{errors.password.message}</p>}
+          <div className="mt-1 text-end">
+            <Link to="/forgot-password" className="text-xs font-medium text-forest hover:underline">
+              שכחתי סיסמה
+            </Link>
+          </div>
         </div>
         <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
           <IconLogin className="h-4 w-4" />

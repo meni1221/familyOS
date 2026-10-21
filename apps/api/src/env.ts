@@ -12,6 +12,24 @@ import type { LogLevel } from '@nestjs/common';
  * key in the message — a server that starts and then fails every database query
  * is harder to diagnose than one that refuses to start.
  */
+/**
+ * An optional key, where an empty value means "not set".
+ *
+ * Docker Compose interpolates a missing variable to an empty string, and
+ * `SMTP_HOST=` must mean "there is no mail server", not "the mail server is a
+ * server with no name".
+ */
+const optionalString = z.preprocess(
+  (value) => (value === '' ? undefined : value),
+  z.string().min(1).optional()
+);
+
+const optionalNumber = (fallback: number, min: number, max: number) =>
+  z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.coerce.number().int().min(min).max(max).default(fallback)
+  );
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
@@ -28,6 +46,29 @@ const envSchema = z.object({
 
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'verbose']).default('info'),
   LOG_FORMAT: z.enum(['json', 'pretty']).default('json'),
+
+  // Optional: an installation without a mail server must still boot. When these
+  // are absent the app says so at startup, and in production a password reset
+  // is refused loudly rather than silently doing nothing.
+  SMTP_HOST: optionalString,
+  SMTP_PORT: optionalNumber(587, 1, 65535),
+  SMTP_SECURE: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.enum(['true', 'false']).default('false')
+  ),
+  SMTP_USER: optionalString,
+  SMTP_PASS: optionalString,
+  SMTP_FROM: optionalString.default('שלנו <no-reply@shlanu.app>'),
+}).superRefine((value, context) => {
+  // A username without a password (or the other way round) is a half-configured
+  // server that would fail on the first reset instead of on boot.
+  if (Boolean(value.SMTP_USER) !== Boolean(value.SMTP_PASS)) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['SMTP_USER'],
+      message: 'SMTP_USER and SMTP_PASS have to be set together',
+    });
+  }
 });
 
 /**

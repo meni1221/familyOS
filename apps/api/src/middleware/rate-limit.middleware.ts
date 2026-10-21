@@ -2,7 +2,12 @@ import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 
-const STRICT_AUTH_PATHS = ['/api/v1/auth/register', '/api/v1/auth/login'];
+const STRICT_AUTH_PATHS = [
+  '/api/v1/auth/register',
+  '/api/v1/auth/login',
+  '/api/v1/auth/forgot-password',
+  '/api/v1/auth/reset-password',
+];
 
 @Injectable()
 export class RateLimitMiddleware implements NestMiddleware {

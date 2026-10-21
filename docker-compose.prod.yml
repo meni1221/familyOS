@@ -31,6 +31,13 @@ services:
       - AUTH_RATE_LIMIT_MAX_REQUESTS=${AUTH_RATE_LIMIT_MAX_REQUESTS:-20}
       - LOG_LEVEL=${LOG_LEVEL:-warn}
       - LOG_FORMAT=json
+      # Mail is optional; empty means "no mail server", not an empty hostname.
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - "SMTP_FROM=${SMTP_FROM:-Shlanu <no-reply@shlanu.app>}"
     depends_on:
       mongodb:
         condition: service_healthy

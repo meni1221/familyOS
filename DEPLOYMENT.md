@@ -38,7 +38,20 @@ RATE_LIMIT_MAX_REQUESTS=300
 AUTH_RATE_LIMIT_MAX_REQUESTS=20
 
 LOG_LEVEL=warn
+
+# שליחת דואר (קישורי איפוס סיסמה). המערכת עולה גם בלעדיו, אבל אז לא נשלחים
+# קישורי איפוס בפרודקשן — הבקשה נרשמת כשגיאה בלוג.
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=shlanu
+SMTP_PASS=CHANGE_ME
+SMTP_FROM="שלנו <no-reply@shlanu.app>"
 ```
+
+אם `SMTP_HOST` נשאר ריק, השרת עולה ומדפיס אזהרה. בסביבת פיתוח קישור האיפוס
+נרשם ללוג כדי שאפשר יהיה להשלים את הזרימה בלי תיבת דואר; בפרודקשן הוא **לא**
+נרשם — לוג אינו ערוץ פרטי, ומי שקורא אותו היה יכול להשתלט על החשבון.
 
 ## שלב 2: אתחול מסד הנתונים
 

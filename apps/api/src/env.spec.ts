@@ -48,6 +48,28 @@ describe('validateEnv', () => {
     expect(env.PATH).toBe('/usr/bin');
     expect(env.HOSTNAME).toBe('api-1');
   });
+
+  it('accepts a complete SMTP block and defaults the rest', () => {
+    const env = envWith({
+      SMTP_HOST: 'smtp.example.com',
+      SMTP_USER: 'mailer',
+      SMTP_PASS: 'secret',
+    });
+
+    expect(env.SMTP_HOST).toBe('smtp.example.com');
+    expect(env.SMTP_PORT).toBe(587);
+    expect(env.SMTP_SECURE).toBe('false');
+    expect(env.SMTP_FROM).toContain('no-reply@shlanu.app');
+  });
+
+  it('refuses half an SMTP credential pair instead of failing on the first reset', () => {
+    expect(() => envWith({ SMTP_HOST: 'smtp.example.com', SMTP_USER: 'mailer' })).toThrow(
+      /SMTP_USER/
+    );
+    expect(() => envWith({ SMTP_HOST: 'smtp.example.com', SMTP_PASS: 'secret' })).toThrow(
+      /SMTP_USER/
+    );
+  });
 });
 
 describe('loggerLevels', () => {
