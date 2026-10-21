@@ -24,7 +24,6 @@ export class ApiError extends Error {
 
 interface RequestOptions {
   body?: unknown;
-  form?: FormData;
   signal?: AbortSignal;
 }
 
@@ -67,10 +66,7 @@ const request = async <T>(
   const headers: Record<string, string> = {};
   let body: BodyInit | undefined;
 
-  if (options.form) {
-    // Never set Content-Type manually: the browser must add the multipart boundary.
-    body = options.form;
-  } else if (options.body !== undefined) {
+  if (options.body !== undefined) {
     headers['Content-Type'] = 'application/json';
     body = JSON.stringify(options.body);
   }
@@ -116,7 +112,6 @@ const request = async <T>(
 export const api = {
   get: <T>(path: string, signal?: AbortSignal) => request<T>('GET', path, { signal }),
   post: <T>(path: string, body?: unknown) => request<T>('POST', path, { body }),
-  postForm: <T>(path: string, form: FormData) => request<T>('POST', path, { form }),
   patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, { body }),
   del: <T>(path: string) => request<T>('DELETE', path),
 };

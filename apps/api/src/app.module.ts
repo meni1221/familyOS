@@ -9,7 +9,6 @@ import { TasksModule } from './modules/tasks/tasks.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 import { BabyModule } from './modules/baby/baby.module';
 import { BudgetModule } from './modules/budget/budget.module';
-import { DocumentsModule } from './modules/documents/documents.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
@@ -29,7 +28,6 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     CalendarModule,
     BabyModule,
     BudgetModule,
-    DocumentsModule,
     NotificationsModule,
     SettingsModule,
     DashboardModule,

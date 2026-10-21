@@ -17,7 +17,6 @@ export type NotificationType =
   | 'EXPENSE_ADDED'
   | 'WEEKLY_SUMMARY'
   | 'INVITATION'
-  | 'DOCUMENT_EXPIRING'
   | 'SYSTEM';
 
 export interface User {
@@ -183,25 +182,6 @@ export interface Expense {
   createdByUserId: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface Document {
-  id: string;
-  familyId: string;
-  title: string;
-  description?: string;
-  category: string;
-  /** Original filename as uploaded by the user. */
-  originalName?: string;
-  contentType: string;
-  sizeBytes: number;
-  issuedAt?: string;
-  expiresAt?: string;
-  uploadedByUserId: string;
-  createdAt: string;
-  updatedAt: string;
-  /** Relative API path that streams the stored file. */
-  downloadUrl: string;
 }
 
 export interface Notification {

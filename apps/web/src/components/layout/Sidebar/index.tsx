@@ -5,7 +5,6 @@ import {
   IconCalendar,
   IconBabyBottle,
   IconWallet,
-  IconFile,
   IconSettings,
 } from '@tabler/icons-react';
 
@@ -15,7 +14,6 @@ const navItems = [
   { to: '/app/calendar', icon: IconCalendar, label: 'יומן משפחתי' },
   { to: '/app/baby', icon: IconBabyBottle, label: 'שגרת התינוק' },
   { to: '/app/budget', icon: IconWallet, label: 'תקציב' },
-  { to: '/app/documents', icon: IconFile, label: 'מסמכים' },
   { to: '/app/settings', icon: IconSettings, label: 'הגדרות' },
 ];
 

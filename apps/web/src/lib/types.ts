@@ -14,7 +14,6 @@ export type {
   Currency,
   CurrentFamily,
   DashboardData,
-  Document as FamilyDocument,
   Expense,
   FamilyInvitation,
   FamilyMember,

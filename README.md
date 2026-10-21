@@ -2,7 +2,7 @@
 
 > כל מה שהמשפחה צריכה, במקום אחד
 
-Shlanu is a family life management SaaS application that helps families coordinate daily tasks, schedules, baby routines, household spending, documents, and reminders through a shared, secure workspace.
+Shlanu is a family life management SaaS application that helps families coordinate daily tasks, schedules, baby routines, household spending, and reminders through a shared, secure workspace.
 
 ## Features
 
@@ -10,7 +10,6 @@ Shlanu is a family life management SaaS application that helps families coordina
 - **Family Calendar** — Coordinate events and schedules
 - **Baby Tracker** — Log feeding, sleep, and diaper changes
 - **Family Budget** — Track expenses and budgets
-- **Document Vault** — Securely store important documents
 - **Notifications** — Stay informed with in-app notifications
 - **Multi-language** — Hebrew (RTL) and English (LTR)
 - **Responsive** — Mobile-first design

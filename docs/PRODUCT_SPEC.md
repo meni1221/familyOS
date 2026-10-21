@@ -18,7 +18,7 @@ Israel, with internationalization built into the architecture.
 Hebrew: "כל מה שהמשפחה צריכה, במקום אחד."
 
 ## Core Value Proposition
-Shlanu helps families coordinate daily tasks, schedules, baby routines, household spending, documents, and reminders through a shared, secure workspace.
+Shlanu helps families coordinate daily tasks, schedules, baby routines, household spending, and reminders through a shared, secure workspace.
 
 ## Product Principles
 1. Family comes first. Minimize cognitive load.
@@ -44,9 +44,8 @@ Shlanu helps families coordinate daily tasks, schedules, baby routines, househol
 4. Family calendar
 5. Baby tracker (optional)
 6. Family budget
-7. Document vault
-8. In-app notifications
-9. Settings & member management
+7. In-app notifications
+8. Settings & member management
 
 ## Design Language
 "Warm editorial minimalism meets polished modern SaaS."
@@ -79,5 +78,4 @@ Shlanu helps families coordinate daily tasks, schedules, baby routines, househol
 - Calendar coordination works for all members
 - Baby tracking is simple and accurate
 - Budget tracking is reliable
-- Documents are secure and accessible
 - The interface feels premium and trustworthy

@@ -2,9 +2,6 @@ import { beforeAll, afterAll, describe, expect, it } from 'vitest';
 import { spawn, type ChildProcess } from 'child_process';
 import mongoose from 'mongoose';
 import { io, type Socket } from 'socket.io-client';
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
 import { StatusCodes } from 'http-status-codes';
 
 /*
@@ -27,8 +24,6 @@ const apiRoot = process.cwd();
 const TEST_PORT = 3997;
 const TEST_DB = `Shlanu_e2e_${process.pid}`;
 const TEST_DB_URL = `mongodb://localhost:27017/${TEST_DB}`;
-
-const uploadsDir = join(tmpdir(), `shlanu-e2e-uploads-${process.pid}`);
 
 let server: ChildProcess | undefined;
 let serverLog = '';
@@ -173,8 +168,6 @@ describe('Shlanu end-to-end journey', () => {
     await connection.dropDatabase();
     await connection.close();
 
-    await fs.rm(uploadsDir, { recursive: true, force: true });
-
     server = spawn(process.execPath, ['dist-e2e/main.js'], {
       cwd: apiRoot,
       env: {
@@ -183,7 +176,6 @@ describe('Shlanu end-to-end journey', () => {
         PORT: String(TEST_PORT),
         DATABASE_URL: TEST_DB_URL,
         DATABASE_NAME: TEST_DB,
-        UPLOADS_DIR: uploadsDir,
         EMAIL_ENABLED: 'false',
       },
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -214,10 +206,9 @@ describe('Shlanu end-to-end journey', () => {
     }
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     socket?.close();
     server?.kill();
-    await fs.rm(uploadsDir, { recursive: true, force: true });
   });
 
   it('registers the family owner and issues a session cookie', async () => {
@@ -488,40 +479,6 @@ describe('Shlanu end-to-end journey', () => {
 
     const gone = await request('DELETE', `/api/v1/baby/profiles/${twinId}`);
     expect(gone.status).toBe(StatusCodes.NOT_FOUND);
-  });
-
-  it('uploads, downloads and deletes a document', async () => {
-    const form = new FormData();
-    form.append('title', 'חוזה שכירות');
-    form.append('category', 'חוזים');
-    form.append('file', new Blob([Buffer.from('%PDF-1.4 e2e')], { type: 'application/pdf' }), 'contract.pdf');
-
-    const uploaded = await request('POST', '/api/v1/documents', { form });
-    expect(uploaded.status).toBe(StatusCodes.CREATED);
-    expect(uploaded.json.data.downloadUrl).toBe(
-      `/api/v1/documents/${uploaded.json.data.id}/download`,
-    );
-    expect(uploaded.json.data.originalName).toBe('contract.pdf');
-    expect(uploaded.json.data.storageKey).toBeUndefined();
-
-    const download = await fetch(`${baseUrl}${uploaded.json.data.downloadUrl}`, {
-      headers: { cookie: ownerCookie },
-    });
-    expect(download.status).toBe(StatusCodes.OK);
-    expect(await download.text()).toContain('%PDF-1.4 e2e');
-
-    const list = await request('GET', '/api/v1/documents');
-    expect(list.json.data).toHaveLength(1);
-
-    const unsupported = new FormData();
-    unsupported.append('title', 'סקריפט');
-    unsupported.append('category', 'אחר');
-    unsupported.append('file', new Blob(['#!/bin/sh'], { type: 'application/x-sh' }), 'evil.sh');
-    const rejected = await request('POST', '/api/v1/documents', { form: unsupported });
-    expect(rejected.status).toBe(StatusCodes.BAD_REQUEST);
-
-    const removed = await request('DELETE', `/api/v1/documents/${uploaded.json.data.id}`);
-    expect(removed.json.success).toBe(true);
   });
 
   it('reads and updates the profile without ever leaking password material', async () => {

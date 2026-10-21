@@ -34,8 +34,5 @@ yarn-error.log*
 # Test coverage
 coverage/
 
-# Uploaded documents (local disk storage)
-uploads/
-
 # Docker
 .dockerignore

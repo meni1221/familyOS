@@ -5,7 +5,6 @@ import {
   IconBell,
   IconCalendar,
   IconCheck,
-  IconPlus,
   IconWallet,
 } from '@tabler/icons-react';
 
@@ -20,7 +19,6 @@ const QUICK_ACTIONS: QuickAction[] = [
   { to: '/app/calendar', icon: IconCalendar, label: 'הוסף אירוע' },
   { to: '/app/baby', icon: IconBabyBottle, label: 'רשום פעילות' },
   { to: '/app/budget', icon: IconWallet, label: 'הוסף הוצאה' },
-  { to: '/app/documents', icon: IconPlus, label: 'העלה מסמך' },
   { to: '/app/notifications', icon: IconBell, label: 'התראות' },
 ];
 

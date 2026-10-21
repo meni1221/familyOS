@@ -32,11 +32,6 @@ API_URL=https://api.shlanu.app
 
 DATABASE_URL="mongodb://USER:PASSWORD@HOST:27017/shlanu?authSource=admin"
 
-# קבצים שהועלו נשמרים על הדיסק של מכולת ה-API — הנתיב חייב לשבת על Volume קבוע
-UPLOADS_DIR=/app/uploads
-MAX_FILE_SIZE_BYTES=10485760
-ALLOWED_FILE_TYPES=application/pdf,image/jpeg,image/png,image/webp
-
 SESSION_SECRET=הזן_מחרוזת_אקראית_מאובטחת_מינימום_32_תווים
 COOKIE_DOMAIN=shlanu.app
 
@@ -151,7 +146,6 @@ curl https://api.shlanu.app/health
 | בעיה | פתרון |
 |------|--------|
 | שגיאת חיבור למסד נתונים | בדוק DATABASE_URL ודא שהמסד נגיש |
-| שגיאת העלאת קבצים | בדוק הרשאות כתיבה לנתיב ב-UPLOADS_DIR |
 | עוגיות לא נשלחות | ודא ש-COOKIE_DOMAIN מוגדר נכון |
 | שגיאת CORS | עדכן FRONTEND_URL ב-.env |
 

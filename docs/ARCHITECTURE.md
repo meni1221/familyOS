@@ -69,12 +69,6 @@ The application uses a modular monolith pattern:
 - Rate limiting on auth endpoints
 - CSRF protection for state-changing requests
 
-### File Storage
-- S3-compatible object storage behind abstraction
-- Short-lived signed URLs for download
-- Authorization before any storage operation
-- Metadata in database, content in object storage
-
 ### Internationalization
 - Hebrew (RTL) as default
 - English (LTR) as secondary

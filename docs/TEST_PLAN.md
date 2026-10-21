@@ -81,14 +81,6 @@
 - Budget vs actual calculations
 - Currency validation
 
-### Documents
-- Request upload authorization
-- Finalize upload
-- Request download
-- Update metadata
-- Delete document
-- Unauthorized access rejection
-
 ### Notifications
 - Create notification
 - Mark as read
@@ -105,10 +97,9 @@
 4. Expired or revoked invitations are rejected
 5. A non-owner cannot perform owner-only actions
 6. The last owner cannot leave without ownership transfer
-7. A user cannot download another family's document
-8. Invalid inputs are rejected by the server
-9. Unauthorized requests do not leak record existence
-10. Cookie/session protections are tested
+7. Invalid inputs are rejected by the server
+8. Unauthorized requests do not leak record existence
+9. Cookie/session protections are tested
 
 ### Permission Boundary Tests
 - Non-member cannot access family data
@@ -124,10 +115,9 @@
 3. Create calendar event → View in calendar
 4. Record baby log → View in timeline
 5. Add expense → View in budget
-6. Upload document → Download document
-7. Receive notification → Mark as read
-8. Change language → Verify RTL/LTR
-9. Mobile responsive navigation
+6. Receive notification → Mark as read
+7. Change language → Verify RTL/LTR
+8. Mobile responsive navigation
 
 ### Browser Testing
 - Chrome (latest)

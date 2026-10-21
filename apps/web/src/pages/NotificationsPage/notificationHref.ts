@@ -11,7 +11,6 @@ const ENTITY_ROUTES: Record<string, string> = {
   Event: '/app/calendar',
   Budget: '/app/budget',
   Expense: '/app/budget',
-  Document: '/app/documents',
   BabyProfile: '/app/baby',
   BabyLog: '/app/baby',
   Invitation: '/app/settings',
@@ -23,7 +22,6 @@ const TYPE_ROUTES: Partial<Record<NotificationType, string>> = {
   TASK_DUE_SOON: '/app/tasks',
   EVENT_REMINDER: '/app/calendar',
   EXPENSE_ADDED: '/app/budget',
-  DOCUMENT_EXPIRING: '/app/documents',
   INVITATION: '/app/settings',
   WEEKLY_SUMMARY: '/app',
 };

@@ -4,9 +4,8 @@
 
 ### Assets
 - User credentials (passwords, session tokens)
-- Family personal data (tasks, events, expenses, documents)
+- Family personal data (tasks, events, expenses)
 - Baby tracking data (health-related)
-- Document files
 
 ### Threats
 - Unauthorized access to family data
@@ -45,8 +44,6 @@
 ### Input Validation
 - Server-side validation on all inputs
 - Zod schemas for API boundaries
-- File type validation (not just extension)
-- Size limits on uploads
 - Sanitization of user content
 
 ### Data Protection

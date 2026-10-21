@@ -11,7 +11,6 @@ import TasksPage from './pages/TasksPage';
 import CalendarPage from './pages/CalendarPage';
 import BabyPage from './pages/BabyPage';
 import BudgetPage from './pages/BudgetPage';
-import DocumentsPage from './pages/DocumentsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
@@ -127,7 +126,6 @@ const App = () => {
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="baby" element={<BabyPage />} />
             <Route path="budget" element={<BudgetPage />} />
-            <Route path="documents" element={<DocumentsPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="profile" element={<ProfilePage />} />

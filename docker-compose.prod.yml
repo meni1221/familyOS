@@ -40,7 +40,6 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - SESSION_SECRET=${SESSION_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
-      - UPLOADS_DIR=/app/uploads
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_USER=${SMTP_USER}
@@ -59,10 +58,6 @@ services:
         condition: service_healthy
     networks:
       - shlanu-network
-    volumes:
-      # Uploaded documents live on the disk of this container, so they need a
-      # volume of their own or every redeploy would wipe them.
-      - uploads_data:/app/uploads
     ports:
       - "3001:3001"
     restart: unless-stopped
@@ -83,8 +78,6 @@ services:
 
 volumes:
   mongodb_data:
-  minio_data:
-  uploads_data:
 
 networks:
   shlanu-network:

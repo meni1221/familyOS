@@ -59,7 +59,6 @@ Responsibilities:
 - Family membership and authorization
 - Business rules and validation
 - Audit logging
-- File metadata and upload integration
 - Notifications
 
 Deliverables:

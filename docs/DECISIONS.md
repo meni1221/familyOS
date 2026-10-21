@@ -48,11 +48,11 @@
 **Rationale**: Primary market is Israel. RTL is not an afterthought but built into the foundation.
 **Consequences**: All layouts must be direction-aware from the start.
 
-## ADR-009: File storage on the local disk
-**Status**: Accepted (revisit before running more than one API instance)
-**Decision**: Uploaded documents are written to the API server's filesystem under `UPLOADS_DIR`, behind a documents service that could later be swapped for object storage.
-**Rationale**: One instance and one disk while the product is being built means no third-party credentials to manage and no SDK to keep current. MinIO sits in `docker-compose.yml` for whoever picks this up next.
-**Consequences**: Uploads survive only with a persistent volume, and a second API instance would not see the first one's files. Moving to S3 is a matter of implementing the storage service, not of flipping a variable — the `STORAGE_*` placeholders in the env examples are not read by the code.
+## ADR-009: No document storage
+**Status**: Superseded — the document vault was removed
+**Decision**: Shlanu does not store uploaded files, and has no documents module.
+**Rationale**: A vault built on a container's local disk keeps its promise only until the next deploy, and an S3-compatible bucket is not available to this deployment. Keeping the module would mean shipping an upload button that quietly loses files.
+**Consequences**: No `UPLOADS_DIR`, upload limits or orphaned files to reconcile. If object storage arrives later the feature returns as a new module with a real provider behind it, rather than as a half-wired one.
 
 ## ADR-010: No Redis in MVP
 **Status**: Accepted
