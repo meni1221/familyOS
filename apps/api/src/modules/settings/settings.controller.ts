@@ -7,12 +7,15 @@
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { StatusCodes } from 'http-status-codes';
 import { SettingsService } from './settings.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
+import { ApiSessionAuth } from '../../api-docs';
 import { UpdateProfileDto, UpdatePreferencesDto, ChangePasswordDto } from './dto';
 
 @ApiTags('settings')
+@ApiSessionAuth()
 @Controller('api/v1/settings')
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
@@ -46,6 +49,14 @@ export class SettingsController {
   @Post('password')
   @ApiOperation({ summary: 'Change the current user password' })
   @ApiBody({ type: ChangePasswordDto })
+  @ApiResponse({
+    status: StatusCodes.UNAUTHORIZED,
+    description: 'The current password is wrong.',
+  })
+  @ApiResponse({
+    status: StatusCodes.BAD_REQUEST,
+    description: 'The new password is the same as the current one.',
+  })
   async changePassword(@Body() body: ChangePasswordDto, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');

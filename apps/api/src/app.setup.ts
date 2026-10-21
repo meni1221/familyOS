@@ -40,13 +40,53 @@ export const configureApp = (app: INestApplication): INestApplication => {
     credentials: true,
   });
 
+  // The docs are public: they describe the shape of the API, not anyone's data.
+  // A cookie-authenticated API cannot be tried out from a page hosted elsewhere,
+  // and every protected route answers 401 on its own.
   const config = new DocumentBuilder()
     .setTitle('Shlanu API')
-    .setDescription('Family life management SaaS API')
+    .setDescription(
+      [
+        'Family life management API.',
+        '',
+        'Protected routes authenticate with the `session` cookie that',
+        '`POST /api/v1/auth/login` sets — there is no bearer token. Browser',
+        'requests that change state also have to pass the CSRF origin check: a',
+        'mismatched `Origin` or `Referer` is refused with 403.',
+      ].join('\n')
+    )
     .setVersion('1.0')
+    .addCookieAuth(
+      'session',
+      {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'session',
+        description: 'HTTP-only session cookie, issued on register and login.',
+      },
+      'session'
+    )
+    .addTag('auth', 'Registration, login, logout and the current user')
+    .addTag('families', 'The family, its members and invitations')
+    .addTag('tasks', 'The shared to-do list')
+    .addTag('calendar', 'Family events')
+    .addTag('baby', 'Babies and their logs')
+    .addTag('budget', 'Budgets and expenses')
+    .addTag('notifications', 'In-app notifications')
+    .addTag('settings', 'Profile, preferences and password')
+    .addTag('dashboard', 'The one-screen summary')
+    .addTag('health', 'Liveness and database check')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    customSiteTitle: 'Shlanu API',
+    swaggerOptions: {
+      // Routes stay collapsed: the list is long and the tags are the index.
+      docExpansion: 'none',
+      operationsSorter: 'method',
+      tagsSorter: 'alpha',
+    },
+  });
 
   return app;
 };

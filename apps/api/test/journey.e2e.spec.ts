@@ -706,4 +706,23 @@ describe('Shlanu end-to-end journey', () => {
     // The revoked token is no longer accepted by the socket handshake either.
     await expectSocketDropped(ownerCookie);
   });
+
+  it('publishes the API documentation', async () => {
+    const page = await fetch(`${baseUrl}/api/docs`);
+    expect(page.status).toBe(StatusCodes.OK);
+    expect(await page.text()).toContain('Shlanu API');
+
+    const response = await fetch(`${baseUrl}/api/docs-json`);
+    expect(response.status).toBe(StatusCodes.OK);
+
+    const spec = (await response.json()) as {
+      paths: Record<string, unknown>;
+      components?: { securitySchemes?: Record<string, unknown> };
+    };
+
+    // A path from each kind of route: the twins work and the session scheme.
+    expect(spec.paths['/api/v1/baby/profiles']).toBeDefined();
+    expect(spec.paths['/api/v1/baby/logs']).toBeDefined();
+    expect(spec.components?.securitySchemes?.session).toBeDefined();
+  });
 });

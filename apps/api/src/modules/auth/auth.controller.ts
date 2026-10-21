@@ -1,9 +1,11 @@
 import { Controller, Post, Body, Res, Req, Get, UnauthorizedException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { StatusCodes } from 'http-status-codes';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './dto/index';
 import { Response, Request } from 'express';
 import { ValidationPipe } from '@nestjs/common';
+import { ApiSessionAuth } from '../../api-docs';
 
 const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -26,6 +28,10 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: RegisterDto })
+  @ApiResponse({
+    status: StatusCodes.CONFLICT,
+    description: 'That email address already has an account.',
+  })
   async register(
     @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: RegisterDto,
     @Res() res: Response
@@ -41,6 +47,10 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiBody({ type: LoginDto })
+  @ApiResponse({
+    status: StatusCodes.UNAUTHORIZED,
+    description: 'The email or password is wrong.',
+  })
   async login(
     @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: LoginDto,
     @Res() res: Response
@@ -68,6 +78,7 @@ export class AuthController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user' })
+  @ApiSessionAuth()
   async me(@Req() req: Request) {
     const token = req.cookies?.session;
     const user = token ? await this.authService.validateSession(token) : null;

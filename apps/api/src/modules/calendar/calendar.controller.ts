@@ -10,12 +10,15 @@
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { StatusCodes } from 'http-status-codes';
 import { CalendarService } from './calendar.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
+import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
 import { CreateEventDto, UpdateEventDto } from './dto/index';
 
 @ApiTags('calendar')
+@ApiSessionAuth()
 @Controller('api/v1/calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
@@ -56,6 +59,10 @@ export class CalendarController {
   @Post()
   @ApiOperation({ summary: 'Create a new event' })
   @ApiBody({ type: CreateEventDto })
+  @ApiResponse({
+    status: StatusCodes.BAD_REQUEST,
+    description: 'The event ends before it starts.',
+  })
   async createEvent(@Body() body: CreateEventDto, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
@@ -66,6 +73,11 @@ export class CalendarController {
   @ApiOperation({ summary: 'Update an event' })
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateEventDto })
+  @ApiResponse({
+    status: StatusCodes.BAD_REQUEST,
+    description: 'The event ends before it starts.',
+  })
+  @ApiNotFound('event')
   async updateEvent(
     @Param('id') id: string,
     @Body() body: UpdateEventDto,
@@ -79,6 +91,7 @@ export class CalendarController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an event' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('event')
   async deleteEvent(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');

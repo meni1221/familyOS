@@ -11,9 +11,11 @@
   UnauthorizedException,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { StatusCodes } from 'http-status-codes';
 import { BabyService } from './baby.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
+import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
 import {
   CreateBabyLogDto,
   UpdateBabyLogDto,
@@ -22,6 +24,7 @@ import {
 } from './dto/index';
 
 @ApiTags('baby')
+@ApiSessionAuth()
 @Controller('api/v1/baby')
 export class BabyController {
   constructor(private readonly babyService: BabyService) {}
@@ -50,6 +53,7 @@ export class BabyController {
   @ApiOperation({ summary: 'Update one baby' })
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateBabyProfileDto })
+  @ApiNotFound('baby')
   async updateProfile(
     @Param('id') id: string,
     @Body(new ValidationPipe({ whitelist: true, transform: true })) body: UpdateBabyProfileDto,
@@ -63,6 +67,7 @@ export class BabyController {
   @Delete('profiles/:id')
   @ApiOperation({ summary: 'Delete a baby and the log entries recorded for them' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('baby')
   async deleteProfile(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
@@ -84,6 +89,11 @@ export class BabyController {
   @Post('logs')
   @ApiOperation({ summary: 'Create a baby log entry' })
   @ApiBody({ type: CreateBabyLogDto })
+  @ApiResponse({
+    status: StatusCodes.BAD_REQUEST,
+    description:
+      'The family has more than one baby and no `babyProfileId` was sent — the API never guesses whose entry it is.',
+  })
   async createLog(
     @Body(new ValidationPipe({ whitelist: true, transform: true })) body: CreateBabyLogDto,
     @Req() req: AuthenticatedRequest
@@ -96,6 +106,7 @@ export class BabyController {
   @Patch('logs/:id')
   @ApiOperation({ summary: 'Update a baby log entry' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('log entry')
   async updateLog(
     @Param('id') id: string,
     @Body() body: UpdateBabyLogDto,
@@ -109,6 +120,7 @@ export class BabyController {
   @Delete('logs/:id')
   @ApiOperation({ summary: 'Delete a baby log entry' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('log entry')
   async deleteLog(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');

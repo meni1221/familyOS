@@ -2,9 +2,11 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UnauthorizedExc
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
+import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
 import { CreateTaskDto, UpdateTaskDto } from './dto/index';
 
 @ApiTags('tasks')
+@ApiSessionAuth()
 @Controller('api/v1/tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
@@ -30,6 +32,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Update a task' })
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateTaskDto })
+  @ApiNotFound('task')
   async updateTask(
     @Param('id') id: string,
     @Body() body: UpdateTaskDto,
@@ -43,6 +46,7 @@ export class TasksController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a task' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('task')
   async deleteTask(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');

@@ -8,12 +8,15 @@
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { StatusCodes } from 'http-status-codes';
 import { FamiliesService } from './families.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
+import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
 import { CreateFamilyDto, CreateInvitationDto, AcceptInvitationDto } from './dto';
 
 @ApiTags('families')
+@ApiSessionAuth()
 @Controller('api/v1/families')
 export class FamiliesController {
   constructor(private readonly familiesService: FamiliesService) {}
@@ -62,6 +65,14 @@ export class FamiliesController {
   @Post('invitations')
   @ApiOperation({ summary: 'Invite someone to the current family' })
   @ApiBody({ type: CreateInvitationDto })
+  @ApiResponse({
+    status: StatusCodes.FORBIDDEN,
+    description: 'Only the family owner can invite.',
+  })
+  @ApiResponse({
+    status: StatusCodes.CONFLICT,
+    description: 'That address is already a member, or already has a pending invitation.',
+  })
   async createInvitation(@Body() body: CreateInvitationDto, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
@@ -71,6 +82,11 @@ export class FamiliesController {
   @Delete('invitations/:id')
   @ApiOperation({ summary: 'Revoke a pending invitation' })
   @ApiParam({ name: 'id', type: String })
+  @ApiResponse({
+    status: StatusCodes.FORBIDDEN,
+    description: 'Only the family owner can revoke an invitation.',
+  })
+  @ApiNotFound('pending invitation')
   async revokeInvitation(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
@@ -80,6 +96,14 @@ export class FamiliesController {
   @Post('invitations/accept')
   @ApiOperation({ summary: 'Accept a family invitation' })
   @ApiBody({ type: AcceptInvitationDto })
+  @ApiResponse({
+    status: StatusCodes.NOT_FOUND,
+    description: 'The invitation is unknown, revoked, already used, or expired.',
+  })
+  @ApiResponse({
+    status: StatusCodes.FORBIDDEN,
+    description: 'The invitation was sent to a different email address.',
+  })
   async acceptInvitation(@Body() body: AcceptInvitationDto, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');

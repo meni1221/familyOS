@@ -12,6 +12,7 @@
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { BudgetService } from './budget.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
+import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
 import {
   CreateBudgetDto,
   UpdateBudgetDto,
@@ -20,6 +21,7 @@ import {
 } from './dto/index';
 
 @ApiTags('budget')
+@ApiSessionAuth()
 @Controller('api/v1/budget')
 export class BudgetController {
   constructor(private readonly budgetService: BudgetService) {}
@@ -62,6 +64,7 @@ export class BudgetController {
   @ApiOperation({ summary: 'Update an expense' })
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateExpenseDto })
+  @ApiNotFound('expense')
   async updateExpense(
     @Param('id') id: string,
     @Body() body: UpdateExpenseDto,
@@ -75,6 +78,7 @@ export class BudgetController {
   @Delete('expenses/:id')
   @ApiOperation({ summary: 'Delete an expense' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('expense')
   async deleteExpense(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
@@ -85,6 +89,7 @@ export class BudgetController {
   @ApiOperation({ summary: 'Update a budget' })
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateBudgetDto })
+  @ApiNotFound('budget')
   async updateBudget(
     @Param('id') id: string,
     @Body() body: UpdateBudgetDto,
@@ -98,6 +103,7 @@ export class BudgetController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a budget' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('budget')
   async deleteBudget(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');

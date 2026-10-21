@@ -2,8 +2,10 @@
 import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
+import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
 
 @ApiTags('notifications')
+@ApiSessionAuth()
 @Controller('api/v1/notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
@@ -35,6 +37,7 @@ export class NotificationsController {
   @Patch(':id/read')
   @ApiOperation({ summary: 'Mark a single notification as read' })
   @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('notification')
   async markAsRead(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');

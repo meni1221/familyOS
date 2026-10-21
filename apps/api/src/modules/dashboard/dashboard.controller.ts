@@ -1,5 +1,6 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiSessionAuth } from '../../api-docs';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -17,6 +18,7 @@ interface CategoryTotal {
 }
 
 @ApiTags('dashboard')
+@ApiSessionAuth()
 @Controller('api/v1/dashboard')
 export class DashboardController {
   constructor(
