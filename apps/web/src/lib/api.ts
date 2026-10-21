@@ -58,6 +58,13 @@ const extractCode = (payload: unknown): string | undefined => {
   return undefined;
 };
 
+/** The server names the file it sends; fall back to a name that still makes sense. */
+const filenameFrom = (response: Response): string => {
+  const disposition = response.headers.get('Content-Disposition') ?? '';
+  const match = disposition.match(/filename="([^"]+)"/);
+  return match ? match[1] : 'shlanu-export.json';
+};
+
 const request = async <T>(
   method: string,
   path: string,
@@ -113,5 +120,36 @@ export const api = {
   get: <T>(path: string, signal?: AbortSignal) => request<T>('GET', path, { signal }),
   post: <T>(path: string, body?: unknown) => request<T>('POST', path, { body }),
   patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, { body }),
-  del: <T>(path: string) => request<T>('DELETE', path),
+  del: <T>(path: string, body?: unknown) => request<T>('DELETE', path, { body }),
+
+  /**
+   * A GET whose answer is a file. Kept here so credentials and the error
+   * message stay the same as every other call — a bare `fetch` elsewhere would
+   * be the one place where a 401 looks like an empty download.
+   */
+  download: async (path: string): Promise<{ blob: Blob; filename: string }> => {
+    let response: Response;
+    try {
+      response = await fetch(path, { credentials: 'include' });
+    } catch {
+      throw new ApiError('לא ניתן להתחבר לשרת. בדקו את החיבור ונסו שוב.', 0);
+    }
+
+    if (!response.ok) {
+      const text = await response.text();
+      let payload: unknown;
+      try {
+        payload = JSON.parse(text);
+      } catch {
+        payload = text;
+      }
+      throw new ApiError(
+        extractMessage(payload, response.status),
+        response.status,
+        extractCode(payload)
+      );
+    }
+
+    return { blob: await response.blob(), filename: filenameFrom(response) };
+  },
 };

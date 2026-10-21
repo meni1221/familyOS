@@ -1,4 +1,4 @@
-import { PasswordSection, ProfileSection } from '../../components/settings';
+import { AccountSection, PasswordSection, ProfileSection } from '../../components/settings';
 
 /**
  * The account view reached from the avatar menu: who you are plus the
@@ -17,6 +17,7 @@ const ProfilePage = () => {
       <div className="space-y-4">
         <ProfileSection />
         <PasswordSection />
+        <AccountSection />
       </div>
     </div>
   );

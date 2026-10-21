@@ -75,6 +75,15 @@
 - No request bodies, no cookies, no passwords, no tokens
 - `X-Request-Id` is validated before being echoed and logged
 
+### Account Deletion and Export
+- The export contains the account and its family data, and no password hash or
+  session token
+- Deletion requires the account's password, and the session is revoked afterwards
+- A non-owner's records stay with the family; an absent assignee is cleared
+  rather than left pointing at a deleted user
+- A family whose only member leaves is deleted with them — the one case where
+  deleting an account deletes family data
+
 ### Audit Trail
 Not implemented yet: `AuditLog` has a schema but nothing writes to it, so the
 project does not claim an audit trail in this document.

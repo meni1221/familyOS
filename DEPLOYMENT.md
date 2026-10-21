@@ -161,7 +161,7 @@ aws s3 cp backup_$(date +%Y%m%d).gz s3://shlanu-backups/
 curl https://api.shlanu.app/health
 
 # תגובה מצופה:
-# {"status":"healthy","timestamp":"...","services":{"database":"connected"}}
+# {"status":"healthy","timestamp":"...","uptimeSeconds":123,"services":{"database":"connected"}}
 ```
 
 ## בעיות נפוצות
@@ -172,6 +172,8 @@ curl https://api.shlanu.app/health
 | 429 לכל המשתמשים בבת אחת | ודא שה-Proxy מעביר `X-Forwarded-For` ושהמכולה מריצה גרסה אחרונה של ה-API |
 | שגיאת CORS | עדכן FRONTEND_URL ב-.env |
 | 403 עם `CSRF_ORIGIN_MISMATCH` | FRONTEND_URL ו-API_URL חייבים להיות בדיוק הכתובות שהדפדפן שולח |
+| משתמש מדווח על תקלה | בקש ממנו את `X-Request-Id` מתגובת השרת (מופיע בכל תשובה), וחפש אותו בלוג |
+| בקשת איפוס סיסמה לא מגיעה | ודא ש-SMTP מוגדר; בלעדיו השרת רושם שגיאה ולא שולח דואר |
 
 ## תמיכה
 

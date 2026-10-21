@@ -16,19 +16,7 @@ import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from './dt
 import { Response, Request } from 'express';
 import { ValidationPipe } from '@nestjs/common';
 import { ApiSessionAuth } from '../../api-docs';
-
-const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
-
-/**
- * One definition for the session cookie, used when it is issued *and* when it
- * is cleared — `clearCookie` only removes a cookie whose attributes match.
- */
-const SESSION_COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
-  path: '/',
-};
+import { SESSION_COOKIE_OPTIONS, SESSION_MAX_AGE_MS } from './session-cookie';
 
 @ApiTags('auth')
 @Controller('api/v1/auth')

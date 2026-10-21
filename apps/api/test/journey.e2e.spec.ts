@@ -890,6 +890,71 @@ describe('Shlanu end-to-end journey', () => {
     expect(carried.headers.get('x-request-id')).toBe('gateway.request_42');
   });
 
+  it('exports the family data as a file, without a single credential in it', async () => {
+    const response = await fetch(`${baseUrl}/api/v1/settings/export`, {
+      headers: { cookie: ownerCookie },
+    });
+
+    expect(response.status).toBe(StatusCodes.OK);
+    expect(response.headers.get('content-disposition')).toContain('attachment');
+
+    const text = await response.text();
+    const exported = JSON.parse(text) as {
+      account: { email: string };
+      family: { name: string } | null;
+      data: { tasks: unknown[]; expenses: unknown[] };
+    };
+
+    expect(exported.account.email).toBe(owner.email);
+    expect(exported.family).not.toBeNull();
+    expect(Array.isArray(exported.data.tasks)).toBe(true);
+    expect(Array.isArray(exported.data.expenses)).toBe(true);
+
+    // An export is a copy of the data, not of the credentials.
+    expect(text).not.toContain('passwordHash');
+    expect(text).not.toContain('password_hash');
+  });
+
+  it('deletes an account only with its password, and then it is gone', async () => {
+    const email = `leaver${stamp}@e2e.test`;
+    const password = 'leaver-pass-1234';
+
+    const registered = await request('POST', '/api/v1/auth/register', {
+      cookie: '',
+      body: { email, password, displayName: 'עוזב' },
+    });
+    expect(registered.status).toBe(StatusCodes.CREATED);
+    const leaverCookie = registered.session;
+
+    const wrong = await request('DELETE', '/api/v1/settings/account', {
+      cookie: leaverCookie,
+      body: { password: 'not-the-password' },
+    });
+    expect(wrong.status).toBe(StatusCodes.UNAUTHORIZED);
+    expect((await request('GET', '/api/v1/auth/me', { cookie: leaverCookie })).status).toBe(
+      StatusCodes.OK
+    );
+
+    const removed = await request('DELETE', '/api/v1/settings/account', {
+      cookie: leaverCookie,
+      body: { password },
+    });
+    expect(removed.status).toBe(StatusCodes.OK);
+
+    // The session is gone, and the credentials no longer open anything.
+    expect((await request('GET', '/api/v1/auth/me', { cookie: leaverCookie })).status).toBe(
+      StatusCodes.UNAUTHORIZED
+    );
+    expect(
+      (
+        await request('POST', '/api/v1/auth/login', {
+          cookie: '',
+          body: { email, password },
+        })
+      ).status
+    ).toBe(StatusCodes.UNAUTHORIZED);
+  });
+
   it('resets a forgotten password over a single-use link and signs the old sessions out', async () => {
     const from = serverLog.length;
 
