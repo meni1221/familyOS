@@ -1,5 +1,6 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
@@ -30,12 +31,12 @@ export class LoggingMiddleware implements NestMiddleware {
       };
 
       // Log level based on status code
-      if (statusCode >= 500) {
+      if (statusCode >= StatusCodes.INTERNAL_SERVER_ERROR) {
         this.logger.error(
           `Request completed: ${method} ${originalUrl} - ${statusCode} (${duration}ms)`,
           logEntry
         );
-      } else if (statusCode >= 400) {
+      } else if (statusCode >= StatusCodes.BAD_REQUEST) {
         this.logger.warn(
           `Request completed: ${method} ${originalUrl} - ${statusCode} (${duration}ms)`,
           logEntry

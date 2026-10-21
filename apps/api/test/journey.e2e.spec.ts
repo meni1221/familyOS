@@ -5,6 +5,7 @@ import { io, type Socket } from 'socket.io-client';
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
+import { StatusCodes } from 'http-status-codes';
 
 /*
  * End-to-end journey.
@@ -224,7 +225,7 @@ describe('Shlanu end-to-end journey', () => {
       body: { ...owner, displayName: 'בעלת המשפחה', preferredLocale: 'he' },
     });
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(StatusCodes.CREATED);
     expect(response.session).toMatch(/^session=/);
 
     ownerCookie = response.session;
@@ -240,20 +241,20 @@ describe('Shlanu end-to-end journey', () => {
       body: { ...owner, displayName: 'כפילות' },
     });
 
-    expect(duplicate.status).toBe(409);
+    expect(duplicate.status).toBe(StatusCodes.CONFLICT);
     expect(duplicate.json.message).toBe('כתובת אימייל כבר רשומה');
 
     const wrongPassword = await request('POST', '/api/v1/auth/login', {
       body: { email: owner.email, password: 'definitely-not-the-password' },
     });
 
-    expect(wrongPassword.status).toBe(401);
+    expect(wrongPassword.status).toBe(StatusCodes.UNAUTHORIZED);
     expect(wrongPassword.json.message).toBe('אימייל או סיסמה שגויים');
   });
 
   it('resolves the session through /auth/me', async () => {
     const response = await request('GET', '/api/v1/auth/me');
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(StatusCodes.OK);
     expect(response.json.email).toBe(owner.email);
   });
 
@@ -282,7 +283,7 @@ describe('Shlanu end-to-end journey', () => {
       },
     });
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(StatusCodes.CREATED);
     expect(response.json.data).toMatchObject({
       title: 'קניות לשבוע',
       priority: 'HIGH',
@@ -302,7 +303,7 @@ describe('Shlanu end-to-end journey', () => {
     const response = await request('POST', '/api/v1/tasks', {
       body: { title: 'משימה', assigneeUserId: 'not-an-object-id' },
     });
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(StatusCodes.BAD_REQUEST);
   });
 
   it('completes a task, stamps completedAt and emits task:updated', async () => {
@@ -314,7 +315,7 @@ describe('Shlanu end-to-end journey', () => {
       body: { status: 'COMPLETED' },
     });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(StatusCodes.OK);
     expect(response.json.data.status).toBe('COMPLETED');
     expect(response.json.data.completedAt).toBeTruthy();
     expect(await event).toBeTruthy();
@@ -327,7 +328,7 @@ describe('Shlanu end-to-end journey', () => {
     expect(removed.json.success).toBe(true);
 
     const missing = await request('PATCH', `/api/v1/tasks/${taskId}`, { body: { title: 'x' } });
-    expect(missing.status).toBe(404);
+    expect(missing.status).toBe(StatusCodes.NOT_FOUND);
   });
 
   it('creates a calendar event and rejects an inverted range', async () => {
@@ -342,7 +343,7 @@ describe('Shlanu end-to-end journey', () => {
       },
     });
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(StatusCodes.CREATED);
     expect(await event).toBeTruthy();
 
     const inverted = await request('POST', '/api/v1/calendar', {
@@ -352,7 +353,7 @@ describe('Shlanu end-to-end journey', () => {
         endsAt: new Date(Date.now() + 3_600_000).toISOString(),
       },
     });
-    expect(inverted.status).toBe(400);
+    expect(inverted.status).toBe(StatusCodes.BAD_REQUEST);
 
     const range = await request(
       'GET',
@@ -360,7 +361,7 @@ describe('Shlanu end-to-end journey', () => {
         new Date(Date.now() - 86_400_000).toISOString(),
       )}&end=${encodeURIComponent(new Date(Date.now() + 86_400_000).toISOString())}`,
     );
-    expect(range.status).toBe(200);
+    expect(range.status).toBe(StatusCodes.OK);
     expect(range.json.data.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -368,7 +369,7 @@ describe('Shlanu end-to-end journey', () => {
     const budgetEvent = waitForEvent('budget:created');
     const budget = await request('POST', '/api/v1/budget', { body: { name: 'מזון', amount: 2500 } });
 
-    expect(budget.status).toBe(201);
+    expect(budget.status).toBe(StatusCodes.CREATED);
     expect(budget.json.data).toMatchObject({ currency: 'ILS', period: 'MONTHLY' });
     expect(await budgetEvent).toBeTruthy();
 
@@ -381,7 +382,7 @@ describe('Shlanu end-to-end journey', () => {
       body: { amount: 120.5, category: 'מזון', occurredAt: new Date().toISOString() },
     });
 
-    expect(expense.status).toBe(201);
+    expect(expense.status).toBe(StatusCodes.CREATED);
     expect(expense.json.data.amount).toBe(120.5);
     expect(await expenseEvent).toBeTruthy();
 
@@ -395,7 +396,7 @@ describe('Shlanu end-to-end journey', () => {
     expect(removedBudget.json.success).toBe(true);
 
     const badId = await request('DELETE', '/api/v1/budget/not-an-id');
-    expect(badId.status).toBe(404);
+    expect(badId.status).toBe(StatusCodes.NOT_FOUND);
   });
 
   it('stores baby logs and auto-creates the baby profile', async () => {
@@ -410,7 +411,7 @@ describe('Shlanu end-to-end journey', () => {
       },
     });
 
-    expect(log.status).toBe(201);
+    expect(log.status).toBe(StatusCodes.CREATED);
     expect(log.json.data.type).toBe('FEEDING');
     expect(await logEvent).toBeTruthy();
 
@@ -433,19 +434,19 @@ describe('Shlanu end-to-end journey', () => {
     const rejected = await request('POST', '/api/v1/baby/profiles', {
       body: { displayName: 'בן', color: 'purple' },
     });
-    expect(rejected.status).toBe(400);
+    expect(rejected.status).toBe(StatusCodes.BAD_REQUEST);
 
     const twin = await request('POST', '/api/v1/baby/profiles', {
       body: { displayName: 'אורי', dateOfBirth: '2025-01-01' },
     });
-    expect(twin.status).toBe(201);
+    expect(twin.status).toBe(StatusCodes.CREATED);
     expect(await profileEvent).toBeTruthy();
     const twinId = twin.json.data.id;
 
     const logged = await request('POST', '/api/v1/baby/logs', {
       body: { type: 'SLEEP', babyProfileId: twinId, occurredAt: new Date().toISOString() },
     });
-    expect(logged.status).toBe(201);
+    expect(logged.status).toBe(StatusCodes.CREATED);
     expect(logged.json.data.babyProfileId).toBe(twinId);
 
     // Two babies, two colours — the point of the colour is telling them apart.
@@ -469,12 +470,12 @@ describe('Shlanu end-to-end journey', () => {
     const ambiguous = await request('POST', '/api/v1/baby/logs', {
       body: { type: 'NOTE', occurredAt: new Date().toISOString() },
     });
-    expect(ambiguous.status).toBe(400);
+    expect(ambiguous.status).toBe(StatusCodes.BAD_REQUEST);
 
     // Deleting a twin takes their entries along and leaves the other alone.
     const removalEvent = waitForEvent('baby-profile:deleted');
     const removed = await request('DELETE', `/api/v1/baby/profiles/${twinId}`);
-    expect(removed.status).toBe(200);
+    expect(removed.status).toBe(StatusCodes.OK);
     expect(removed.json.deletedLogs).toBe(1);
     expect(await removalEvent).toBeTruthy();
 
@@ -486,7 +487,7 @@ describe('Shlanu end-to-end journey', () => {
     expect(allLogs.json.data[0].type).toBe('FEEDING');
 
     const gone = await request('DELETE', `/api/v1/baby/profiles/${twinId}`);
-    expect(gone.status).toBe(404);
+    expect(gone.status).toBe(StatusCodes.NOT_FOUND);
   });
 
   it('uploads, downloads and deletes a document', async () => {
@@ -496,7 +497,7 @@ describe('Shlanu end-to-end journey', () => {
     form.append('file', new Blob([Buffer.from('%PDF-1.4 e2e')], { type: 'application/pdf' }), 'contract.pdf');
 
     const uploaded = await request('POST', '/api/v1/documents', { form });
-    expect(uploaded.status).toBe(201);
+    expect(uploaded.status).toBe(StatusCodes.CREATED);
     expect(uploaded.json.data.downloadUrl).toBe(
       `/api/v1/documents/${uploaded.json.data.id}/download`,
     );
@@ -506,7 +507,7 @@ describe('Shlanu end-to-end journey', () => {
     const download = await fetch(`${baseUrl}${uploaded.json.data.downloadUrl}`, {
       headers: { cookie: ownerCookie },
     });
-    expect(download.status).toBe(200);
+    expect(download.status).toBe(StatusCodes.OK);
     expect(await download.text()).toContain('%PDF-1.4 e2e');
 
     const list = await request('GET', '/api/v1/documents');
@@ -517,7 +518,7 @@ describe('Shlanu end-to-end journey', () => {
     unsupported.append('category', 'אחר');
     unsupported.append('file', new Blob(['#!/bin/sh'], { type: 'application/x-sh' }), 'evil.sh');
     const rejected = await request('POST', '/api/v1/documents', { form: unsupported });
-    expect(rejected.status).toBe(400);
+    expect(rejected.status).toBe(StatusCodes.BAD_REQUEST);
 
     const removed = await request('DELETE', `/api/v1/documents/${uploaded.json.data.id}`);
     expect(removed.json.success).toBe(true);
@@ -525,7 +526,7 @@ describe('Shlanu end-to-end journey', () => {
 
   it('reads and updates the profile without ever leaking password material', async () => {
     const profile = await request('GET', '/api/v1/settings/profile');
-    expect(profile.status).toBe(200);
+    expect(profile.status).toBe(StatusCodes.OK);
     expect(profile.json.data.email).toBe(owner.email);
     expect(profile.text).not.toContain('passwordHash');
 
@@ -551,7 +552,7 @@ describe('Shlanu end-to-end journey', () => {
     const unknown = await request('PATCH', '/api/v1/settings/preferences', {
       body: { notificationPreferences: { unknownKey: true } },
     });
-    expect(unknown.status).toBe(200);
+    expect(unknown.status).toBe(StatusCodes.OK);
 
     const profile = await request('GET', '/api/v1/settings/profile');
     expect(profile.json.data.notificationPreferences.unknownKey).toBeUndefined();
@@ -562,12 +563,12 @@ describe('Shlanu end-to-end journey', () => {
     const wrong = await request('POST', '/api/v1/settings/password', {
       body: { currentPassword: 'definitely-wrong', newPassword: 'brand-new-pass-1' },
     });
-    expect(wrong.status).toBe(401);
+    expect(wrong.status).toBe(StatusCodes.UNAUTHORIZED);
 
     const unchanged = await request('POST', '/api/v1/settings/password', {
       body: { currentPassword: owner.password, newPassword: owner.password },
     });
-    expect(unchanged.status).toBe(400);
+    expect(unchanged.status).toBe(StatusCodes.BAD_REQUEST);
 
     const changed = await request('POST', '/api/v1/settings/password', {
       body: { currentPassword: owner.password, newPassword: 'brand-new-pass-1' },
@@ -579,7 +580,7 @@ describe('Shlanu end-to-end journey', () => {
 
   it('exposes the current family and its members without raw ids', async () => {
     const current = await request('GET', '/api/v1/families/current');
-    expect(current.status).toBe(200);
+    expect(current.status).toBe(StatusCodes.OK);
     expect(current.json.data.memberCount).toBe(1);
     expect(current.json.data).not.toHaveProperty('_id');
 
@@ -590,11 +591,13 @@ describe('Shlanu end-to-end journey', () => {
   });
 
   it('creates, lists and revokes an invitation', async () => {
-    const created = await request('POST', '/api/v1/families/invitations', {
-      body: { email: guest.email, role: 'MEMBER' },
-    });
+    const created = await request<{ data: { inviteUrl: string; expiresAt: string } }>(
+      'POST',
+      '/api/v1/families/invitations',
+      { body: { email: guest.email, role: 'MEMBER' } }
+    );
 
-    expect(created.status).toBe(201);
+    expect(created.status).toBe(StatusCodes.CREATED);
     expect(created.json.data.inviteUrl).toContain('/app/settings?invite=');
     expect(created.json.data.expiresAt).toBeTruthy();
 
@@ -618,7 +621,7 @@ describe('Shlanu end-to-end journey', () => {
     const registered = await request('POST', '/api/v1/auth/register', {
       body: { ...guest, displayName: 'האורח', preferredLocale: 'he' },
     });
-    expect(registered.status).toBe(201);
+    expect(registered.status).toBe(StatusCodes.CREATED);
     guestCookie = registered.session;
 
     const ownFamily = await request('GET', '/api/v1/families/current', { cookie: guestCookie });
@@ -652,7 +655,7 @@ describe('Shlanu end-to-end journey', () => {
       cookie: guestCookie,
       body: { token },
     });
-    expect(reused.status).toBe(404);
+    expect(reused.status).toBe(StatusCodes.NOT_FOUND);
   });
 
   it('notifies the assignee when a task is assigned to them', async () => {
@@ -675,7 +678,7 @@ describe('Shlanu end-to-end journey', () => {
     const created = await request('POST', '/api/v1/tasks', {
       body: { title: 'תורנות כלים', assigneeUserId: guestMember.id },
     });
-    expect(created.status).toBe(201);
+    expect(created.status).toBe(StatusCodes.CREATED);
 
     const notification = await pushed;
     expect(notification?.type).toBe('TASK_ASSIGNED');
@@ -715,7 +718,7 @@ describe('Shlanu end-to-end journey', () => {
   it('serves the aggregated dashboard', async () => {
     const response = await request('GET', '/api/v1/dashboard');
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(StatusCodes.OK);
     expect(response.json).toHaveProperty('tasks');
     expect(response.json).toHaveProperty('events');
     expect(response.json).toHaveProperty('budget');
@@ -728,10 +731,10 @@ describe('Shlanu end-to-end journey', () => {
 
   it('rejects unauthenticated writes and reads', async () => {
     const write = await request('POST', '/api/v1/tasks', { cookie: '', body: { title: 'אנונימי' } });
-    expect(write.status).toBe(401);
+    expect(write.status).toBe(StatusCodes.UNAUTHORIZED);
 
     const readAll = await request('POST', '/api/v1/notifications/read-all', { cookie: '' });
-    expect(readAll.status).toBe(401);
+    expect(readAll.status).toBe(StatusCodes.UNAUTHORIZED);
   });
 
   it('logs out and invalidates the session', async () => {
@@ -741,7 +744,7 @@ describe('Shlanu end-to-end journey', () => {
     // The session is gone, so `/auth/me` now answers 401 like every other
     // authenticated endpoint.
     const me = await request('GET', '/api/v1/auth/me', { cookie: ownerCookie });
-    expect(me.status).toBe(401);
+    expect(me.status).toBe(StatusCodes.UNAUTHORIZED);
 
     // The revoked token is no longer accepted by the socket handshake either.
     await expectSocketDropped(ownerCookie);
