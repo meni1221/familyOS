@@ -16,6 +16,7 @@ import ErrorBoundary from './components/ui/ErrorBoundary';
 import PageTransition from './components/layout/PageTransition';
 import ToastProvider from './components/ui/ToastProvider';
 import ConfirmProvider from './components/ui/ConfirmProvider';
+import CookieNotice from './components/ui/CookieNotice';
 import { AccessibilityWidget, SkipLink } from './components/accessibility';
 import { ContentGuard } from './components/security';
 import { useRealtimeConnection } from './hooks/useRealtime';
@@ -166,6 +167,7 @@ const App = () => {
         <RealtimeBridge />
         <LocaleSync />
         <ContentGuard />
+        <CookieNotice />
         <AccessibilityWidget />
       </ToastProvider>
     </ErrorBoundary>
