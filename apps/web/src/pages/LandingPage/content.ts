@@ -1,10 +1,10 @@
 import type { ComponentType } from 'react';
 import {
+  IconAccessible,
   IconBabyBottle,
   IconBell,
   IconCalendar,
   IconCheck,
-  IconFile,
   IconHeart,
   IconShield,
   IconSparkles,
@@ -28,12 +28,12 @@ export const FEATURES: LandingItem[] = [
   {
     icon: IconCalendar,
     title: 'יומן משפחתי',
-    description: 'סינורון אירועים, פגישות ומסגרות זמן לכל בני המשפחה',
+    description: 'סינכרון אירועים, פגישות ומסגרות זמן لكل בני המשפחה',
   },
   {
     icon: IconBabyBottle,
     title: 'שגרת התינוק',
-    description: 'מעקב הזנה, שינה וחיתולים עם סיכומים יומיים ושבועיים',
+    description: 'מעקב הזנה, שינה וחיתולים — גם לתאומים, עם סיכומים יומיים',
   },
   {
     icon: IconWallet,
@@ -41,14 +41,14 @@ export const FEATURES: LandingItem[] = [
     description: 'ניהול הוצאות והכנסות עם סיכומים לפי קטגוריות',
   },
   {
-    icon: IconFile,
-    title: 'כספת מסמכים',
-    description: 'אחסון מאובטח של מסמכים חשובים עם תזכורות תפוגה',
+    icon: IconAccessible,
+    title: 'עברית ונגישות',
+    description: 'ממשק עברי מלא, קיצורי מקלדת ווידג׳ט נגישות בכל עמוד',
   },
   {
     icon: IconBell,
     title: 'התראות חכמות',
-    description: 'תזכורות בזמן על משימות, אירועים ומסמכים',
+    description: 'תזכורות בזמן על משימות ואירועים',
   },
 ];
 
@@ -67,7 +67,7 @@ export const BENEFITS: LandingItem[] = [
   {
     icon: IconShield,
     title: 'פרטיות מלאה',
-    description: 'הנתונים שלכם שייכים לכם — לנו רק מתשתמשים בהם',
+    description: 'הנתונים שלכם שייכים לכם — ואינם משמשים לפרסום',
   },
   {
     icon: IconSparkles,

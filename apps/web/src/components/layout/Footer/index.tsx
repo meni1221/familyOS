@@ -25,9 +25,15 @@ const Footer = ({ className = '' }: FooterProps) => {
 
         <p>כל מה שהמשפחה צריכה, במקום אחד</p>
 
-        <nav aria-label="קישורים בתחתית העמוד" className="flex items-center gap-4">
+        <nav aria-label="קישורים בתחתית העמוד" className="flex flex-wrap items-center justify-center gap-4">
           <Link to="/privacy" className="transition-colors hover:text-ink">
             מדיניות פרטיות
+          </Link>
+          <span aria-hidden="true" className="text-border">
+            |
+          </span>
+          <Link to="/terms" className="transition-colors hover:text-ink">
+            תנאי שימוש
           </Link>
           <span aria-hidden="true" className="text-border">
             |

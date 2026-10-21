@@ -13,7 +13,7 @@ export const SITE_NAME = 'שלנו';
 export const SITE_TAGLINE = 'כל מה שהמשפחה צריכה, במקום אחד';
 
 export const DEFAULT_DESCRIPTION =
-  'שלנו היא אפליקציה לניהול חיי המשפחה: משימות משותפות, לוח שנה משפחתי, מעקב אחר תינוקות, תקציב הבית, מסמכים חשובים והתראות — במקום אחד, בעברית ובחינם.';
+  'שלנו היא אפליקציה לניהול חיי המשפחה: משימות משותפות, לוח שנה משפחתי, מעקב אחר תינוקות, תקציב הבית והתראות — במקום אחד, בעברית ובחינם.';
 
 /** Words a family would actually type, not a list of every synonym. */
 export const SITE_KEYWORDS = [
@@ -25,7 +25,6 @@ export const SITE_KEYWORDS = [
   'יומן האכלות',
   'תקציב משפחתי',
   'הוצאות הבית',
-  'מסמכים משפחתיים',
   'ארגון המשפחה',
   'אפליקציה בעברית',
   'family management app',
