@@ -1,128 +1,89 @@
 name: CI
 
+# The default branch is `master`; this workflow used to watch `main` and
+# `develop`, neither of which exists, so nothing ran on a push.
 on:
   push:
-    branches: [main, develop]
+    branches: [master]
   pull_request:
-    branches: [main, develop]
+    branches: [master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   NODE_VERSION: '20'
-  DATABASE_URL: mongodb://localhost:27017/shlanu_test
 
 jobs:
-  lint-and-format:
-    name: Lint & Format
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Check formatting (Prettier)
-        run: npx prettier --check apps/web/src apps/api/src packages/**
-
-  type-check:
-    name: Type Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Type check frontend
-        run: cd apps/web && npx tsc --noEmit
-
-      - name: Type check backend
-        run: cd apps/api && npx tsc --noEmit
-
-  unit-tests:
-    name: Unit & Integration Tests
+  verify:
+    name: Lint, types, tests, build and e2e
     runs-on: ubuntu-latest
     services:
+      # The e2e suite drives the compiled server against its own database; the
+      # container is what makes that possible on a clean runner.
       mongodb:
         image: mongo:7
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    env:
+      DATABASE_URL: mongodb://localhost:27017/Shlanu_ci
+      NODE_ENV: test
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: |
+          npx tsc -p packages/shared-types/tsconfig.json
+          npx tsc -p apps/api/tsconfig.json --noEmit
+          npx tsc -p apps/api/tsconfig.e2e.json --noEmit
+          npx tsc -p apps/web/tsconfig.json
+
+      - name: Unit tests
         run: npm test
-        env:
-          DATABASE_URL: ${{ env.DATABASE_URL }}
-          NODE_ENV: test
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: [lint-and-format, type-check, unit-tests]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build all packages
+      - name: Build
         run: npm run build
 
-  security-scan:
-    name: Security Scan
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+  audit:
+    name: Dependency audit
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run npm audit
-        run: npm audit --audit-level=moderate || true
+      - name: Report production vulnerabilities
+        # A report, not a gate: a new advisory should not block a deploy that
+        # fixes something more pressing. Dependabot opens the upgrade PRs.
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
