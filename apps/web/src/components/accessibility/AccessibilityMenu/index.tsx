@@ -83,19 +83,19 @@ const AccessibilityMenu = forwardRef<HTMLDivElement, AccessibilityMenuProps>(
                 type="button"
                 onClick={() => changeFontSize(-FONT_SIZE_STEP)}
                 disabled={settings.fontSize <= FONT_SIZE_MIN}
-                className="flex h-8 w-8 items-center justify-center rounded-4 border border-border text-ink-secondary transition-colors hover:bg-cream hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
+                className="flex h-7 w-7 items-center justify-center rounded-4 border border-border text-ink-secondary transition-colors hover:bg-cream hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
                 aria-label="הקטן גודל גופן"
               >
-                <IconTextDecrease className="h-4 w-4" />
+                <IconTextDecrease className="h-3.5 w-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => changeFontSize(FONT_SIZE_STEP)}
                 disabled={settings.fontSize >= FONT_SIZE_MAX}
-                className="flex h-8 w-8 items-center justify-center rounded-4 border border-border text-ink-secondary transition-colors hover:bg-cream hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
+                className="flex h-7 w-7 items-center justify-center rounded-4 border border-border text-ink-secondary transition-colors hover:bg-cream hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
                 aria-label="הגדל גודל גופן"
               >
-                <IconTextIncrease className="h-4 w-4" />
+                <IconTextIncrease className="h-3.5 w-3.5" />
               </button>
               <button
                 type="button"
