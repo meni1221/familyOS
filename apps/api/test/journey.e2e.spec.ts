@@ -42,13 +42,35 @@ let ownerCookie = '';
 let guestCookie = '';
 let guestInviteUrl = '';
 
+/**
+ * A parsed JSON body, read loosely: most assertions here reach one or two
+ * properties of a response, and restating every DTO on the client side would be
+ * noise in a suite that is testing the server. The payloads that get iterated
+ * declare their shape instead — `request<{ data: Member[] }>(...)` — so the
+ * loose default never spreads past the assertions it was written for.
+ */
+interface Json {
+  [key: string]: Json;
+}
+
+interface ApiResponse<TJson> {
+  status: number;
+  json: TJson;
+  text: string;
+  session: string;
+}
+
 interface RequestOptions {
   body?: unknown;
   form?: FormData;
   cookie?: string;
 }
 
-const request = async (method: string, path: string, options: RequestOptions = {}) => {
+const request = async <TJson = Json>(
+  method: string,
+  path: string,
+  options: RequestOptions = {}
+): Promise<ApiResponse<TJson>> => {
   const headers: Record<string, string> = {};
   const cookie = options.cookie ?? ownerCookie;
   if (cookie) headers.cookie = cookie;
@@ -64,11 +86,11 @@ const request = async (method: string, path: string, options: RequestOptions = {
   const session = cookies.find((entry) => entry.startsWith('session='));
 
   const text = await response.text();
-  let json: any;
+  let json: TJson;
   try {
-    json = text ? JSON.parse(text) : undefined;
+    json = (text ? JSON.parse(text) : undefined) as TJson;
   } catch {
-    json = text;
+    json = text as TJson;
   }
 
   return {
@@ -105,7 +127,7 @@ const expectSocketDropped = async (cookie: string): Promise<void> => {
 };
 
 /** Resolves with the payload of the first matching event, or `null` on timeout. */
-const waitForEvent = <T = any>(event: string, timeoutMs = 5000): Promise<T | null> => {
+const waitForEvent = <T = Json>(event: string, timeoutMs = 5000): Promise<T | null> => {
   return new Promise((resolve) => {
     if (!socket) {
       resolve(null);
@@ -602,8 +624,11 @@ describe('Shlanu end-to-end journey', () => {
     const ownFamily = await request('GET', '/api/v1/families/current', { cookie: guestCookie });
     const ownerFamily = await request('GET', '/api/v1/families/current');
 
-    const invitations = await request('GET', '/api/v1/families/invitations');
-    expect(invitations.json.data.some((item: any) => item.email === guest.email)).toBe(true);
+    const invitations = await request<{ data: Array<{ email: string }> }>(
+      'GET',
+      '/api/v1/families/invitations'
+    );
+    expect(invitations.json.data.some((item) => item.email === guest.email)).toBe(true);
 
     const token = guestInviteUrl.split('invite=')[1];
     expect(token).toBeTruthy();
@@ -631,13 +656,17 @@ describe('Shlanu end-to-end journey', () => {
   });
 
   it('notifies the assignee when a task is assigned to them', async () => {
-    const members = await request('GET', '/api/v1/families/members');
-    const guestMember = members.json.data.find((member: any) => !member.isYou);
+    const members = await request<{ data: Array<{ id: string; isYou: boolean }> }>(
+      'GET',
+      '/api/v1/families/members'
+    );
+    const guestMember = members.json.data.find((member) => !member.isYou);
+    if (!guestMember) throw new Error('the invited member is missing from the family');
 
     const guestSocket = await connectSocket({ cookie: guestCookie });
-    const pushed = new Promise<any | null>((resolve) => {
+    const pushed = new Promise<Json | null>((resolve) => {
       const timer = setTimeout(() => resolve(null), 5000);
-      guestSocket.once('notification:created', (payload: any) => {
+      guestSocket.once('notification:created', (payload: Json) => {
         clearTimeout(timer);
         resolve(payload);
       });

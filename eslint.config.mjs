@@ -87,9 +87,6 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.node } },
     rules: {
       'no-console': 'off',
-      // Test payloads are parsed JSON; spelling out every shape would be
-      // testing the types rather than the API.
-      '@typescript-eslint/no-explicit-any': 'off',
     },
   }
 );
