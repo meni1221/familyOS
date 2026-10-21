@@ -29,16 +29,12 @@ export default {
         sans: ['Heebo', 'system-ui', 'sans-serif'],
         numeric: ['Heebo', 'system-ui', 'sans-serif'],
       },
-      spacing: {
-        '4': 'var(--space-4)',
-        '8': 'var(--space-8)',
-        '12': 'var(--space-12)',
-        '16': 'var(--space-16)',
-        '24': 'var(--space-24)',
-        '32': 'var(--space-32)',
-        '48': 'var(--space-48)',
-        '64': 'var(--space-64)',
-      },
+      /*
+       * No spacing override on purpose. The numeric utilities (p-4, gap-6,
+       * h-16, py-24) must keep Tailwind's 0.25rem scale. A previous override
+       * mapped `4` to 4px and `16` to 16px, which silently collapsed the
+       * header to sixteen pixels and every section's vertical padding.
+       */
       borderRadius: {
         '4': 'var(--radius-4)',
         '8': 'var(--radius-8)',
