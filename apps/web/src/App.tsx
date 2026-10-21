@@ -17,6 +17,7 @@ import ProfilePage from './pages/ProfilePage';
 import AccessibilityPage from './pages/AccessibilityPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 import ToastProvider from './components/ui/ToastProvider';
 import ConfirmProvider from './components/ui/ConfirmProvider';
 import { AccessibilityWidget, SkipLink } from './components/accessibility';
@@ -81,65 +82,67 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => {
   return (
-    <ToastProvider>
-      <ConfirmProvider>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <PublicRoute>
-                <>
-                  <SkipLink />
-                  <LandingPage />
-                </>
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <LoginPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <PublicRoute>
-                <RegisterPage />
-              </PublicRoute>
-            }
-          />
-          <Route path="/accessibility" element={<AccessibilityPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route
-            path="/app"
-            element={
-              <ProtectedRoute>
-                <AppShell />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<DashboardPage />} />
-            <Route path="tasks" element={<TasksPage />} />
-            <Route path="calendar" element={<CalendarPage />} />
-            <Route path="baby" element={<BabyPage />} />
-            <Route path="budget" element={<BudgetPage />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </ConfirmProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <ConfirmProvider>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <PublicRoute>
+                  <>
+                    <SkipLink />
+                    <LandingPage />
+                  </>
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
+            <Route path="/accessibility" element={<AccessibilityPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <AppShell />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<DashboardPage />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="calendar" element={<CalendarPage />} />
+              <Route path="baby" element={<BabyPage />} />
+              <Route path="budget" element={<BudgetPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </ConfirmProvider>
 
-      {/* Global, mounted once: available on every page, public or protected. */}
-      <RealtimeBridge />
-      <LocaleSync />
-      <ContentGuard />
-      <AccessibilityWidget />
-    </ToastProvider>
+        {/* Global, mounted once: available on every page, public or protected. */}
+        <RealtimeBridge />
+        <LocaleSync />
+        <ContentGuard />
+        <AccessibilityWidget />
+      </ToastProvider>
+    </ErrorBoundary>
   );
 };
 
