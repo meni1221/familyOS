@@ -5,6 +5,7 @@
  * web client cannot drift apart; anything purely presentational is added here.
  */
 export type {
+  BabyColor,
   BabyLog,
   BabyLogType,
   BabyProfile,

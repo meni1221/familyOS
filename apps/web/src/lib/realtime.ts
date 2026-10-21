@@ -13,6 +13,9 @@ export type RealtimeEvent =
   | 'expense:deleted'
   | 'budget:created'
   | 'budget:updated'
+  | 'baby-profile:created'
+  | 'baby-profile:updated'
+  | 'baby-profile:deleted'
   | 'baby-log:created'
   | 'baby-log:updated'
   | 'baby-log:deleted'
@@ -32,6 +35,9 @@ export const REALTIME_EVENTS: RealtimeEvent[] = [
   'expense:deleted',
   'budget:created',
   'budget:updated',
+  'baby-profile:created',
+  'baby-profile:updated',
+  'baby-profile:deleted',
   'baby-log:created',
   'baby-log:updated',
   'baby-log:deleted',
@@ -52,6 +58,9 @@ export const REALTIME_INVALIDATIONS: Record<RealtimeEvent, string[][]> = {
   'expense:deleted': [['budget'], ['budget', 'expenses'], ['dashboard']],
   'budget:created': [['budget'], ['dashboard']],
   'budget:updated': [['budget'], ['dashboard']],
+  'baby-profile:created': [['baby', 'profiles'], ['dashboard']],
+  'baby-profile:updated': [['baby', 'profiles'], ['dashboard']],
+  'baby-profile:deleted': [['baby'], ['dashboard']],
   'baby-log:created': [['baby', 'logs'], ['dashboard']],
   'baby-log:updated': [['baby', 'logs'], ['dashboard']],
   'baby-log:deleted': [['baby', 'logs'], ['dashboard']],

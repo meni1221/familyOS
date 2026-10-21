@@ -1,18 +1,19 @@
 ﻿import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
+  Patch,
+  Post,
+  Query,
   Req,
   UnauthorizedException,
+  ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { BabyService } from './baby.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
-import { ValidationPipe } from '@nestjs/common';
 import {
   CreateBabyLogDto,
   UpdateBabyLogDto,
@@ -25,38 +26,59 @@ import {
 export class BabyController {
   constructor(private readonly babyService: BabyService) {}
 
-  @Get('profile')
-  @ApiOperation({ summary: 'Get baby profile' })
-  async getProfile(@Req() req: AuthenticatedRequest) {
+  @Get('profiles')
+  @ApiOperation({ summary: 'List the babies of the family' })
+  async listProfiles(@Req() req: AuthenticatedRequest) {
     const user = req.user;
-    if (!user) return null;
-    return this.babyService.getProfile(user.familyId);
+    if (!user) return { data: [] };
+    return this.babyService.listProfiles(user.familyId);
   }
 
-  @Post('profile')
-  @ApiOperation({ summary: 'Create or update the family baby profile' })
+  @Post('profiles')
+  @ApiOperation({ summary: 'Add a baby to the family' })
   @ApiBody({ type: CreateBabyProfileDto })
-  async createProfile(@Body() dto: CreateBabyProfileDto, @Req() req: AuthenticatedRequest) {
+  async createProfile(
+    @Body(new ValidationPipe({ whitelist: true, transform: true })) body: CreateBabyProfileDto,
+    @Req() req: AuthenticatedRequest
+  ) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
-    return this.babyService.saveProfile(user.familyId, dto);
+    return this.babyService.createProfile(user.familyId, body);
   }
 
-  @Patch('profile')
-  @ApiOperation({ summary: 'Update the family baby profile' })
+  @Patch('profiles/:id')
+  @ApiOperation({ summary: 'Update one baby' })
+  @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateBabyProfileDto })
-  async updateProfile(@Body() dto: UpdateBabyProfileDto, @Req() req: AuthenticatedRequest) {
+  async updateProfile(
+    @Param('id') id: string,
+    @Body(new ValidationPipe({ whitelist: true, transform: true })) body: UpdateBabyProfileDto,
+    @Req() req: AuthenticatedRequest
+  ) {
     const user = req.user;
     if (!user) throw new UnauthorizedException('נדרשת התחברות');
-    return this.babyService.saveProfile(user.familyId, dto);
+    return this.babyService.updateProfile(user.familyId, id, body);
+  }
+
+  @Delete('profiles/:id')
+  @ApiOperation({ summary: 'Delete a baby and the log entries recorded for them' })
+  @ApiParam({ name: 'id', type: String })
+  async deleteProfile(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
+    return this.babyService.deleteProfile(user.familyId, id);
   }
 
   @Get('logs')
-  @ApiOperation({ summary: 'List baby logs' })
-  async getLogs(@Req() req: AuthenticatedRequest) {
+  @ApiOperation({ summary: 'List baby log entries, optionally of one baby' })
+  @ApiQuery({ name: 'babyProfileId', required: false, type: String })
+  async getLogs(
+    @Query('babyProfileId') babyProfileId: string | undefined,
+    @Req() req: AuthenticatedRequest
+  ) {
     const user = req.user;
     if (!user) return { data: [] };
-    return this.babyService.getLogs(user.familyId);
+    return this.babyService.getLogs(user.familyId, babyProfileId);
   }
 
   @Post('logs')

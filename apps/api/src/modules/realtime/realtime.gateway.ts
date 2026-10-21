@@ -172,6 +172,18 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
     this.emitToFamily(familyId, 'budget:updated', budget);
   }
 
+  emitBabyProfileCreated(familyId: string, profile: unknown) {
+    this.emitToFamily(familyId, 'baby-profile:created', profile);
+  }
+
+  emitBabyProfileUpdated(familyId: string, profile: unknown) {
+    this.emitToFamily(familyId, 'baby-profile:updated', profile);
+  }
+
+  emitBabyProfileDeleted(familyId: string, profileId: string) {
+    this.emitToFamily(familyId, 'baby-profile:deleted', { id: profileId });
+  }
+
   emitBabyLogCreated(familyId: string, log: unknown) {
     this.emitToFamily(familyId, 'baby-log:created', log);
   }

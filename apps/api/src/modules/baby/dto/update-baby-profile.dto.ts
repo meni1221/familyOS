@@ -1,5 +1,6 @@
-import { IsString, IsOptional, IsDateString, IsBoolean, Length } from 'class-validator';
+import { IsString, IsOptional, IsDateString, IsBoolean, IsIn, Length } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { BABY_COLORS } from '../../../database/models/baby-profile.model';
 
 export class UpdateBabyProfileDto {
   @ApiPropertyOptional({ example: 'יונתן' })
@@ -12,6 +13,11 @@ export class UpdateBabyProfileDto {
   @IsOptional()
   @IsDateString({}, { message: 'תאריך לידה לא תקין' })
   dateOfBirth?: string;
+
+  @ApiPropertyOptional({ example: 'gold', enum: BABY_COLORS })
+  @IsOptional()
+  @IsIn(BABY_COLORS, { message: 'צבע לא מוכר' })
+  color?: string;
 
   @ApiPropertyOptional({ example: true })
   @IsOptional()

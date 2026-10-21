@@ -9,6 +9,7 @@ import { Notification, NotificationDocument } from '../../database/models/notifi
 import { Expense, ExpenseDocument } from '../../database/models/expense.model';
 import { Budget, BudgetDocument } from '../../database/models/budget.model';
 import { BabyLog, BabyLogDocument } from '../../database/models/baby-log.model';
+import { BabyProfile, BabyProfileDocument } from '../../database/models/baby-profile.model';
 
 interface CategoryTotal {
   _id: string;
@@ -25,6 +26,7 @@ export class DashboardController {
     @InjectModel(Expense.name) private expenseModel: Model<ExpenseDocument>,
     @InjectModel(Budget.name) private budgetModel: Model<BudgetDocument>,
     @InjectModel(BabyLog.name) private babyLogModel: Model<BabyLogDocument>,
+    @InjectModel(BabyProfile.name) private babyProfileModel: Model<BabyProfileDocument>,
   ) {}
 
   @Get()
@@ -51,6 +53,7 @@ export class DashboardController {
       todayEvents,
       upcomingEvents,
       recentBabyLogs,
+      babyProfiles,
       unreadNotifications,
       unreadCount,
       monthlyBudget,
@@ -81,6 +84,7 @@ export class DashboardController {
         .limit(5)
         .exec(),
       this.babyLogModel.find({ familyId }).sort({ occurredAt: -1 }).limit(5).exec(),
+      this.babyProfileModel.find({ familyId }).sort({ createdAt: 1 }).exec(),
       this.notificationModel
         .find({ familyId, recipientUserId: userId, readAt: null })
         .sort({ createdAt: -1 })
@@ -113,7 +117,7 @@ export class DashboardController {
     return {
       tasks: { today: todayTasks, overdue: overdueTasks, upcoming: upcomingTasks },
       events: { today: todayEvents, upcoming: upcomingEvents },
-      babyLogs: { recent: recentBabyLogs },
+      babyLogs: { recent: recentBabyLogs, profiles: babyProfiles },
       budget: {
         monthlyExpenses,
         budgetAmount,
@@ -136,7 +140,7 @@ const emptyDashboard = () => {
   return {
     tasks: { today: [], overdue: [], upcoming: [] },
     events: { today: [], upcoming: [] },
-    babyLogs: { recent: [] },
+    babyLogs: { recent: [], profiles: [] },
     budget: {
       monthlyExpenses: 0,
       budgetAmount: 0,

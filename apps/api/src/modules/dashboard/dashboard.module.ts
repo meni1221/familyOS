@@ -10,6 +10,7 @@ import { Notification, NotificationSchema } from '../../database/models/notifica
 import { Expense, ExpenseSchema } from '../../database/models/expense.model';
 import { Budget, BudgetSchema } from '../../database/models/budget.model';
 import { BabyLog, BabyLogSchema } from '../../database/models/baby-log.model';
+import { BabyProfile, BabyProfileSchema } from '../../database/models/baby-profile.model';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { BabyLog, BabyLogSchema } from '../../database/models/baby-log.model';
       { name: Expense.name, schema: ExpenseSchema },
       { name: Budget.name, schema: BudgetSchema },
       { name: BabyLog.name, schema: BabyLogSchema },
+      { name: BabyProfile.name, schema: BabyProfileSchema },
     ]),
   ],
   controllers: [DashboardController],

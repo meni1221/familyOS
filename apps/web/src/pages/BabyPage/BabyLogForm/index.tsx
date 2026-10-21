@@ -1,10 +1,15 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toDateTimeInputValue } from '../../../lib/format';
-import { LOG_TYPES } from '../logTypes';
+import { LOG_TYPES } from '../../../lib/babyLogTypes';
+import type { BabyProfile } from '../../../lib/types';
 import { logSchema, type LogFormData } from '../schemas';
 
 interface BabyLogFormProps {
+  /** The babies a log can be recorded for; empty until one exists. */
+  profiles: BabyProfile[];
+  /** The baby the form starts on — the one the timeline is showing. */
+  defaultBabyProfileId: string;
   isPending: boolean;
   /** Mutation error, shown inline when it happened. */
   error: unknown;
@@ -13,21 +18,49 @@ interface BabyLogFormProps {
 }
 
 /** Records one event: feeding, sleep, diaper or a plain note. */
-const BabyLogForm = ({ isPending, error, onSubmit }: BabyLogFormProps) => {
+const BabyLogForm = ({
+  profiles,
+  defaultBabyProfileId,
+  isPending,
+  error,
+  onSubmit,
+}: BabyLogFormProps) => {
+  const emptyForm = (): LogFormData => ({
+    type: 'FEEDING',
+    babyProfileId: defaultBabyProfileId,
+    occurredAt: toDateTimeInputValue(),
+  });
+
   const form = useForm<LogFormData>({
     resolver: zodResolver(logSchema),
-    defaultValues: { type: 'FEEDING', occurredAt: toDateTimeInputValue() },
+    defaultValues: emptyForm(),
   });
 
   const submit = async (values: LogFormData) => {
     await onSubmit(values);
-    form.reset({ type: 'FEEDING', occurredAt: toDateTimeInputValue() });
+    form.reset(emptyForm());
   };
 
   return (
     <div className="card">
       <h2 className="section-title mb-4">רשום פעילות חדשה</h2>
       <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
+        {/* With one baby there is nothing to choose; with twins there is. */}
+        {profiles.length > 0 && (
+          <div>
+            <label htmlFor="log-baby" className="label">
+              תינוק/ת
+            </label>
+            <select id="log-baby" className="input" {...form.register('babyProfileId')}>
+              {profiles.map((profile) => (
+                <option key={profile.id} value={profile.id}>
+                  {profile.displayName}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {LOG_TYPES.map((item) => {
             const isActive = form.watch('type') === item.type;

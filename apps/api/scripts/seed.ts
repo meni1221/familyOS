@@ -159,17 +159,29 @@ const seed = async () => {
     },
   ]);
 
-  const baby = await models.BabyProfile.create({
-    familyId: family._id,
-    displayName: 'נועה',
-    dateOfBirth: daysFromNow(-180),
-    trackingEnabled: true,
-  });
+  // Twins: the case the baby switcher and the colours exist for, and the one
+  // that shows up worst on a dashboard that assumes one baby.
+  const [noa, uri] = await models.BabyProfile.create([
+    {
+      familyId: family._id,
+      displayName: 'נועה',
+      dateOfBirth: daysFromNow(-180),
+      color: 'gold',
+      trackingEnabled: true,
+    },
+    {
+      familyId: family._id,
+      displayName: 'אורי',
+      dateOfBirth: daysFromNow(-180),
+      color: 'forest',
+      trackingEnabled: true,
+    },
+  ]);
 
   await models.BabyLog.create([
     {
       familyId: family._id,
-      babyProfileId: baby._id,
+      babyProfileId: noa._id,
       type: 'FEEDING',
       occurredAt: daysFromNow(0, -2),
       details: { amountMl: 120 },
@@ -177,11 +189,27 @@ const seed = async () => {
     },
     {
       familyId: family._id,
-      babyProfileId: baby._id,
+      babyProfileId: uri._id,
+      type: 'FEEDING',
+      occurredAt: daysFromNow(0, -3),
+      details: { amountMl: 110 },
+      createdByUserId: israel._id,
+    },
+    {
+      familyId: family._id,
+      babyProfileId: noa._id,
       type: 'SLEEP',
       occurredAt: daysFromNow(0, -5),
       endedAt: daysFromNow(0, -3),
       createdByUserId: israel._id,
+    },
+    {
+      familyId: family._id,
+      babyProfileId: uri._id,
+      type: 'DIAPER',
+      occurredAt: daysFromNow(0, -1),
+      details: { diaperType: 'WET' },
+      createdByUserId: sarah._id,
     },
   ]);
 

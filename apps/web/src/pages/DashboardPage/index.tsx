@@ -68,7 +68,7 @@ const DashboardPage = () => {
         <EventsCard events={data?.events.today ?? []} />
         <NotificationsCard unreadCount={data?.notifications.unreadCount ?? 0} />
         <BudgetCard budget={data?.budget} />
-        <BabyCard logs={data?.babyLogs.recent ?? []} />
+        <BabyCard babyLogs={data?.babyLogs ?? { recent: [], profiles: [] }} />
       </div>
 
       <QuickActions />

@@ -3,13 +3,20 @@ import { IconBabyBottle, IconFile, IconPlus } from '@tabler/icons-react';
 import DeleteButton from '../../../components/ui/DeleteButton';
 import EmptyState from '../../../components/ui/EmptyState';
 import LoadingSpinner from '../../../components/ui/LoadingSpinner';
+import { LOG_TYPES } from '../../../lib/babyLogTypes';
 import { formatDate, formatTime, toDateInputValue } from '../../../lib/format';
-import type { BabyLog } from '../../../lib/types';
+import type { BabyLog, BabyProfile } from '../../../lib/types';
+import { babyColorTokens } from '../../../lib/babyColors';
 import { detailSummary } from '../detailSummary';
-import { LOG_TYPES } from '../logTypes';
 
 interface BabyTimelineProps {
   logs: BabyLog[];
+  /** Used to name and colour each entry while the whole family is on screen. */
+  profiles: BabyProfile[];
+  /** True while "all" is selected: every row then says whose entry it is. */
+  showBaby: boolean;
+  /** The baby whose timeline this is, when one is selected. */
+  babyName?: string | null;
   isLoading: boolean;
   /** A deletion is in flight, so every delete button waits. */
   isDeleting: boolean;
@@ -20,6 +27,9 @@ interface BabyTimelineProps {
 /** The recorded activity, grouped by day, newest first. */
 const BabyTimeline = ({
   logs,
+  profiles,
+  showBaby,
+  babyName,
   isLoading,
   isDeleting,
   onAdd,
@@ -36,6 +46,10 @@ const BabyTimeline = ({
     return Array.from(groups.entries());
   }, [logs]);
 
+  const profilesById = useMemo(() => {
+    return new Map(profiles.map((profile) => [profile.id, profile]));
+  }, [profiles]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -50,7 +64,11 @@ const BabyTimeline = ({
         <EmptyState
           icon={IconBabyBottle}
           title="אין רשומות עדיין"
-          description="התחילו לרשום את הפעילות הראשונה של התינוק"
+          description={
+            babyName
+              ? `עדיין לא נרשמה פעילות של ${babyName}`
+              : 'התחילו לרשום את הפעילות הראשונה של התינוק'
+          }
           action={
             <button type="button" className="btn-primary btn-sm" onClick={onAdd}>
               <IconPlus className="h-4 w-4" />
@@ -72,6 +90,7 @@ const BabyTimeline = ({
               const meta = LOG_TYPES.find((item) => item.type === log.type);
               const Icon = meta?.icon ?? IconFile;
               const details = detailSummary(log);
+              const profile = profilesById.get(log.babyProfileId);
 
               return (
                 <li key={log.id} className="card flex flex-wrap items-center gap-3 py-3">
@@ -84,6 +103,15 @@ const BabyTimeline = ({
 
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-ink">
+                      {showBaby && profile && (
+                        <>
+                          <span
+                            className={`me-1 inline-block h-2 w-2 rounded-full align-middle ${babyColorTokens(profile.color).dot}`}
+                            aria-hidden="true"
+                          />
+                          {profile.displayName} ·{' '}
+                        </>
+                      )}
                       {meta?.label ?? log.type} · {formatTime(log.occurredAt)}
                     </p>
                     {(details.length > 0 || log.note) && (

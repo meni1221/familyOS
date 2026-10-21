@@ -395,13 +395,76 @@ describe('Shlanu end-to-end journey', () => {
     const logs = await request('GET', '/api/v1/baby/logs');
     expect(logs.json.data).toHaveLength(1);
 
-    const profile = await request('GET', '/api/v1/baby/profile');
-    expect(profile.json.data).toBeTruthy();
+    const profiles = await request('GET', '/api/v1/baby/profiles');
+    expect(profiles.json.data).toHaveLength(1);
+    expect(profiles.json.data[0].color).toBeTruthy();
 
-    const saved = await request('PATCH', '/api/v1/baby/profile', {
+    const saved = await request('PATCH', `/api/v1/baby/profiles/${profiles.json.data[0].id}`, {
       body: { displayName: 'יונתן', dateOfBirth: '2025-01-01' },
     });
     expect(saved.json.data.displayName).toBe('יונתן');
+  });
+
+  it('keeps twins apart, on the timeline and in the database', async () => {
+    const profileEvent = waitForEvent('baby-profile:created');
+
+    const rejected = await request('POST', '/api/v1/baby/profiles', {
+      body: { displayName: 'בן', color: 'purple' },
+    });
+    expect(rejected.status).toBe(400);
+
+    const twin = await request('POST', '/api/v1/baby/profiles', {
+      body: { displayName: 'אורי', dateOfBirth: '2025-01-01' },
+    });
+    expect(twin.status).toBe(201);
+    expect(await profileEvent).toBeTruthy();
+    const twinId = twin.json.data.id;
+
+    const logged = await request('POST', '/api/v1/baby/logs', {
+      body: { type: 'SLEEP', babyProfileId: twinId, occurredAt: new Date().toISOString() },
+    });
+    expect(logged.status).toBe(201);
+    expect(logged.json.data.babyProfileId).toBe(twinId);
+
+    // Two babies, two colours — the point of the colour is telling them apart.
+    const profiles = await request('GET', '/api/v1/baby/profiles');
+    expect(profiles.json.data).toHaveLength(2);
+    expect(profiles.json.data[0].color).not.toBe(profiles.json.data[1].color);
+
+    const twinLogs = await request('GET', `/api/v1/baby/logs?babyProfileId=${twinId}`);
+    expect(twinLogs.json.data).toHaveLength(1);
+    expect(twinLogs.json.data[0].type).toBe('SLEEP');
+
+    const firstLogs = await request(
+      'GET',
+      `/api/v1/baby/logs?babyProfileId=${profiles.json.data[0].id}`,
+    );
+    expect(firstLogs.json.data).toHaveLength(1);
+    expect(firstLogs.json.data[0].type).toBe('FEEDING');
+
+    // With two babies to choose from, a log that names neither is refused
+    // rather than filed under whichever one came first.
+    const ambiguous = await request('POST', '/api/v1/baby/logs', {
+      body: { type: 'NOTE', occurredAt: new Date().toISOString() },
+    });
+    expect(ambiguous.status).toBe(400);
+
+    // Deleting a twin takes their entries along and leaves the other alone.
+    const removalEvent = waitForEvent('baby-profile:deleted');
+    const removed = await request('DELETE', `/api/v1/baby/profiles/${twinId}`);
+    expect(removed.status).toBe(200);
+    expect(removed.json.deletedLogs).toBe(1);
+    expect(await removalEvent).toBeTruthy();
+
+    const remaining = await request('GET', '/api/v1/baby/profiles');
+    expect(remaining.json.data).toHaveLength(1);
+
+    const allLogs = await request('GET', '/api/v1/baby/logs');
+    expect(allLogs.json.data).toHaveLength(1);
+    expect(allLogs.json.data[0].type).toBe('FEEDING');
+
+    const gone = await request('DELETE', `/api/v1/baby/profiles/${twinId}`);
+    expect(gone.status).toBe(404);
   });
 
   it('uploads, downloads and deletes a document', async () => {
@@ -628,6 +691,9 @@ describe('Shlanu end-to-end journey', () => {
     expect(response.json).toHaveProperty('events');
     expect(response.json).toHaveProperty('budget');
     expect(response.json).toHaveProperty('babyLogs');
+    expect(response.json.babyLogs).toHaveProperty('recent');
+    // The dashboard names the babies, so the card can group by them.
+    expect(response.json.babyLogs.profiles).toHaveLength(1);
     expect(response.json).toHaveProperty('notifications');
   });
 

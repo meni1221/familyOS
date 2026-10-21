@@ -133,11 +133,15 @@ export interface CalendarEvent {
   updatedAt: string;
 }
 
+/** The colours a baby can be marked with. The web maps each to a brand token. */
+export type BabyColor = 'forest' | 'gold' | 'sage' | 'ink';
+
 export interface BabyProfile {
   id: string;
   familyId: string;
   displayName: string;
   dateOfBirth?: string;
+  color: BabyColor;
   trackingEnabled: boolean;
   createdAt: string;
   updatedAt: string;
@@ -278,6 +282,7 @@ export interface DashboardData {
   };
   babyLogs: {
     recent: BabyLog[];
+    profiles: BabyProfile[];
   };
   budget: {
     monthlyExpenses: number;
