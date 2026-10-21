@@ -6,6 +6,7 @@ import { NestApplicationOptions } from '@nestjs/common/interfaces/nest-applicati
 import { Model } from 'mongoose';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import { loggerLevels } from './env';
 import { LoggingMiddleware } from './middleware/logging.middleware';
 import { SecurityHeadersMiddleware } from './middleware/security-headers.middleware';
 import { RateLimitMiddleware } from './middleware/rate-limit.middleware';
@@ -102,6 +103,9 @@ export const configureApp = (app: NestExpressApplication): NestExpressApplicatio
 export const createApp = async (
   options: NestApplicationOptions = {}
 ): Promise<NestExpressApplication> => {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: loggerLevels(),
+    ...options,
+  });
   return configureApp(app);
 };

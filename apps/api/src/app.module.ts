@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { validateEnv } from './env';
 import { DatabaseModule } from './database/database.module';
 import { RealtimeModule } from './modules/realtime/realtime.module';
 import { HealthModule } from './modules/health/health.module';
@@ -18,6 +19,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
+      validate: validateEnv,
     }),
     DatabaseModule,
     RealtimeModule,

@@ -176,7 +176,6 @@ describe('Shlanu end-to-end journey', () => {
         PORT: String(TEST_PORT),
         DATABASE_URL: TEST_DB_URL,
         DATABASE_NAME: TEST_DB,
-        EMAIL_ENABLED: 'false',
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     });

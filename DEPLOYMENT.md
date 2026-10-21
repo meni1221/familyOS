@@ -10,19 +10,19 @@
 - דומיין מוגדר עם רשומות DNS
 - אישור SSL/TLS (מומלץ Let's Encrypt)
 - מסד נתונים MongoDB (MongoDB Atlas, או שרת MongoDB משלך)
-- אחסון קבוע לקבצים שהועלו (Volume שנשמר בין הפעלות של מכולת ה-API)
 
 ## שלב 1: הכנת סביבה
 
 ### העתק קובץ הגדרות
 
 ```bash
-cp apps/api/.env.example apps/api/.env.production
+cp apps/api/.env.production.example apps/api/.env.production
 ```
 
 ### עדכן ערכים בקובץ .env.production
 
-ערוך את הקובץ והכנס ערכים אמיתיים:
+ערוך את הקובץ והכנס ערכים אמיתיים. כל מפתח בקובץ נקרא על ידי הקוד — שרת
+שמפתח חובה חסר בו או פגום לא יעלה, ויפרט בהודעת השגיאה איזה מפתח.
 
 ```env
 NODE_ENV=production
@@ -30,20 +30,14 @@ PORT=3001
 FRONTEND_URL=https://app.shlanu.app
 API_URL=https://api.shlanu.app
 
-DATABASE_URL="mongodb://USER:PASSWORD@HOST:27017/shlanu?authSource=admin"
+DATABASE_URL="mongodb://USER:PASSWORD@HOST:27017/Shlanu?authSource=admin"
+DATABASE_NAME=Shlanu
 
-SESSION_SECRET=הזן_מחרוזת_אקראית_מאובטחת_מינימום_32_תווים
-COOKIE_DOMAIN=shlanu.app
-
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=המשתמש_שלך
-SMTP_PASS=הסיסמה_שלך
-SMTP_FROM=noreply@shlanu.app
-EMAIL_ENABLED=true
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=300
+AUTH_RATE_LIMIT_MAX_REQUESTS=20
 
 LOG_LEVEL=warn
-LOG_FORMAT=json
 ```
 
 ## שלב 2: אתחול מסד הנתונים
@@ -90,13 +84,19 @@ server {
         proxy_pass http://web:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     # Proxy ל-API
+    # ה-API סומך על צעד פרוקסי אחד בלבד — זה שאתה רואה כאן. בלעדי הכותרות
+    # האלה כל הבקשות ייראו כביאות מאותה כתובת, ומגביל הקצב יחסום את כולם יחד.
     location /api/ {
         proxy_pass http://api:3001;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     # WebSocket
@@ -105,6 +105,10 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 ```
@@ -122,12 +126,13 @@ aws s3 cp backup_$(date +%Y%m%d).gz s3://shlanu-backups/
 
 ## שלב 6: ניטור והתראות
 
-הגדר Sentry למעקב אחר שגיאות:
+ה-API חושף `GET /health`, שמחזיר את מצב החיבור למסד הנתונים. חברו אליו שירות
+ניטור חיצוני (UptimeRobot, Better Stack, בדיקת uptime של ספק הענן) בבדיקה כל דקה,
+והגדירו התראה כשהבדיקה נכשלת פעמיים ברצף.
 
-```env
-SENTRY_DSN=https://key@sentry.io/project
-SENTRY_ENVIRONMENT=production
-```
+אין עדיין אינטגרציית דיווח שגיאות בתוך האפליקציה. עד שתתווסף, שגיאות נרשמות
+ללוג של המכולה (`docker-compose -f docker-compose.prod.yml logs -f api`), ורמת
+הפירוט נקבעת ב-`LOG_LEVEL`.
 
 ## בדיקת בריאות מערכת
 
@@ -146,8 +151,9 @@ curl https://api.shlanu.app/health
 | בעיה | פתרון |
 |------|--------|
 | שגיאת חיבור למסד נתונים | בדוק DATABASE_URL ודא שהמסד נגיש |
-| עוגיות לא נשלחות | ודא ש-COOKIE_DOMAIN מוגדר נכון |
+| 429 לכל המשתמשים בבת אחת | ודא שה-Proxy מעביר `X-Forwarded-For` ושהמכולה מריצה גרסה אחרונה של ה-API |
 | שגיאת CORS | עדכן FRONTEND_URL ב-.env |
+| 403 עם `CSRF_ORIGIN_MISMATCH` | FRONTEND_URL ו-API_URL חייבים להיות בדיוק הכתובות שהדפדפן שולח |
 
 ## תמיכה
 
