@@ -1,25 +1,25 @@
 import { Injectable, NestMiddleware, ForbiddenException } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { randomBytes } from 'crypto';
+import { isAllowedOrigin } from './origin';
 
 /**
  * CSRF protection for cookie-authenticated, state-changing requests.
  *
- * Strategy (double protection, browser-friendly):
- *  1. Origin / Referer must match the allowed frontend origin when present.
- *     Browsers always send `Origin` on cross-site POSTs, so a mismatch is a
- *     reliable CSRF signal.
- *  2. If the client sends `x-csrf-token`, it must match the token issued for
- *     the current session (`generateCsrfToken`).
+ * The defence is the browser's own `Origin`: every cross-site `POST`, `PATCH`
+ * or `DELETE` carries one, so a request from another site can be recognised
+ * even though the victim's session cookie came along. `Referer` is the fallback
+ * for browsers or clients that omit `Origin`.
  *
- * Same-origin requests coming through the Vite proxy (dev) or nginx (prod)
- * pass check 1, and non-browser clients (curl, tests) without `Origin` are
- * allowed — they cannot be abused by a victim's browser.
+ * Both are compared against the exact origins the app is served from. A
+ * request with neither header — curl, the test suite, a server-to-server call —
+ * is allowed: it cannot be produced by a victim's browser on an attacker's
+ * behalf, which is the only thing this middleware is defending against.
+ *
+ * Same-origin requests through the Vite proxy (development) or nginx
+ * (production) pass, because the browser reports the page's origin.
  */
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
-  private readonly tokens = new Map<string, { token: string; expires: number }>();
-
   private readonly safeMethods = ['GET', 'HEAD', 'OPTIONS'];
 
   private readonly allowedOrigins = [
@@ -27,60 +27,25 @@ export class CsrfMiddleware implements NestMiddleware {
     process.env.API_URL ?? 'http://localhost:3001',
   ].filter(Boolean);
 
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: Request, _res: Response, next: NextFunction) {
     if (this.safeMethods.includes(req.method)) {
       return next();
     }
 
-    const origin = req.headers.origin as string | undefined;
-    const referer = req.headers.referer as string | undefined;
-
-    if (origin && !this.isAllowedOrigin(origin)) {
+    const origin = req.headers.origin;
+    if (origin && !isAllowedOrigin(origin, this.allowedOrigins)) {
       throw new ForbiddenException({
         error: { code: 'CSRF_ORIGIN_MISMATCH', message: 'מקור הבקשה אינו מורשה' },
       });
     }
 
-    if (!origin && referer && !this.isAllowedOrigin(referer)) {
+    const referer = req.headers.referer;
+    if (!origin && referer && !isAllowedOrigin(referer, this.allowedOrigins)) {
       throw new ForbiddenException({
         error: { code: 'CSRF_ORIGIN_MISMATCH', message: 'מקור הבקשה אינו מורשה' },
       });
-    }
-
-    const sessionToken = req.cookies?.session;
-    const csrfToken = req.headers['x-csrf-token'] as string | undefined;
-
-    if (sessionToken && csrfToken) {
-      const stored = this.tokens.get(sessionToken);
-      if (!stored || stored.token !== csrfToken || Date.now() > stored.expires) {
-        throw new ForbiddenException({
-          error: { code: 'CSRF_TOKEN_INVALID', message: 'CSRF token חסר או לא תקין' },
-        });
-      }
     }
 
     next();
-  }
-
-  generateCsrfToken(sessionToken: string): string {
-    const token = randomBytes(32).toString('hex');
-    this.tokens.set(sessionToken, { token, expires: Date.now() + 3_600_000 });
-    return token;
-  }
-
-  private isAllowedOrigin(value: string): boolean {
-    return this.allowedOrigins.some((allowed) => value.startsWith(allowed));
-  }
-
-  constructor() {
-    const timer = setInterval(() => {
-      const now = Date.now();
-      for (const [key, value] of this.tokens.entries()) {
-        if (now > value.expires) {
-          this.tokens.delete(key);
-        }
-      }
-    }, 300_000);
-    timer.unref?.();
   }
 }
