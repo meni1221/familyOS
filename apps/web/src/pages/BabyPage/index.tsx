@@ -1,16 +1,32 @@
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconPlus, IconUsers } from '@tabler/icons-react';
 import { api } from '../../lib/api';
 import { errorMessage } from '../../lib/errorMessage';
 import { useToast } from '../../hooks/useToast';
-import type { BabyLog, BabyProfile } from '../../lib/types';
+import LoadMore from '../../components/ui/LoadMore';
+import type { BabyLog, BabyProfile, Page } from '../../lib/types';
 import BabyLogForm from './BabyLogForm';
 import BabyManagerModal from './BabyManagerModal';
 import BabySwitcher from './BabySwitcher';
 import BabyTimeline from './BabyTimeline';
 import { profileAge } from './profileAge';
 import type { LogFormData, ProfileFormData } from './schemas';
+
+const BABY_LOGS_PAGE_SIZE = 50;
+
+const fetchLogPage = async (
+  babyProfileId: string | null,
+  offset: number
+): Promise<Page<BabyLog>> => {
+  const params = new URLSearchParams({
+    limit: String(BABY_LOGS_PAGE_SIZE),
+    offset: String(offset),
+  });
+  if (babyProfileId) params.set('babyProfileId', babyProfileId);
+
+  return api.get<Page<BabyLog>>(`/api/v1/baby/logs?${params.toString()}`);
+};
 
 /**
  * The baby routine: the babies of the family, the timeline of whichever one is
@@ -35,15 +51,21 @@ const BabyPage = () => {
   const selectedProfile = profiles.find((profile) => profile.id === selected) ?? null;
   const activeId = selectedProfile?.id ?? null;
 
-  const { data: logs = [], isLoading: logsLoading } = useQuery({
+  const {
+    data: logPages,
+    isLoading: logsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['baby', 'logs', activeId ?? 'all'],
-    queryFn: async () =>
-      (
-        await api.get<{ data: BabyLog[] }>(
-          activeId ? `/api/v1/baby/logs?babyProfileId=${activeId}` : '/api/v1/baby/logs'
-        )
-      ).data ?? [],
+    queryFn: ({ pageParam }) => fetchLogPage(activeId, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasMore ? allPages.length * BABY_LOGS_PAGE_SIZE : undefined,
   });
+
+  const logs = logPages?.pages.flatMap((page) => page.data) ?? [];
 
   const invalidate = () => {
     void client.invalidateQueries({ queryKey: ['baby'] });
@@ -129,7 +151,7 @@ const BabyPage = () => {
     : headerProfile
       ? `${headerProfile.displayName}${headerAge ? ` · ${headerAge}` : ''}`
       : profiles.length > 1
-        ? `${profiles.length} תינוקות · ${logs.length} רשומות`
+        ? `${profiles.length} תינוקות`
         : 'הגדירו פרופיל תינוק כדי להתחיל';
 
   return (
@@ -188,6 +210,15 @@ const BabyPage = () => {
           isDeleting={deleteLog.isPending}
           onAdd={() => setActiveTab('add')}
           onDelete={(id) => deleteLog.mutate(id)}
+        />
+      )}
+
+      {activeTab === 'timeline' && (
+        <LoadMore
+          hasMore={Boolean(hasNextPage)}
+          isLoading={isFetchingNextPage}
+          onClick={() => void fetchNextPage()}
+          label="עוד רשומות"
         />
       )}
 

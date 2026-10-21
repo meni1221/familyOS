@@ -1,6 +1,27 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiCookieAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
+
+/**
+ * The two query parameters every paginated list takes. Declared once so the
+ * documented numbers cannot drift away from `PageQueryDto`.
+ */
+export const ApiPagination = () =>
+  applyDecorators(
+    ApiQuery({
+      name: 'limit',
+      required: false,
+      type: Number,
+      description: 'Records to return (1–100, default 50).',
+    }),
+    ApiQuery({
+      name: 'offset',
+      required: false,
+      type: Number,
+      description: 'Records to skip (default 0).',
+    })
+  );
+
 
 /**
  * The session cookie is the only credential this API accepts, and every

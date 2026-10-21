@@ -37,6 +37,15 @@ export interface ListResponse<T> {
   data: T[];
 }
 
+/**
+ * A page of a paginated list. `hasMore` is the server's answer to "is there
+ * another page?", so the client never has to ask for an empty one to find out.
+ */
+export interface Page<T> {
+  data: T[];
+  hasMore: boolean;
+}
+
 /** `GET /api/v1/dashboard` — the shared shape plus the recent-expense list. */
 export interface DashboardPayload
   extends Omit<SharedDashboardData, 'budget'> {

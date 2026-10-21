@@ -324,6 +324,59 @@ describe('Shlanu end-to-end journey', () => {
     expect(missing.status).toBe(StatusCodes.NOT_FOUND);
   });
 
+  it('pages the task list, filters it by state and fetches one task', async () => {
+    const createdIds: string[] = [];
+    for (const title of ['עמוד א', 'עמוד ב', 'עמוד ג']) {
+      const created = await request<{ data: { id: string } }>('POST', '/api/v1/tasks', {
+        body: { title },
+      });
+      createdIds.push(created.json.data.id);
+    }
+
+    await request('PATCH', `/api/v1/tasks/${createdIds[0]}`, { body: { status: 'COMPLETED' } });
+
+    const firstPage = await request<{ data: Array<{ id: string; title: string }>; hasMore: boolean }>(
+      'GET',
+      '/api/v1/tasks?limit=2',
+    );
+    expect(firstPage.json.data).toHaveLength(2);
+    expect(firstPage.json.hasMore).toBe(true);
+
+    const secondPage = await request<{ data: Array<{ id: string }>; hasMore: boolean }>(
+      'GET',
+      '/api/v1/tasks?limit=2&offset=2',
+    );
+    const collected = [...firstPage.json.data, ...secondPage.json.data].map((task) => task.id);
+    expect(new Set(collected).size).toBe(collected.length);
+
+    const completed = await request<{ data: Array<{ id: string }> }>(
+      'GET',
+      '/api/v1/tasks?status=completed&limit=100',
+    );
+    expect(completed.json.data.map((task) => task.id)).toContain(createdIds[0]);
+
+    const open = await request<{ data: Array<{ id: string }> }>(
+      'GET',
+      '/api/v1/tasks?status=open&limit=100',
+    );
+    expect(open.json.data.map((task) => task.id)).not.toContain(createdIds[0]);
+
+    // The notification link for a task has to open the task, not just its page.
+    const single = await request<{ data: { id: string; title: string } }>(
+      'GET',
+      `/api/v1/tasks/${createdIds[1]}`,
+    );
+    expect(single.json.data.title).toBe('עמוד ב');
+
+    expect((await request('GET', '/api/v1/tasks/not-an-id')).status).toBe(StatusCodes.NOT_FOUND);
+    expect((await request('GET', '/api/v1/tasks?limit=0')).status).toBe(StatusCodes.BAD_REQUEST);
+    expect((await request('GET', '/api/v1/tasks?limit=101')).status).toBe(StatusCodes.BAD_REQUEST);
+
+    for (const id of createdIds) {
+      await request('DELETE', `/api/v1/tasks/${id}`);
+    }
+  });
+
   it('creates a calendar event and rejects an inverted range', async () => {
     const event = waitForEvent('event:created');
 
@@ -390,6 +443,42 @@ describe('Shlanu end-to-end journey', () => {
 
     const badId = await request('DELETE', '/api/v1/budget/not-an-id');
     expect(badId.status).toBe(StatusCodes.NOT_FOUND);
+  });
+
+  it('computes the month summary on the server, and pages the expense list', async () => {
+    const budget = await request<{ data: { id: string } }>('POST', '/api/v1/budget', {
+      body: { name: 'תקציב בדיקה', amount: 1000 },
+    });
+    const first = await request<{ data: { id: string } }>('POST', '/api/v1/budget/expenses', {
+      body: { amount: 200, category: 'שונות', occurredAt: new Date().toISOString() },
+    });
+    const second = await request<{ data: { id: string } }>('POST', '/api/v1/budget/expenses', {
+      body: { amount: 50, category: 'שונות', occurredAt: new Date().toISOString() },
+    });
+
+    // Two endpoints, one definition of "this month": if they ever disagree, the
+    // page and the dashboard show different numbers for the same money.
+    const dashboard = await request<{
+      budget: { monthlyExpenses: number; budgetAmount: number; remaining: number };
+    }>('GET', '/api/v1/dashboard');
+    const summary = await request<{
+      data: { monthlyExpenses: number; budgetTotal: number; remaining: number };
+    }>('GET', '/api/v1/budget/summary');
+
+    expect(summary.json.data.monthlyExpenses).toBe(dashboard.json.budget.monthlyExpenses);
+    expect(summary.json.data.budgetTotal).toBe(dashboard.json.budget.budgetAmount);
+    expect(summary.json.data.remaining).toBe(dashboard.json.budget.remaining);
+
+    const page = await request<{ data: unknown[]; hasMore: boolean }>(
+      'GET',
+      '/api/v1/budget/expenses?limit=1',
+    );
+    expect(page.json.data).toHaveLength(1);
+    expect(page.json.hasMore).toBe(true);
+
+    await request('DELETE', `/api/v1/budget/expenses/${first.json.data.id}`);
+    await request('DELETE', `/api/v1/budget/expenses/${second.json.data.id}`);
+    await request('DELETE', `/api/v1/budget/${budget.json.data.id}`);
   });
 
   it('stores baby logs and auto-creates the baby profile', async () => {
@@ -481,6 +570,24 @@ describe('Shlanu end-to-end journey', () => {
 
     const gone = await request('DELETE', `/api/v1/baby/profiles/${twinId}`);
     expect(gone.status).toBe(StatusCodes.NOT_FOUND);
+  });
+
+  it('pages the baby timeline one entry at a time', async () => {
+    const profiles = await request<{ data: Array<{ id: string }> }>('GET', '/api/v1/baby/profiles');
+    const profileId = profiles.json.data[0].id;
+
+    const created = await request<{ data: { id: string } }>('POST', '/api/v1/baby/logs', {
+      body: { type: 'DIAPER', babyProfileId: profileId, occurredAt: new Date().toISOString() },
+    });
+
+    const page = await request<{ data: Array<{ id: string }>; hasMore: boolean }>(
+      'GET',
+      `/api/v1/baby/logs?babyProfileId=${profileId}&limit=1`,
+    );
+    expect(page.json.data).toHaveLength(1);
+    expect(page.json.hasMore).toBe(true);
+
+    await request('DELETE', `/api/v1/baby/logs/${created.json.data.id}`);
   });
 
   it('reads and updates the profile without ever leaking password material', async () => {

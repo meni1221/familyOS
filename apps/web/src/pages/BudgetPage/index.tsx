@@ -1,18 +1,35 @@
-import { useMemo, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconPlus, IconWallet } from '@tabler/icons-react';
 import { api } from '../../lib/api';
 import { errorMessage } from '../../lib/errorMessage';
 import { useCurrentFamily } from '../../hooks/useFamily';
 import { useToast } from '../../hooks/useToast';
+import LoadMore from '../../components/ui/LoadMore';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import type { Budget, Currency, Expense } from '../../lib/types';
+import type { Budget, Currency, Expense, Page } from '../../lib/types';
 import BudgetSummary from './BudgetSummary';
 import BudgetList from './BudgetList';
 import ExpenseList from './ExpenseList';
 import BudgetFormModal from './BudgetFormModal';
 import ExpenseFormModal from './ExpenseFormModal';
 import type { BudgetFormData, ExpenseFormData } from './schemas';
+
+const EXPENSES_PAGE_SIZE = 30;
+
+interface BudgetSummaryData {
+  monthlyExpenses: number;
+  budgetTotal: number;
+  remaining: number;
+}
+
+const fetchExpensePage = async (offset: number): Promise<Page<Expense>> => {
+  const params = new URLSearchParams({
+    limit: String(EXPENSES_PAGE_SIZE),
+    offset: String(offset),
+  });
+  return api.get<Page<Expense>>(`/api/v1/budget/expenses?${params.toString()}`);
+};
 
 /**
  * The family budget: what was budgeted, what was spent this month, and the two
@@ -32,10 +49,28 @@ const BudgetPage = () => {
     queryFn: async () => (await api.get<{ data: Budget[] }>('/api/v1/budget')).data ?? [],
   });
 
-  const { data: expenses, isLoading: expensesLoading } = useQuery({
+  const {
+    data: expensePages,
+    isLoading: expensesLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['budget', 'expenses'],
+    queryFn: ({ pageParam }) => fetchExpensePage(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasMore ? allPages.length * EXPENSES_PAGE_SIZE : undefined,
+  });
+
+  const expenses = expensePages?.pages.flatMap((page) => page.data) ?? [];
+
+  // The totals cover every expense of the month, not only the pages the
+  // browser has loaded, so they are asked for rather than added up here.
+  const { data: summary } = useQuery({
+    queryKey: ['budget', 'summary'],
     queryFn: async () =>
-      (await api.get<{ data: Expense[] }>('/api/v1/budget/expenses')).data ?? [],
+      (await api.get<{ data: BudgetSummaryData }>('/api/v1/budget/summary')).data,
   });
 
   const invalidate = () => {
@@ -86,26 +121,6 @@ const BudgetPage = () => {
     onError: (error) => toast.error('מחיקת ההוצאה נכשלה', errorMessage(error)),
   });
 
-  const summary = useMemo(() => {
-    const now = new Date();
-    const monthlyExpenses = (expenses ?? [])
-      .filter((expense) => {
-        const date = new Date(expense.occurredAt);
-        return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
-      })
-      .reduce((total, expense) => total + expense.amount, 0);
-
-    const budgetTotal = (budgets ?? [])
-      .filter((budget) => budget.period === 'MONTHLY')
-      .reduce((total, budget) => total + budget.amount, 0);
-
-    return {
-      monthlyExpenses,
-      budgetTotal,
-      remaining: budgetTotal - monthlyExpenses,
-    };
-  }, [expenses, budgets]);
-
   if (budgetsLoading || expensesLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -131,9 +146,9 @@ const BudgetPage = () => {
       </div>
 
       <BudgetSummary
-        monthlyExpenses={summary.monthlyExpenses}
-        budgetTotal={summary.budgetTotal}
-        remaining={summary.remaining}
+        monthlyExpenses={summary?.monthlyExpenses ?? 0}
+        budgetTotal={summary?.budgetTotal ?? 0}
+        remaining={summary?.remaining ?? 0}
         currency={defaultCurrency}
       />
 
@@ -151,10 +166,17 @@ const BudgetPage = () => {
       />
 
       <ExpenseList
-        expenses={expenses ?? []}
+        expenses={expenses}
         isDeleting={deleteExpense.isPending}
         onCreate={() => setExpenseFormOpen(true)}
         onDelete={(id) => deleteExpense.mutate(id)}
+      />
+
+      <LoadMore
+        hasMore={Boolean(hasNextPage)}
+        isLoading={isFetchingNextPage}
+        onClick={() => void fetchNextPage()}
+        label="עוד הוצאות"
       />
 
       <BudgetFormModal

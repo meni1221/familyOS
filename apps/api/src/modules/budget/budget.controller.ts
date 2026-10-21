@@ -6,13 +6,15 @@
   Delete,
   Body,
   Param,
+  Query,
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { BudgetService } from './budget.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
-import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
+import { ApiNotFound, ApiPagination, ApiSessionAuth } from '../../api-docs';
+import { PageQueryDto } from '../../pagination/pagination';
 import {
   CreateBudgetDto,
   UpdateBudgetDto,
@@ -43,12 +45,21 @@ export class BudgetController {
     return this.budgetService.createBudget(user.familyId, body);
   }
 
+  @Get('summary')
+  @ApiOperation({ summary: 'Monthly totals for the budget page' })
+  async getSummary(@Req() req: AuthenticatedRequest) {
+    const user = req.user;
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
+    return this.budgetService.getSummary(user.familyId);
+  }
+
   @Get('expenses')
   @ApiOperation({ summary: 'List expenses' })
-  async getExpenses(@Req() req: AuthenticatedRequest) {
+  @ApiPagination()
+  async getExpenses(@Query() query: PageQueryDto, @Req() req: AuthenticatedRequest) {
     const user = req.user;
-    if (!user) return { data: [] };
-    return this.budgetService.getExpenses(user.familyId);
+    if (!user) return { data: [], hasMore: false };
+    return this.budgetService.getExpenses(user.familyId, query);
   }
 
   @Post('expenses')

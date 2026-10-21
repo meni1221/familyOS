@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { isValidObjectId, Model } from 'mongoose';
+import { isValidObjectId, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Budget, BudgetDocument } from '../../database/models/budget.model';
 import { Expense, ExpenseDocument } from '../../database/models/expense.model';
@@ -10,6 +10,7 @@ import {
   UpdateExpenseDto,
 } from './dto';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
+import { PageQueryDto, resolvePage, toPage } from '../../pagination/pagination';
 
 @Injectable()
 export class BudgetService {
@@ -78,13 +79,56 @@ export class BudgetService {
     return { success: true };
   }
 
-  async getExpenses(familyId: string) {
+  /**
+   * The three numbers above the budget page.
+   *
+   * Computed here rather than in the browser: the expenses list is paginated, so
+   * a client that adds up the rows it happens to hold would show a monthly total
+   * that shrinks as pages load and changes when a page is not fetched at all.
+   */
+  async getSummary(familyId: string) {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const [budgets, totals] = await Promise.all([
+      this.budgetModel.find({ familyId }).select('amount period').exec(),
+      this.expenseModel
+        .aggregate<{ _id: null; total: number }>([
+          {
+            $match: {
+              familyId: new Types.ObjectId(familyId),
+              occurredAt: { $gte: startOfMonth },
+            },
+          },
+          { $group: { _id: null, total: { $sum: '$amount' } } },
+        ])
+        .exec(),
+    ]);
+
+    const monthlyExpenses = totals[0]?.total ?? 0;
+    const budgetTotal = budgets
+      .filter((budget) => budget.period === 'MONTHLY')
+      .reduce((total, budget) => total + budget.amount, 0);
+
+    return {
+      data: {
+        monthlyExpenses,
+        budgetTotal,
+        remaining: budgetTotal - monthlyExpenses,
+      },
+    };
+  }
+
+  async getExpenses(familyId: string, query: PageQueryDto = {}) {
+    const { limit, offset } = resolvePage(query);
     const expenses = await this.expenseModel
       .find({ familyId })
       .sort({ occurredAt: -1 })
-      .limit(500)
+      .skip(offset)
+      .limit(limit + 1)
       .exec();
-    return { data: expenses };
+    return toPage(expenses, limit);
   }
 
   async createExpense(familyId: string, userId: string, dto: CreateExpenseDto) {

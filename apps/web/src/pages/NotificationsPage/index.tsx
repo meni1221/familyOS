@@ -1,34 +1,54 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { IconBell, IconCheck } from '@tabler/icons-react';
 import { api } from '../../lib/api';
 import { errorMessage } from '../../lib/errorMessage';
 import { useToast } from '../../hooks/useToast';
+import { useUnreadCount } from '../../hooks/useUnreadCount';
 import EmptyState from '../../components/ui/EmptyState';
+import LoadMore from '../../components/ui/LoadMore';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import type { Notification } from '../../lib/types';
+import type { Notification, Page } from '../../lib/types';
 import NotificationList from './NotificationList';
 
-const fetchNotifications = async (): Promise<Notification[]> => {
-  const response = await api.get<{ data: Notification[] }>('/api/v1/notifications');
-  return response.data ?? [];
+const NOTIFICATIONS_PAGE_SIZE = 30;
+
+const fetchNotificationPage = async (offset: number): Promise<Page<Notification>> => {
+  const params = new URLSearchParams({
+    limit: String(NOTIFICATIONS_PAGE_SIZE),
+    offset: String(offset),
+  });
+  return api.get<Page<Notification>>(`/api/v1/notifications?${params.toString()}`);
 };
 
 /**
  * The notification centre: the unread counter, "mark all" and the list. The
- * list lives next to this file.
+ * counter is the server's, so it counts the notifications that are not loaded
+ * yet as well.
  */
 const NotificationsPage = () => {
   const client = useQueryClient();
   const toast = useToast();
 
-  const { data: notifications, isLoading, error } = useQuery({
+  const {
+    data: pages,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['notifications'],
-    queryFn: fetchNotifications,
+    queryFn: ({ pageParam }) => fetchNotificationPage(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasMore ? allPages.length * NOTIFICATIONS_PAGE_SIZE : undefined,
   });
+
+  const notifications = pages?.pages.flatMap((page) => page.data) ?? [];
+  const unread = useUnreadCount();
 
   const invalidate = () => {
     void client.invalidateQueries({ queryKey: ['notifications'] });
-    void client.invalidateQueries({ queryKey: ['notifications', 'unread'] });
     void client.invalidateQueries({ queryKey: ['dashboard'] });
   };
 
@@ -45,8 +65,6 @@ const NotificationsPage = () => {
     },
     onError: (error) => toast.error('סימון ההתראות נכשל', errorMessage(error)),
   });
-
-  const unread = (notifications ?? []).filter((item) => !item.readAt).length;
 
   if (isLoading) {
     return (
@@ -91,9 +109,16 @@ const NotificationsPage = () => {
       )}
 
       <NotificationList
-        notifications={notifications ?? []}
+        notifications={notifications}
         isMarking={markOne.isPending}
         onMarkRead={(id) => markOne.mutate(id)}
+      />
+
+      <LoadMore
+        hasMore={Boolean(hasNextPage)}
+        isLoading={isFetchingNextPage}
+        onClick={() => void fetchNextPage()}
+        label="עוד התראות"
       />
     </div>
   );

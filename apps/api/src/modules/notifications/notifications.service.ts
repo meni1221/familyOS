@@ -3,6 +3,7 @@ import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Notification, NotificationDocument } from '../../database/models/notification.model';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
+import { PageQueryDto, resolvePage, toPage } from '../../pagination/pagination';
 
 export interface CreateNotificationInput {
   type: string;
@@ -19,13 +20,15 @@ export class NotificationsService {
     private readonly realtime: RealtimeGateway,
   ) {}
 
-  async getNotifications(familyId: string, userId: string) {
+  async getNotifications(familyId: string, userId: string, query: PageQueryDto = {}) {
+    const { limit, offset } = resolvePage(query);
     const notifications = await this.notificationModel
       .find({ familyId, recipientUserId: userId })
       .sort({ createdAt: -1 })
-      .limit(50)
+      .skip(offset)
+      .limit(limit + 1)
       .exec();
-    return { data: notifications };
+    return toPage(notifications, limit);
   }
 
   async getUnreadCount(familyId: string, userId: string) {

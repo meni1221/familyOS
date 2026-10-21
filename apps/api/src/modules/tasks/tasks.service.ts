@@ -2,9 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Task, TaskDocument } from '../../database/models/task.model';
-import { CreateTaskDto, UpdateTaskDto } from './dto/index';
+import { CreateTaskDto, ListTasksQueryDto, UpdateTaskDto } from './dto/index';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
 import { NotificationsService } from '../notifications/notifications.service';
+import { resolvePage, toPage } from '../../pagination/pagination';
 
 @Injectable()
 export class TasksService {
@@ -14,13 +15,35 @@ export class TasksService {
     private readonly notifications: NotificationsService,
   ) {}
 
-  async getFamilyTasks(familyId: string) {
+  async getFamilyTasks(familyId: string, query: ListTasksQueryDto = {}) {
+    const { limit, offset } = resolvePage(query);
+
+    const filter: Record<string, unknown> = { familyId };
+    if (query.status === 'open') filter.status = { $ne: 'COMPLETED' };
+    if (query.status === 'completed') filter.status = 'COMPLETED';
+
     const tasks = await this.taskModel
-      .find({ familyId })
+      .find(filter)
       .sort({ createdAt: -1 })
-      .limit(500)
+      .skip(offset)
+      // One extra record tells the caller whether another page exists.
+      .limit(limit + 1)
       .exec();
-    return { data: tasks };
+
+    return toPage(tasks, limit);
+  }
+
+  async getTask(familyId: string, taskId: string) {
+    if (!isValidObjectId(taskId)) {
+      throw new NotFoundException('משימה לא נמצאה');
+    }
+
+    const task = await this.taskModel.findOne({ _id: taskId, familyId }).exec();
+    if (!task) {
+      throw new NotFoundException('משימה לא נמצאה');
+    }
+
+    return { data: task };
   }
 
   async createTask(familyId: string, userId: string, data: CreateTaskDto) {

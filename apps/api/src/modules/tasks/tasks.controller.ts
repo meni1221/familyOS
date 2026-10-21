@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
-import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
-import { CreateTaskDto, UpdateTaskDto } from './dto/index';
+import { ApiNotFound, ApiPagination, ApiSessionAuth } from '../../api-docs';
+import { CreateTaskDto, ListTasksQueryDto, UpdateTaskDto } from './dto/index';
 
 @ApiTags('tasks')
 @ApiSessionAuth()
@@ -13,10 +24,21 @@ export class TasksController {
 
   @Get()
   @ApiOperation({ summary: 'List tasks for current family' })
-  async getTasks(@Req() req: AuthenticatedRequest) {
+  @ApiPagination()
+  async getTasks(@Query() query: ListTasksQueryDto, @Req() req: AuthenticatedRequest) {
     const user = req.user;
-    if (!user) return { data: [] };
-    return this.tasksService.getFamilyTasks(user.familyId);
+    if (!user) return { data: [], hasMore: false };
+    return this.tasksService.getFamilyTasks(user.familyId, query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get one task' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiNotFound('task')
+  async getTask(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const user = req.user;
+    if (!user) throw new UnauthorizedException('נדרשת התחברות');
+    return this.tasksService.getTask(user.familyId, id);
   }
 
   @Post()

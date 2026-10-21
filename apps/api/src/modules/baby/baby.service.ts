@@ -15,6 +15,7 @@ import { BabyLog, BabyLogDocument } from '../../database/models/baby-log.model';
 import { CreateBabyLogDto, UpdateBabyLogDto } from './dto/index';
 import { CreateBabyProfileDto, UpdateBabyProfileDto } from './dto/index';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
+import { PageQueryDto, resolvePage, toPage } from '../../pagination/pagination';
 
 const DEFAULT_BABY_DISPLAY_NAME = 'התינוק/ת שלי';
 
@@ -147,19 +148,21 @@ export class BabyService {
   }
 
   /** The timeline, newest first, optionally for one baby only. */
-  async getLogs(familyId: string, babyProfileId?: string) {
+  async getLogs(familyId: string, query: PageQueryDto = {}, babyProfileId?: string) {
+    const { limit, offset } = resolvePage(query);
     const filter: Record<string, unknown> = { familyId };
     if (babyProfileId) {
-      if (!isValidObjectId(babyProfileId)) return { data: [] };
+      if (!isValidObjectId(babyProfileId)) return { data: [], hasMore: false };
       filter.babyProfileId = babyProfileId;
     }
 
     const logs = await this.logModel
       .find(filter)
       .sort({ occurredAt: -1 })
-      .limit(500)
+      .skip(offset)
+      .limit(limit + 1)
       .exec();
-    return { data: logs };
+    return toPage(logs, limit);
   }
 
   async createLog(familyId: string, userId: string, dto: CreateBabyLogDto) {

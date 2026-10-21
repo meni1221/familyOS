@@ -1,8 +1,9 @@
-﻿import { Controller, Get, Post, Patch, Param, Req, UnauthorizedException } from '@nestjs/common';
+﻿import { Controller, Get, Post, Patch, Param, Query, Req, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
-import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
+import { ApiNotFound, ApiPagination, ApiSessionAuth } from '../../api-docs';
+import { PageQueryDto } from '../../pagination/pagination';
 
 @ApiTags('notifications')
 @ApiSessionAuth()
@@ -12,10 +13,11 @@ export class NotificationsController {
 
   @Get()
   @ApiOperation({ summary: 'List notifications' })
-  async getNotifications(@Req() req: AuthenticatedRequest) {
+  @ApiPagination()
+  async getNotifications(@Query() query: PageQueryDto, @Req() req: AuthenticatedRequest) {
     const user = req.user;
-    if (!user) return { data: [] };
-    return this.notificationsService.getNotifications(user.familyId, user.id);
+    if (!user) return { data: [], hasMore: false };
+    return this.notificationsService.getNotifications(user.familyId, user.id, query);
   }
 
   @Get('unread-count')

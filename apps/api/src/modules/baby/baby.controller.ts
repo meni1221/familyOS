@@ -15,7 +15,8 @@ import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery, ApiResponse } from 
 import { StatusCodes } from 'http-status-codes';
 import { BabyService } from './baby.service';
 import { AuthenticatedRequest } from '../../middleware/authenticated-request';
-import { ApiNotFound, ApiSessionAuth } from '../../api-docs';
+import { ApiNotFound, ApiPagination, ApiSessionAuth } from '../../api-docs';
+import { PageQueryDto } from '../../pagination/pagination';
 import {
   CreateBabyLogDto,
   UpdateBabyLogDto,
@@ -77,13 +78,15 @@ export class BabyController {
   @Get('logs')
   @ApiOperation({ summary: 'List baby log entries, optionally of one baby' })
   @ApiQuery({ name: 'babyProfileId', required: false, type: String })
+  @ApiPagination()
   async getLogs(
     @Query('babyProfileId') babyProfileId: string | undefined,
+    @Query() query: PageQueryDto,
     @Req() req: AuthenticatedRequest
   ) {
     const user = req.user;
-    if (!user) return { data: [] };
-    return this.babyService.getLogs(user.familyId, babyProfileId);
+    if (!user) return { data: [], hasMore: false };
+    return this.babyService.getLogs(user.familyId, query, babyProfileId);
   }
 
   @Post('logs')
