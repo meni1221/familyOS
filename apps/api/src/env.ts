@@ -37,6 +37,10 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'is required'),
   DATABASE_NAME: z.string().min(1).default('Shlanu'),
 
+  // Optional override for Node's resolver, applied in database.module.ts. See
+  // dns.ts: a host whose resolver list is broken cannot expand `mongodb+srv`.
+  DNS_SERVERS: optionalString,
+
   FRONTEND_URL: z.string().url().default('http://localhost:5173'),
   API_URL: z.string().url().default('http://localhost:3001'),
 
