@@ -176,6 +176,9 @@ describe('Shlanu end-to-end journey', () => {
         PORT: String(TEST_PORT),
         DATABASE_URL: TEST_DB_URL,
         DATABASE_NAME: TEST_DB,
+        // The journey is what this suite tests; the auth limiter would only make
+        // it fail on the browser-like request count instead of on a bug.
+        AUTH_RATE_LIMIT_MAX_REQUESTS: '1000',
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
@@ -691,6 +694,82 @@ describe('Shlanu end-to-end journey', () => {
 
     const readAll = await request('POST', '/api/v1/notifications/read-all', { cookie: '' });
     expect(readAll.status).toBe(StatusCodes.UNAUTHORIZED);
+  });
+
+  it('keeps a second family out of everything the first one owns', async () => {
+    // A family with no relationship to the owner's — not a member, not invited.
+    const registered = await request('POST', '/api/v1/auth/register', {
+      cookie: '',
+      body: {
+        email: `stranger${stamp}@e2e.test`,
+        password: 'stranger-pass-1234',
+        displayName: 'שכן',
+      },
+    });
+    expect(registered.status).toBe(StatusCodes.CREATED);
+    const strangerCookie = registered.session;
+
+    // One record of each kind that belongs to the owner's family.
+    const task = await request('POST', '/api/v1/tasks', { body: { title: 'סוד משפחתי' } });
+    const taskId = task.json.data.id;
+
+    const budget = await request('POST', '/api/v1/budget', { body: { name: 'קופה', amount: 100 } });
+    const budgetId = budget.json.data.id;
+
+    const expense = await request('POST', '/api/v1/budget/expenses', {
+      body: { amount: 12.5, category: 'שונות', occurredAt: new Date().toISOString() },
+    });
+    const expenseId = expense.json.data.id;
+
+    const profiles = await request('GET', '/api/v1/baby/profiles');
+    const babyId = profiles.json.data[0].id;
+
+    const asStranger = (method: string, path: string, body?: unknown) =>
+      request(method, path, { cookie: strangerCookie, body });
+
+    // Every write is refused as "not found", never "forbidden": answering 403
+    // would confirm that the id exists, turning the ids into an enumeration
+    // oracle for another family's records.
+    const refused = await Promise.all([
+      asStranger('PATCH', `/api/v1/tasks/${taskId}`, { title: 'נגנב' }),
+      asStranger('DELETE', `/api/v1/tasks/${taskId}`),
+      asStranger('DELETE', `/api/v1/budget/${budgetId}`),
+      asStranger('DELETE', `/api/v1/budget/expenses/${expenseId}`),
+      asStranger('PATCH', `/api/v1/baby/profiles/${babyId}`, { displayName: 'נגנב' }),
+      asStranger('POST', '/api/v1/baby/logs', {
+        type: 'NOTE',
+        babyProfileId: babyId,
+        occurredAt: new Date().toISOString(),
+      }),
+    ]);
+
+    for (const attempt of refused) {
+      expect(attempt.status).toBe(StatusCodes.NOT_FOUND);
+    }
+
+    // A timeline that names someone else's baby is not an error — it is simply
+    // empty, for the same reason.
+    const foreignTimeline = await asStranger('GET', `/api/v1/baby/logs?babyProfileId=${babyId}`);
+    expect(foreignTimeline.status).toBe(StatusCodes.OK);
+    expect(foreignTimeline.json.data).toHaveLength(0);
+
+    // Nothing moved: the family that owns these records still sees them intact.
+    const tasks = await request('GET', '/api/v1/tasks');
+    const survivor = tasks.json.data.find((entry) => entry.id === taskId);
+    expect(survivor?.title).toBe('סוד משפחתי');
+
+    const expenses = await request('GET', '/api/v1/budget/expenses');
+    expect(expenses.json.data).toHaveLength(1);
+    expect(expenses.json.data[0].id).toBe(expenseId);
+
+    const ownedProfiles = await request('GET', '/api/v1/baby/profiles');
+    expect(ownedProfiles.json.data[0].id).toBe(babyId);
+    expect(ownedProfiles.json.data[0].displayName).toBe('יונתן');
+
+    // And the stranger's own family starts empty, rather than seeing a filtered
+    // view of everyone else's rows.
+    expect((await asStranger('GET', '/api/v1/tasks')).json.data).toHaveLength(0);
+    expect((await asStranger('GET', '/api/v1/budget/expenses')).json.data).toHaveLength(0);
   });
 
   it('logs out and invalidates the session', async () => {
