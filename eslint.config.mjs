@@ -82,6 +82,7 @@ export default tseslint.config(
       '**/*.test.tsx',
       '**/*.config.ts',
       '**/*.config.mjs',
+      '**/scripts/**/*.mjs',
     ],
     languageOptions: { globals: { ...globals.node } },
     rules: {

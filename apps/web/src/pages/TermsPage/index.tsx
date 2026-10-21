@@ -1,7 +1,8 @@
 import { useSeo } from '../../hooks/useSeo';
+import { publicPageSeo } from '../../lib/seo';
 
 const TermsPage = () => {
-  useSeo({ title: 'תנאי שימוש', path: '/terms' });
+  useSeo({ ...publicPageSeo('/terms'), path: '/terms' });
 
   return (
     <div className="mx-auto max-w-3xl">

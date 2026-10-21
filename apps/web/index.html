@@ -7,7 +7,7 @@
     <link rel="apple-touch-icon" sizes="192x192" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>שלנו — כל מה שהמשפחה צריכה, במקום אחד</title>
+    <title>כל מה שהמשפחה צריכה, במקום אחד · שלנו</title>
     <meta
       name="description"
       content="שלנו היא אפליקציה לניהול חיי המשפחה: משימות משותפות, לוח שנה משפחתי, מעקב אחר תינוקות, תקציב הבית והתראות — במקום אחד, בעברית ובחינם."
@@ -20,29 +20,39 @@
     <meta name="author" content="שלנו" />
     <meta name="theme-color" content="#21483C" />
     <link rel="canonical" href="https://shlanu.app/" />
+    <link rel="alternate" hreflang="he-IL" href="https://shlanu.app/" />
+    <link rel="alternate" hreflang="x-default" href="https://shlanu.app/" />
 
     <!-- Open Graph / social sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="שלנו" />
     <meta property="og:locale" content="he_IL" />
-    <meta property="og:title" content="שלנו — כל מה שהמשפחה צריכה, במקום אחד" />
+    <meta property="og:title" content="כל מה שהמשפחה צריכה, במקום אחד · שלנו" />
     <meta
       property="og:description"
-      content="משימות, לוח שנה, מעקב תינוק ותקציב — הכל במקום אחד, משותף לכל המשפחה."
+      content="שלנו היא אפליקציה לניהול חיי המשפחה: משימות משותפות, לוח שנה משפחתי, מעקב אחר תינוקות, תקציב הבית והתראות — במקום אחד, בעברית ובחינם."
     />
     <meta property="og:url" content="https://shlanu.app/" />
-    <meta property="og:image" content="https://shlanu.app/logo.png" />
-    <meta property="og:image:alt" content="הלוגו של שלנו" />
+    <meta property="og:image" content="https://shlanu.app/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="שלנו — אפליקציה לניהול חיי המשפחה" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="שלנו — כל מה שהמשפחה צריכה, במקום אחד" />
+    <meta name="twitter:title" content="כל מה שהמשפחה צריכה, במקום אחד · שלנו" />
     <meta
       name="twitter:description"
-      content="משימות, לוח שנה, מעקב תינוק ותקציב — הכל במקום אחד, משותף לכל המשפחה."
+      content="שלנו היא אפליקציה לניהול חיי המשפחה: משימות משותפות, לוח שנה משפחתי, מעקב אחר תינוקות, תקציב הבית והתראות — במקום אחד, בעברית ובחינם."
     />
-    <meta name="twitter:image" content="https://shlanu.app/logo.png" />
+    <meta name="twitter:image" content="https://shlanu.app/og.png" />
+    <meta name="twitter:image:alt" content="שלנו — אפליקציה לניהול חיי המשפחה" />
 
-    <!-- What the site is, in the shape search engines prefer over guesswork -->
+    <!--
+      What the site is, in the shape search engines prefer over guesswork.
+      The FAQ answers are the ones rendered by `LandingPage/Faq`, and the
+      questions and answers come from `src/seo/content.json`; keep them equal.
+    -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -67,6 +77,16 @@
             "areaServed": "IL"
           },
           {
+            "@type": "WebPage",
+            "@id": "https://shlanu.app/#webpage",
+            "url": "https://shlanu.app/",
+            "name": "כל מה שהמשפחה צריכה, במקום אחד · שלנו",
+            "isPartOf": { "@id": "https://shlanu.app/#website" },
+            "about": { "@id": "https://shlanu.app/#organization" },
+            "inLanguage": "he-IL",
+            "primaryImageOfPage": "https://shlanu.app/og.png"
+          },
+          {
             "@type": "SoftwareApplication",
             "name": "שלנו",
             "alternateName": "Shlanu",
@@ -81,6 +101,49 @@
               "מעקב אחר תינוקות",
               "תקציב והוצאות הבית",
               "התראות בזמן אמת"
+            ],
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "ILS"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://shlanu.app/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "האם שלנו בחינם?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "כן. ההרשמה והשימוש בכלים פתוחים, בלי כרטיס אשראי."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "למי שייכים הנתונים של המשפחה?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "לכם. הנתונים משמשים רק כדי שהאפליקציה תעבוד, ואינם נמכרים או משמשים לפרסום."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "אפשר להשתמש לבד, בלי בן או בת זוג?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "כן. אפשר להתחיל לבד, ולהזמין בני משפחה נוספים כשתרצו."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "מה קורה למי שרוצה לעזוב?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "מהפרופיל אפשר להוריד עותק של הנתונים כקובץ JSON ולמחוק את החשבון. אם עוד חברים במשפחה, הנתונים נשארים אצלם."
+                }
+              }
             ]
           }
         ]
@@ -93,6 +156,27 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!--
+      The app is a single-page React application. This is what a crawler that
+      does not execute JavaScript, and a visitor whose script failed, still get.
+    -->
+    <noscript>
+      <div dir="rtl">
+        <h1>שלנו — כל מה שהמשפחה צריכה, במקום אחד</h1>
+        <p>
+          שלנו היא אפליקציה בעברית לניהול חיי המשפחה: משימות משותפות, לוח שנה משפחתי,
+          מעקב אחר תינוקות, תקציב הבית והתראות — במקום אחד ובחינם.
+        </p>
+        <p>כדי להשתמש באפליקציה יש להפעיל JavaScript בדפדפן.</p>
+        <ul>
+          <li><a href="/terms">תנאי שימוש</a></li>
+          <li><a href="/privacy">מדיניות פרטיות</a></li>
+          <li><a href="/accessibility">הצהרת נגישות</a></li>
+        </ul>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

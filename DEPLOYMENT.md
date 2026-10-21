@@ -80,6 +80,12 @@ docker-compose -f docker-compose.prod.yml ps
 docker-compose -f docker-compose.prod.yml logs -f
 ```
 
+### עמודים ציבוריים ו-SEO
+
+הבנייה של הווב מריצה, אחרי Vite, את `apps/web/scripts/prerender.mjs`. הסקריפט כותב עותק של ה-HTML לכל עמוד ציבורי (`/terms`, `/privacy`, `/accessibility`) עם כותרת, תיאור, canonical ונתוני schema משלו, כך שגם בוט שאינו מריץ JavaScript מקבל את העמוד הנכון ולא את דף הבית. ה-nginx שבתוך הקונטיינר כבר מגיש את הקבצים האלה דרך `try_files $uri $uri/ /index.html`, ולכן אין צורך בשינוי נוסף. אם פרוקסי חיצוני מגיש את הקבצים בעצמו, ודאו שהנתיבים האלה מגיעים מהתיקיות ולא כ-fallback ל-`index.html`.
+
+תמונת השיתוף `apps/web/public/og.png` (1200x630) נכללת בבנייה. אם משנים דומיין, עדכנו את `apps/web/src/seo/content.json`, ואת `apps/web/public/robots.txt` ו-`apps/web/public/sitemap.xml`.
+
 ## שלב 4: הגדרת פרוקסי הפוך (Nginx)
 
 צור קובץ הגדרת Nginx לדומיין שלך:

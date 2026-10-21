@@ -1,7 +1,8 @@
 import { useSeo } from '../../hooks/useSeo';
+import { publicPageSeo } from '../../lib/seo';
 
 const PrivacyPage = () => {
-  useSeo({ title: 'מדיניות פרטיות', path: '/privacy' });
+  useSeo({ ...publicPageSeo('/privacy'), path: '/privacy' });
 
   return (
     <div className="mx-auto max-w-3xl">

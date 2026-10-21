@@ -13,6 +13,8 @@ Shlanu is a family life management SaaS application that helps families coordina
 - **Notifications** — Stay informed with in-app notifications
 - **Multi-language** — Hebrew (RTL) and English (LTR)
 - **Responsive** — Mobile-first design
+- **Accessible** — Keyboard navigation, skip links, and an on-page accessibility panel
+- **Motion with restraint** — GSAP entrances that respect the reduced-motion setting
 
 ## Technology Stack
 
@@ -23,6 +25,7 @@ Shlanu is a family life management SaaS application that helps families coordina
 - TanStack Query
 - React Router
 - React Hook Form + Zod
+- GSAP for motion
 
 ### Backend
 - NestJS

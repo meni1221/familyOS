@@ -1,7 +1,8 @@
 import { useSeo } from '../../hooks/useSeo';
+import { publicPageSeo } from '../../lib/seo';
 
 const AccessibilityPage = () => {
-  useSeo({ title: 'הצהרת נגישות', path: '/accessibility' });
+  useSeo({ ...publicPageSeo('/accessibility'), path: '/accessibility' });
 
   return (
     <div className="mx-auto max-w-3xl">

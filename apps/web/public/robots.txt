@@ -1,4 +1,4 @@
-# שלנו — https://shlanu.app
+# https://shlanu.app
 # The public pages are meant to be found. Everything under /app sits behind a
 # login and is marked noindex by the app itself.
 
@@ -7,5 +7,7 @@ Allow: /
 Disallow: /app
 Disallow: /login
 Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
 
 Sitemap: https://shlanu.app/sitemap.xml

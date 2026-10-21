@@ -2,26 +2,31 @@
 <!--
   Only the pages a visitor can reach without an account. The app itself is
   behind a login and is excluded here and in robots.txt.
-  Update lastmod when the public pages change.
+  Titles and descriptions live in src/seo/content.json; update lastmod when the
+  public pages change.
 -->
-<urlset xmlns="http://www.sitemap.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://shlanu.app/</loc>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://shlanu.app/privacy</loc>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://shlanu.app/terms</loc>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://shlanu.app/accessibility</loc>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
