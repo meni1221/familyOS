@@ -27,6 +27,7 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive().default(20),
 
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'verbose']).default('info'),
+  LOG_FORMAT: z.enum(['json', 'pretty']).default('json'),
 });
 
 /**

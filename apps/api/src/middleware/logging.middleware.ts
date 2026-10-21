@@ -1,51 +1,50 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { RequestWithId } from './request-id.middleware';
 
+/**
+ * One line per request, with the id the caller also received in `X-Request-Id`.
+ *
+ * `durationMs` is a number rather than a `"12ms"` string so a collector can
+ * average it; the level follows the status, which is the only signal available
+ * at this point — an exception's stack is logged where it is thrown.
+ */
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
   private readonly logger = new Logger(LoggingMiddleware.name);
 
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: RequestWithId, res: Response, next: NextFunction) {
     const start = Date.now();
     const { method, originalUrl, ip } = req;
 
-    // Skip logging for health checks
+    // A health check every ten seconds would otherwise be most of the log.
     if (originalUrl === '/health') {
       return next();
     }
 
     res.on('finish', () => {
       const { statusCode } = res;
-      const duration = Date.now() - start;
+      const durationMs = Date.now() - start;
 
-      // Don't log sensitive data (passwords, tokens, etc.)
       const logEntry = {
+        requestId: req.requestId,
         method,
         url: originalUrl,
         statusCode,
-        duration: `${duration}ms`,
+        durationMs,
         ip: ip ?? 'unknown',
         userAgent: req.get('User-Agent') ?? 'unknown',
-        timestamp: new Date().toISOString(),
       };
 
-      // Log level based on status code
+      const line = `Request completed: ${method} ${originalUrl} - ${statusCode} (${durationMs}ms)`;
+
       if (statusCode >= StatusCodes.INTERNAL_SERVER_ERROR) {
-        this.logger.error(
-          `Request completed: ${method} ${originalUrl} - ${statusCode} (${duration}ms)`,
-          logEntry
-        );
+        this.logger.error(line, logEntry);
       } else if (statusCode >= StatusCodes.BAD_REQUEST) {
-        this.logger.warn(
-          `Request completed: ${method} ${originalUrl} - ${statusCode} (${duration}ms)`,
-          logEntry
-        );
+        this.logger.warn(line, logEntry);
       } else {
-        this.logger.log(
-          `Request completed: ${method} ${originalUrl} - ${statusCode} (${duration}ms)`,
-          logEntry
-        );
+        this.logger.log(line, logEntry);
       }
     });
 

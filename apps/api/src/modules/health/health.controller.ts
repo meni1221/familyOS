@@ -17,6 +17,7 @@ export class HealthController {
       return {
         status: 'healthy',
         timestamp: new Date().toISOString(),
+        uptimeSeconds: Math.round(process.uptime()),
         services: {
           database: 'connected',
         },

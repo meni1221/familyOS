@@ -754,7 +754,7 @@ describe('Shlanu end-to-end journey', () => {
     expect(foreignTimeline.json.data).toHaveLength(0);
 
     // Nothing moved: the family that owns these records still sees them intact.
-    const tasks = await request('GET', '/api/v1/tasks');
+    const tasks = await request<{ data: Json[] }>('GET', '/api/v1/tasks');
     const survivor = tasks.json.data.find((entry) => entry.id === taskId);
     expect(survivor?.title).toBe('סוד משפחתי');
 
@@ -770,6 +770,17 @@ describe('Shlanu end-to-end journey', () => {
     // view of everyone else's rows.
     expect((await asStranger('GET', '/api/v1/tasks')).json.data).toHaveLength(0);
     expect((await asStranger('GET', '/api/v1/budget/expenses')).json.data).toHaveLength(0);
+  });
+
+  it('returns a request id that can be traced back to the log', async () => {
+    const generated = await fetch(`${baseUrl}/health`);
+    expect(generated.headers.get('x-request-id')).toMatch(/^[0-9a-f-]{36}$/);
+
+    // A caller that already has an id keeps it, so a trace survives the hop.
+    const carried = await fetch(`${baseUrl}/health`, {
+      headers: { 'x-request-id': 'gateway.request_42' },
+    });
+    expect(carried.headers.get('x-request-id')).toBe('gateway.request_42');
   });
 
   it('logs out and invalidates the session', async () => {

@@ -6,7 +6,8 @@ import { NestApplicationOptions } from '@nestjs/common/interfaces/nest-applicati
 import { Model } from 'mongoose';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
-import { loggerLevels } from './env';
+import { createLogger } from './logging/logger';
+import { RequestIdMiddleware } from './middleware/request-id.middleware';
 import { LoggingMiddleware } from './middleware/logging.middleware';
 import { SecurityHeadersMiddleware } from './middleware/security-headers.middleware';
 import { RateLimitMiddleware } from './middleware/rate-limit.middleware';
@@ -35,6 +36,7 @@ export const configureApp = (app: NestExpressApplication): NestExpressApplicatio
   bindSessionModel(app.get<Model<Session>>(getModelToken(Session.name)));
 
   app.use(cookieParser());
+  app.use(new RequestIdMiddleware().use.bind(new RequestIdMiddleware()));
   app.use(new LoggingMiddleware().use.bind(new LoggingMiddleware()));
   app.use(new SecurityHeadersMiddleware().use.bind(new SecurityHeadersMiddleware()));
   app.use(new RateLimitMiddleware().use.bind(new RateLimitMiddleware()));
@@ -104,7 +106,7 @@ export const createApp = async (
   options: NestApplicationOptions = {}
 ): Promise<NestExpressApplication> => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: loggerLevels(),
+    logger: createLogger(),
     ...options,
   });
   return configureApp(app);

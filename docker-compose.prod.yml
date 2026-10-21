@@ -30,6 +30,7 @@ services:
       - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-300}
       - AUTH_RATE_LIMIT_MAX_REQUESTS=${AUTH_RATE_LIMIT_MAX_REQUESTS:-20}
       - LOG_LEVEL=${LOG_LEVEL:-warn}
+      - LOG_FORMAT=json
     depends_on:
       mongodb:
         condition: service_healthy
