@@ -1,5 +1,6 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { getModelToken } from '@nestjs/mongoose';
 import { NestApplicationOptions } from '@nestjs/common/interfaces/nest-application-options.interface';
 import { Model } from 'mongoose';
@@ -21,7 +22,13 @@ import { AppModule } from './app.module';
  * Kept separate from `main.ts` so the HTTP surface of the server is defined in a
  * single, reviewable place.
  */
-export const configureApp = (app: INestApplication): INestApplication => {
+export const configureApp = (app: NestExpressApplication): NestExpressApplication => {
+  // One proxy sits in front in every deployment — Vite in development, nginx in
+  // production — and it is the only one. Trusting exactly that hop makes `req.ip`
+  // the client that called rather than the proxy, which is what the request log
+  // and the rate limiter mean by "who".
+  app.set('trust proxy', 1);
+
   // The session store is a module singleton (the auth middleware is built by
   // hand below), so it receives its model once, here.
   bindSessionModel(app.get<Model<Session>>(getModelToken(Session.name)));
@@ -92,7 +99,9 @@ export const configureApp = (app: INestApplication): INestApplication => {
 };
 
 /** Creates a fully configured application without binding it to a port. */
-export const createApp = async (options: NestApplicationOptions = {}): Promise<INestApplication> => {
-  const app = await NestFactory.create(AppModule, options);
+export const createApp = async (
+  options: NestApplicationOptions = {}
+): Promise<NestExpressApplication> => {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
   return configureApp(app);
 };
