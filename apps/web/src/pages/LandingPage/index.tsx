@@ -1,11 +1,12 @@
 import Footer from '../../components/layout/Footer';
 import { useSeo } from '../../hooks/useSeo';
-import { SITE_TAGLINE } from '../../lib/seo';
+import { publicPageSeo } from '../../lib/seo';
 import LandingHeader from './LandingHeader';
 import LandingHero from './LandingHero';
 import FeatureGrid from './FeatureGrid';
 import HowItWorks from './HowItWorks';
 import SecuritySection from './SecuritySection';
+import Faq from './Faq';
 import LandingCta from './LandingCta';
 
 /**
@@ -13,7 +14,7 @@ import LandingCta from './LandingCta';
  * this file; the copy they render lives in `content.ts`.
  */
 const LandingPage = () => {
-  useSeo({ title: SITE_TAGLINE, path: '/' });
+  useSeo({ ...publicPageSeo('/'), path: '/' });
 
   return (
     <div className="min-h-screen bg-canvas">
@@ -24,6 +25,7 @@ const LandingPage = () => {
         <FeatureGrid />
         <HowItWorks />
         <SecuritySection />
+        <Faq />
         <LandingCta />
       </main>
 

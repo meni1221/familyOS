@@ -80,6 +80,7 @@ export const NAV_LINKS = [
   { href: '#features', label: 'תכונות' },
   { href: '#how-it-works', label: 'איך זה עובד' },
   { href: '#security', label: 'אבטחה' },
+  { href: '#faq', label: 'שאלות' },
 ];
 
 /** The three onboarding steps. */
