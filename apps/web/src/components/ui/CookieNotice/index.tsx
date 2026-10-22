@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import { IconCookie } from '@tabler/icons-react';
 import { gsap, isMotionReduced } from '../../../lib/motion';
@@ -19,6 +19,8 @@ import {
  * what this does, once, with the privacy policy one click away.
  */
 const CookieNotice = () => {
+  const { pathname } = useLocation();
+  const isApp = pathname.startsWith('/app');
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +65,9 @@ const CookieNotice = () => {
       ref={cardRef}
       role="region"
       aria-label="שימוש בעוגיות"
-      className="fixed inset-x-4 bottom-40 z-[950] mx-auto max-w-md rounded-12 border border-border bg-surface p-4 shadow-modal md:bottom-6 print:hidden"
+      className={`fixed start-4 end-20 z-[950] mx-auto max-w-md rounded-12 border border-border bg-surface p-4 shadow-modal lg:end-4 lg:bottom-6 print:hidden ${
+        isApp ? 'bottom-20' : 'bottom-4'
+      }`}
     >
       <div className="flex items-start gap-3">
         <span
