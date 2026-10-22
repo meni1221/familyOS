@@ -80,7 +80,7 @@ const AccessibilityWidget = () => {
   return (
     <div
       ref={containerRef}
-      className="fixed end-6 bottom-20 z-[1000] md:bottom-6 print:hidden"
+      className="fixed end-6 bottom-20 z-[1000] lg:bottom-6 print:hidden"
     >
       {isOpen && (
         <AccessibilityMenu

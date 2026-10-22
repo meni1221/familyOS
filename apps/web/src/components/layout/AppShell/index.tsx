@@ -36,13 +36,13 @@ const AppShell = () => {
       <div className="flex flex-1">
         <Sidebar />
 
-        <div className="flex flex-1 flex-col md:ms-60">
+        <div className="flex flex-1 flex-col lg:ms-60">
           <main className="flex-1 p-4 pb-8 md:p-6 lg:p-8" id="main-content">
             <div className="mx-auto max-w-content">
               <Outlet />
             </div>
           </main>
-          <Footer className="pb-24 md:pb-8" />
+          <Footer className="pb-24 lg:pb-8" />
           <MobileNav />
         </div>
       </div>

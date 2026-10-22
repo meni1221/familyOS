@@ -23,7 +23,7 @@ const navItems = [
  */
 const Sidebar = () => {
   return (
-    <aside className="fixed bottom-0 start-0 top-20 z-20 hidden w-60 flex-col border-e border-border bg-surface md:flex">
+    <aside className="fixed bottom-0 start-0 top-20 z-20 hidden w-60 flex-col border-e border-border bg-surface lg:flex">
       <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3 md:pt-6 lg:pt-8">
         {navItems.map((item) => (
           <NavLink
